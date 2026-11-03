@@ -58,82 +58,36 @@ Wenn der Nutzer die Erstellung eines BPMN-Modells bestaetigt:
 **WICHTIG**: Vor der Erstellung des BPMN-Modells MUESSEN die folgenden Referenzdokumente gelesen werden:
 1. `BPMN_ADONIS/BPMN_ADONIS_Template.xml` - ADONIS-kompatibles Template als Strukturreferenz (3-Pool-Vorlage, adaptieren auf 2 Pools)
 2. `BPMN-DI_Guidelines.md` - Technische BPMN-DI Standards und Layout-Regeln (als ergaenzende Referenz)
+3. `.github/instructions/BPMN_Documentation.instructions.md` - Verbindliche Regel fuer Taskinformationen in Documentation - Element documentation
 
-#### BPMN-Modell-Struktur (ADONIS-kompatibel):
-- **Basis**: Verwende die Struktur aus `BPMN_ADONIS/BPMN_ADONIS_Template.xml`, adaptiert auf 2 Pools
-- **XML-Deklaration**: `<?xml version="1.0" encoding="utf-8"?>`
-- **Namespace-Deklarationen** (KRITISCH fuer ADONIS-Import):
-  ```xml
-  <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
-               xmlns:adonis="http://www.boc-group.com"
-               xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
-               xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
-               xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
-               xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
-               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               id="definition__[UUID]"
-               typeLanguage="http://www.w3.org/2001/XMLSchema"
-               xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd"
-               targetNamespace="http://www.boc-group.com">
-  ```
 
-- **2 Pools**: Immer Kunde-Pool (oben) und Organisation-Pool (unten) in dieser Reihenfolge
-- **Pool-Dimensionen** (BPMN-DI):
-  - Breite: 1830px (Pool-Rahmen: 1830px, Lane: 1800px)
-  - Hoehe: 380px pro Pool
-  - Y-Koordinaten: Kunde y=0, Organisation y=390
-- **Horizontale Task-Anordnung** (OBLIGATORISCH):
-  - Alle Tasks und Elemente in einem Pool auf identischer Y-Koordinate
-  - Task-Dimensionen: 151 x 76 px (ADONIS-Standard)
-  - Event-Dimensionen: 36 x 36 px
-  - Horizontaler Abstand zwischen Tasks: ca. 60-80px
-  - Kunde-Tasks: y=152, Events: y=172
-  - Organisations-Tasks: y=542, Events: y=562
-- **Element-Typen**:
-  - `<task>` fuer alle Aktivitaeten (generisch, ADONIS-kompatibel)
-  - `<startEvent>` / `<endEvent>` fuer Prozessstart/-ende
-  - `<messageEventDefinition>` fuer Message-Start-Events (bei Pool-uebergreifendem Nachrichtenempfang)
-- **Message Flows**:
-  - Kunde ↔ Organisation: Antrag, Anfragen und Bescheid
-  - Als `<messageFlow>` in der Collaboration definiert
-  - BPMN-DI: Routing ueber Waypoints zwischen Pool-Grenzen
-- **Sequence Flows**:
-  - Innerhalb eines Pools als `<sequenceFlow>` definiert
-  - sourceRef und targetRef referenzieren Element-IDs
-
-#### Dateiname und Speicherort:
-- **Ordner**: `CreateBPMN/`
-- **Dateiname**: `ADONIS_KO_[Prozessname].bpmn` z.B.:
-  - `ADONIS_KO_Personalausweis_beantragen.bpmn`
-  - `ADONIS_KO_Elterngeld_beantragen.bpmn`
-  - `ADONIS_KO_Kita_Platz_vermitteln.bpmn`
-
-## ADONIS-Import Hinweise
-
-Die erzeugten BPMN-Dateien koennen wie folgt in ADONIS importiert werden:
-1. In ADONIS: **Datei → Importieren → BPMN 2.0 Import**
-2. Die `.bpmn`-Datei auswaehlen
-3. ADONIS ergaenzt automatisch fehlende ADONIS-spezifische Metadaten (Extension Elements)
-4. Nach dem Import koennen Modellattribute in ADONIS bearbeitet werden
-
-### Bekannte ADONIS-Import-Besonderheiten:
-- ADONIS fuegt beim Import automatisch `adonis:extensionElements` hinzu (Modellattribute, Instanzattribute)
-- Generische `<task>` Elemente werden in ADONIS als Aufgaben dargestellt
-- `isExecutable="false"` ist Standard fuer Prozessmodelle in ADONIS
-- Die BPMN-DI Koordinaten werden fuer die visuelle Darstellung uebernommen
-
-## Referenzdokumente
-
-Diese Dokumente MUESSEN vor der BPMN-Modell-Erstellung gelesen werden:
-
-### 1. BPMN_ADONIS/BPMN_ADONIS_Template.xml
-- ADONIS-kompatibles BPMN-Template (3-Pool-KOI-Struktur als Basis, adaptieren auf 2 Pools)
-- Korrekte Namespace-Deklarationen fuer ADONIS-Import
-- Beispiel-Struktur fuer Kunde- und Organisation-Prozesse
-- Message Flow Definitionen zwischen Pools
-- Vollstaendige BPMN-DI Visualisierung mit ADONIS-konformen Koordinaten
+### 1. ADONIS XML-Template (PRIMAERE VORLAGE)
+- **Pfad**: `BPMN_ADONIS/BPMN_ADONIS_Template.xml`
+- Enthaelt im Kommentarkopf ALLE XML-Erstellungsregeln:
+  - ID-Konventionen
+  - Koordinaten-System und Layout
+  - Message Flow Regeln mit adonis:connector
+  - Waypoint-Abstände
+  - Qualitaetscheckliste
 
 ### 2. BPMN-DI_Guidelines.md
 - Technische Standards fuer BPMN Diagram Interchange
 - Layout-Regeln und Koordinaten-Standards
-- Ergaenzende Referenz fuer horizontale Task-Anordnung
+
+## Qualitaetssicherung
+
+Vor Abschluss pruefen (Details siehe Template-Kommentarkopf):
+- Taskdokumentation gemaess `.github/instructions/BPMN_Documentation.instructions.md` geprueft; unbestaetigte ADONIS-UI-Zuordnung ausgewiesen
+- ✅ **e2e-Rahmen definiert**: Kundenbeduernis, Startereignis (vom Kunden abgeleitet), Endereignis (vom Kunden abgeleitet)
+- ✅ **Alle Prozessbeteiligten dargestellt**: Aktivitaeten aus Kunde-, Organisation lueckenlos abgebildet
+- ✅ Template `BPMN_ADONIS_Template.xml` als Basis verwendet und Kommentarkopf gelesen
+- ✅ 2-Pool-Struktur implementiert
+- ✅ Organisation-Pool mit vollstaendigem Prozess
+- Kunden-Pool mit vollstaendigem Prozess
+- ✅ Alle Tasks horizontal auf identischer Y-Koordinate pro Lane
+- ✅ Jeder Lane-Wechsel hat ein untypisiertes Zwischenereignis in der uebernehmenden Lane (Objekt + Partizip Perfekt)
+- ✅ Happy Path ohne Alternativpfade
+- ✅ Umlaute korrekt ersetzt (ae, oe, ue, ss)
+- ✅ Message Flows mit `adonis:connector` Extension Elements
+- ✅ ID-Konvention eingehalten (siehe Template)
+- ✅ Waypoints mit 5px Abstand zu Pool-Grenzen (siehe Template)
