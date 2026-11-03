@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ADONIS BPMN 2.0 KOI Template
+  =============================
+  Dieses Template dient als Vorlage fuer BPMN-Prozessmodelle,
+  die in die Prozessmodellierungssoftware ADONIS (BOC Group)
+  importiert werden koennen.
+
+  Struktur: 3-Pool-Kollaboration (Kunde, Organisation, IT)
+  Jeder Pool enthaelt eine Lane mit einem einfachen Beispielprozess.
+
+  WICHTIG fuer ADONIS-Import:
+  - Namespace xmlns:adonis="http://www.boc-group.com" ist erforderlich
+  - targetNamespace="http://www.boc-group.com"
+  - IDs verwenden GUID-Format mit Unterstrich-Praefix: _[UUID]
+  - BPMN-DI verwendet omgdc: und omgdi: Praefixe
+  - adonis:extensionElements werden bei Import ergaenzt
+-->
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:adonis="http://www.boc-group.com"
+             xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             id="definition__[DEFINITION_UUID]"
+             typeLanguage="http://www.w3.org/2001/XMLSchema"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd"
+             targetNamespace="http://www.boc-group.com">
+
+  <!-- =====================================================
+       COLLABORATION - KOI-Kollaboration (Kunde, Organisation, IT)
+       ===================================================== -->
+  <collaboration id="Collaboration_[COLLAB_UUID]"
+                 name="[PROZESSNAME]"
+                 isClosed="false">
+
+    <!-- Participants (Pools) -->
+    <participant processRef="process_[KUNDE_UUID]"
+                 name="Kunde"
+                 id="_[KUNDE_PARTICIPANT_UUID]"/>
+    <participant processRef="process_[IT_UUID]"
+                 name="IT"
+                 id="_[IT_PARTICIPANT_UUID]"/>
+    <participant processRef="process_[ORGANISATION_UUID]"
+                 name="Organisation"
+                 id="_[ORGANISATION_PARTICIPANT_UUID]"/>
+
+    <!-- Message Flows zwischen Pools -->
+    <!-- Kunde → Organisation: z.B. Antrag einreichen -->
+    <messageFlow id="_[MSGFLOW_K_O_UUID]"
+                 name="[NACHRICHT_KUNDE_AN_ORGANISATION]"
+                 sourceRef="_[KUNDE_SEND_ELEMENT_UUID]"
+                 targetRef="_[ORGANISATION_RECEIVE_ELEMENT_UUID]"/>
+
+    <!-- Organisation → IT: z.B. Datenverarbeitungsauftrag -->
+    <messageFlow id="_[MSGFLOW_O_IT_UUID]"
+                 name="[NACHRICHT_ORGANISATION_AN_IT]"
+                 sourceRef="_[ORGANISATION_SEND_ELEMENT_UUID]"
+                 targetRef="_[IT_RECEIVE_ELEMENT_UUID]"/>
+
+    <!-- IT → Organisation: z.B. Verarbeitungsergebnis -->
+    <messageFlow id="_[MSGFLOW_IT_O_UUID]"
+                 name="[NACHRICHT_IT_AN_ORGANISATION]"
+                 sourceRef="_[IT_SEND_ELEMENT_UUID]"
+                 targetRef="_[ORGANISATION_RECEIVE2_ELEMENT_UUID]"/>
+
+    <!-- Organisation → Kunde: z.B. Bescheid -->
+    <messageFlow id="_[MSGFLOW_O_K_UUID]"
+                 name="[NACHRICHT_ORGANISATION_AN_KUNDE]"
+                 sourceRef="_[ORGANISATION_SEND2_ELEMENT_UUID]"
+                 targetRef="_[KUNDE_RECEIVE_ELEMENT_UUID]"/>
+
+  </collaboration>
+
+  <!-- =====================================================
+       PROZESS: Kunde
+       ===================================================== -->
+  <process name="Kunde"
+           id="process_[KUNDE_UUID]"
+           isExecutable="false"
+           isClosed="false"
+           processType="None">
+
+    <laneSet id="laneSet_[KUNDE_UUID]">
+      <lane name="[KUNDE_LANE_NAME]" id="_[KUNDE_LANE_UUID]">
+        <flowNodeRef>_[KUNDE_START_UUID]</flowNodeRef>
+        <flowNodeRef>_[KUNDE_TASK1_UUID]</flowNodeRef>
+        <!-- Weitere flowNodeRef fuer zusaetzliche Tasks -->
+        <flowNodeRef>_[KUNDE_END_UUID]</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <!-- Start Event -->
+    <startEvent name="[KUNDE_STARTEREIGNIS]" id="_[KUNDE_START_UUID]">
+      <outgoing>_[KUNDE_FLOW1_UUID]</outgoing>
+    </startEvent>
+
+    <!-- Task(s) -->
+    <task name="[KUNDE_TASK1_NAME]"
+          id="_[KUNDE_TASK1_UUID]"
+          isForCompensation="false">
+      <incoming>_[KUNDE_FLOW1_UUID]</incoming>
+      <outgoing>_[KUNDE_FLOW2_UUID]</outgoing>
+    </task>
+
+    <!-- End Event -->
+    <endEvent name="[KUNDE_ENDEREIGNIS]" id="_[KUNDE_END_UUID]">
+      <incoming>_[KUNDE_FLOW2_UUID]</incoming>
+    </endEvent>
+
+    <!-- Sequence Flows -->
+    <sequenceFlow sourceRef="_[KUNDE_START_UUID]"
+                  targetRef="_[KUNDE_TASK1_UUID]"
+                  id="_[KUNDE_FLOW1_UUID]"/>
+    <sequenceFlow sourceRef="_[KUNDE_TASK1_UUID]"
+                  targetRef="_[KUNDE_END_UUID]"
+                  id="_[KUNDE_FLOW2_UUID]"/>
+
+  </process>
+
+  <!-- =====================================================
+       PROZESS: IT
+       ===================================================== -->
+  <process name="IT"
+           id="process_[IT_UUID]"
+           isExecutable="false"
+           isClosed="false"
+           processType="None">
+
+    <laneSet id="laneSet_[IT_UUID]">
+      <lane name="[IT_LANE_NAME]" id="_[IT_LANE_UUID]">
+        <flowNodeRef>_[IT_START_UUID]</flowNodeRef>
+        <flowNodeRef>_[IT_TASK1_UUID]</flowNodeRef>
+        <!-- Weitere flowNodeRef fuer zusaetzliche Tasks -->
+        <flowNodeRef>_[IT_END_UUID]</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <!-- Start Event (Message Start: Datenverarbeitungsauftrag eingegangen) -->
+    <startEvent name="[IT_STARTEREIGNIS]" id="_[IT_START_UUID]">
+      <outgoing>_[IT_FLOW1_UUID]</outgoing>
+      <messageEventDefinition id="msgEvtDef_[IT_START_UUID]"/>
+    </startEvent>
+
+    <!-- Task(s) -->
+    <task name="[IT_TASK1_NAME]"
+          id="_[IT_TASK1_UUID]"
+          isForCompensation="false">
+      <incoming>_[IT_FLOW1_UUID]</incoming>
+      <outgoing>_[IT_FLOW2_UUID]</outgoing>
+    </task>
+
+    <!-- End Event -->
+    <endEvent name="[IT_ENDEREIGNIS]" id="_[IT_END_UUID]">
+      <incoming>_[IT_FLOW2_UUID]</incoming>
+    </endEvent>
+
+    <!-- Sequence Flows -->
+    <sequenceFlow sourceRef="_[IT_START_UUID]"
+                  targetRef="_[IT_TASK1_UUID]"
+                  id="_[IT_FLOW1_UUID]"/>
+    <sequenceFlow sourceRef="_[IT_TASK1_UUID]"
+                  targetRef="_[IT_END_UUID]"
+                  id="_[IT_FLOW2_UUID]"/>
+
+  </process>
+
+  <!-- =====================================================
+       PROZESS: Organisation
+       ===================================================== -->
+  <process name="Organisation"
+           id="process_[ORGANISATION_UUID]"
+           isExecutable="false"
+           isClosed="false"
+           processType="None">
+
+    <laneSet id="laneSet_[ORGANISATION_UUID]">
+      <lane name="[ORGANISATION_LANE_NAME]" id="_[ORGANISATION_LANE_UUID]">
+        <flowNodeRef>_[ORG_START_UUID]</flowNodeRef>
+        <flowNodeRef>_[ORG_TASK1_UUID]</flowNodeRef>
+        <!-- Weitere flowNodeRef fuer zusaetzliche Tasks -->
+        <flowNodeRef>_[ORG_END_UUID]</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <!-- Start Event (Message Start: Antrag eingegangen) -->
+    <startEvent name="[ORG_STARTEREIGNIS]" id="_[ORG_START_UUID]">
+      <outgoing>_[ORG_FLOW1_UUID]</outgoing>
+      <messageEventDefinition id="msgEvtDef_[ORG_START_UUID]"/>
+    </startEvent>
+
+    <!-- Task(s) -->
+    <task name="[ORG_TASK1_NAME]"
+          id="_[ORG_TASK1_UUID]"
+          isForCompensation="false">
+      <incoming>_[ORG_FLOW1_UUID]</incoming>
+      <outgoing>_[ORG_FLOW2_UUID]</outgoing>
+    </task>
+
+    <!-- End Event -->
+    <endEvent name="[ORG_ENDEREIGNIS]" id="_[ORG_END_UUID]">
+      <incoming>_[ORG_FLOW2_UUID]</incoming>
+    </endEvent>
+
+    <!-- Sequence Flows -->
+    <sequenceFlow sourceRef="_[ORG_START_UUID]"
+                  targetRef="_[ORG_TASK1_UUID]"
+                  id="_[ORG_FLOW1_UUID]"/>
+    <sequenceFlow sourceRef="_[ORG_TASK1_UUID]"
+                  targetRef="_[ORG_END_UUID]"
+                  id="_[ORG_FLOW2_UUID]"/>
+
+  </process>
+
+  <!-- =====================================================
+       BPMN-DI: Diagramm-Visualisierung
+       Koordinatensystem fuer 3-Pool-Layout (KOI)
+       
+       Pool-Anordnung (vertikal):
+         Kunde:        y=0,    Hoehe=380
+         IT:           y=390,  Hoehe=380
+         Organisation: y=780,  Hoehe=380
+
+       Tasks horizontal ausgerichtet innerhalb jedes Pools.
+       Task-Dimensionen: 151 x 76 px
+       Event-Dimensionen: 36 x 36 px
+       Horizontaler Abstand zwischen Elementen: ca. 60-80px
+       ===================================================== -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration_[COLLAB_UUID]">
+
+      <!-- ===== POOL: Kunde (oben, y=0) ===== -->
+      <bpmndi:BPMNShape bpmnElement="_[KUNDE_PARTICIPANT_UUID]" isHorizontal="true">
+        <omgdc:Bounds x="10" y="0" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_[KUNDE_LANE_UUID]" isHorizontal="true">
+        <omgdc:Bounds x="40" y="0" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: Start Event -->
+      <bpmndi:BPMNShape bpmnElement="_[KUNDE_START_UUID]">
+        <omgdc:Bounds x="120" y="172" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: Task 1 -->
+      <bpmndi:BPMNShape bpmnElement="_[KUNDE_TASK1_UUID]">
+        <omgdc:Bounds x="220" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: End Event -->
+      <bpmndi:BPMNShape bpmnElement="_[KUNDE_END_UUID]">
+        <omgdc:Bounds x="440" y="172" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: Sequence Flows -->
+      <bpmndi:BPMNEdge bpmnElement="_[KUNDE_FLOW1_UUID]">
+        <omgdi:waypoint x="156" y="190"/>
+        <omgdi:waypoint x="220" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_[KUNDE_FLOW2_UUID]">
+        <omgdi:waypoint x="371" y="190"/>
+        <omgdi:waypoint x="440" y="190"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- ===== POOL: IT (Mitte, y=390) ===== -->
+      <bpmndi:BPMNShape bpmnElement="_[IT_PARTICIPANT_UUID]" isHorizontal="true">
+        <omgdc:Bounds x="10" y="390" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_[IT_LANE_UUID]" isHorizontal="true">
+        <omgdc:Bounds x="40" y="390" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Start Event -->
+      <bpmndi:BPMNShape bpmnElement="_[IT_START_UUID]">
+        <omgdc:Bounds x="120" y="562" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Task 1 -->
+      <bpmndi:BPMNShape bpmnElement="_[IT_TASK1_UUID]">
+        <omgdc:Bounds x="220" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: End Event -->
+      <bpmndi:BPMNShape bpmnElement="_[IT_END_UUID]">
+        <omgdc:Bounds x="440" y="562" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Sequence Flows -->
+      <bpmndi:BPMNEdge bpmnElement="_[IT_FLOW1_UUID]">
+        <omgdi:waypoint x="156" y="580"/>
+        <omgdi:waypoint x="220" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_[IT_FLOW2_UUID]">
+        <omgdi:waypoint x="371" y="580"/>
+        <omgdi:waypoint x="440" y="580"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- ===== POOL: Organisation (unten, y=780) ===== -->
+      <bpmndi:BPMNShape bpmnElement="_[ORGANISATION_PARTICIPANT_UUID]" isHorizontal="true">
+        <omgdc:Bounds x="10" y="780" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_[ORGANISATION_LANE_UUID]" isHorizontal="true">
+        <omgdc:Bounds x="40" y="780" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Start Event -->
+      <bpmndi:BPMNShape bpmnElement="_[ORG_START_UUID]">
+        <omgdc:Bounds x="120" y="952" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Task 1 -->
+      <bpmndi:BPMNShape bpmnElement="_[ORG_TASK1_UUID]">
+        <omgdc:Bounds x="220" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: End Event -->
+      <bpmndi:BPMNShape bpmnElement="_[ORG_END_UUID]">
+        <omgdc:Bounds x="440" y="952" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Sequence Flows -->
+      <bpmndi:BPMNEdge bpmnElement="_[ORG_FLOW1_UUID]">
+        <omgdi:waypoint x="156" y="970"/>
+        <omgdi:waypoint x="220" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_[ORG_FLOW2_UUID]">
+        <omgdi:waypoint x="371" y="970"/>
+        <omgdi:waypoint x="440" y="970"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- ===== MESSAGE FLOWS ===== -->
+      <!-- Kunde → Organisation (von oben nach unten, kreuzt IT-Pool) -->
+      <bpmndi:BPMNEdge bpmnElement="_[MSGFLOW_K_O_UUID]">
+        <omgdi:waypoint x="295" y="228"/>
+        <omgdi:waypoint x="295" y="780"/>
+        <omgdi:waypoint x="138" y="780"/>
+        <omgdi:waypoint x="138" y="952"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- Organisation → IT (von unten nach Mitte) -->
+      <bpmndi:BPMNEdge bpmnElement="_[MSGFLOW_O_IT_UUID]">
+        <omgdi:waypoint x="295" y="932"/>
+        <omgdi:waypoint x="295" y="780"/>
+        <omgdi:waypoint x="138" y="780"/>
+        <omgdi:waypoint x="138" y="562"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- IT → Organisation (von Mitte nach unten) -->
+      <bpmndi:BPMNEdge bpmnElement="_[MSGFLOW_IT_O_UUID]">
+        <omgdi:waypoint x="295" y="618"/>
+        <omgdi:waypoint x="295" y="780"/>
+        <omgdi:waypoint x="458" y="780"/>
+        <omgdi:waypoint x="458" y="952"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- Organisation → Kunde (von unten nach oben, kreuzt IT-Pool) -->
+      <bpmndi:BPMNEdge bpmnElement="_[MSGFLOW_O_K_UUID]">
+        <omgdi:waypoint x="295" y="932"/>
+        <omgdi:waypoint x="295" y="390"/>
+        <omgdi:waypoint x="458" y="390"/>
+        <omgdi:waypoint x="458" y="208"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>
