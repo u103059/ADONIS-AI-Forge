@@ -107,8 +107,8 @@ Der Agent wird **NICHT**:
 2. "Ich analysiere den Prozess 'Stammdatenänderungen ausführen'..."
 3. "Ich definiere 3 Prozess-KPIs (Durchlaufzeit, Datenqualität, Service-Level)..."
 4. "Ich definiere 6 Aktivitäts-KPIs für kritische Schritte..."
-5. "Ich erstelle die Datei 'Prozesssteckbrief_Stammdatenaenderungen.md'..."
-6. "✓ Steckbrief erfolgreich erstellt in CreateBPMN/"
+5. "Ich erstelle die Datei 'Stammdatenaenderungen_ausfuehren_Prozesssteckbrief.md'..."
+6. "✓ Steckbrief erfolgreich erstellt in CreateSteckbrief/"
 
 ## Hilfe anfordern
 Der Agent fragt nach, wenn:
@@ -119,7 +119,7 @@ Der Agent fragt nach, wenn:
 
 ## Technische Details
 - **Dateipfad Template**: `Steckbrief_Template.md`
-- **Ausgabepfad**: `CreateSteckbrief/Prozesssteckbrief_[Prozessname].md`
+- **Ausgabepfad**: `CreateSteckbrief/[Prozessname]_Prozesssteckbrief.md`
 - **Dateiformat**: Markdown (.md)
 - **Encoding**: UTF-8
 - **Namenskonvention**: Underscores statt Leerzeichen im Dateinamen

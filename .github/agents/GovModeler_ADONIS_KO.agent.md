@@ -56,27 +56,34 @@ Wenn der Nutzer die Erstellung eines BPMN-Modells bestaetigt:
 
 #### Vorbereitung: Referenzdokumente lesen
 **WICHTIG**: Vor der Erstellung des BPMN-Modells MUESSEN die folgenden Referenzdokumente gelesen werden:
-1. `BPMN_ADONIS/BPMN_ADONIS_Template.xml` - ADONIS-kompatibles Template als Strukturreferenz (3-Pool-Vorlage, adaptieren auf 2 Pools)
-2. `BPMN-DI_Guidelines.md` - Technische BPMN-DI Standards und Layout-Regeln (als ergaenzende Referenz)
+1. `BPMN_ADONIS_Template.xml` - ADONIS-kompatibles Template als Strukturreferenz (3-Pool-Vorlage, adaptieren auf 2 Pools)
+2. `ADONIS_BPMN_Guidelines.md` - ADONIS-spezifische Modellierungs-, Layout- und BPMN-DI-Regeln
 3. `.github/instructions/BPMN_Documentation.instructions.md` - Verbindliche Regel fuer Taskinformationen in Documentation - Element documentation
+4. `BPMN_ADONIS/ADONIS KOI Beispielprozessmodell.bpmn` - ADONIS-Export als Referenz fuer `adonis:connector` an Message Flows und Zwischenereignisse
 
 
 ### 1. ADONIS XML-Template (PRIMAERE VORLAGE)
-- **Pfad**: `BPMN_ADONIS/BPMN_ADONIS_Template.xml`
-- Enthaelt im Kommentarkopf ALLE XML-Erstellungsregeln:
-  - ID-Konventionen
-  - Koordinaten-System und Layout
-  - Message Flow Regeln mit adonis:connector
-  - Waypoint-Abstände
-  - Qualitaetscheckliste
+- **Pfad**: `BPMN_ADONIS_Template.xml`
+- Enthaelt im Kommentarkopf die Grundregeln fuer Namespaces, ID-Format und BPMN-DI-Praefixe
+- Vollstaendige Struktur fuer Collaboration, Prozesse, Lanes und BPMN-DI
 
-### 2. BPMN-DI_Guidelines.md
-- Technische Standards fuer BPMN Diagram Interchange
-- Layout-Regeln und Koordinaten-Standards
+### 2. ADONIS_BPMN_Guidelines.md
+- ID-Konventionen (Kap. 7)
+- Koordinaten-System, Pool- und Element-Dimensionen (Kap. 4-6)
+- Message Flows und Waypoint-Routing (Kap. 8, 10)
+- Best Practices und Checkliste (Kap. 16-17)
+
+### 3. BPMN_ADONIS/ADONIS KOI Beispielprozessmodell.bpmn
+- Aufbau der `adonis:connector` Extension Elements an Message Flows
+- Verwendung von `intermediateCatchEvent` fuer empfangene Nachrichten
+
+#### Dateiname und Speicherort:
+- **Ordner**: `CreateBPMN/`
+- **Dateiname**: `ADONIS_KO_[Prozessname].bpmn` z.B. `ADONIS_KO_Wohngeld_beantragen.bpmn`
 
 ## Qualitaetssicherung
 
-Vor Abschluss pruefen (Details siehe Template-Kommentarkopf):
+Vor Abschluss pruefen (Details siehe `ADONIS_BPMN_Guidelines.md`):
 - Taskdokumentation gemaess `.github/instructions/BPMN_Documentation.instructions.md` geprueft; unbestaetigte ADONIS-UI-Zuordnung ausgewiesen
 - ✅ **e2e-Rahmen definiert**: Kundenbeduernis, Startereignis (vom Kunden abgeleitet), Endereignis (vom Kunden abgeleitet)
 - ✅ **Alle Prozessbeteiligten dargestellt**: Aktivitaeten aus Kunde-, Organisation lueckenlos abgebildet
@@ -88,6 +95,6 @@ Vor Abschluss pruefen (Details siehe Template-Kommentarkopf):
 - ✅ Jeder Lane-Wechsel hat ein untypisiertes Zwischenereignis in der uebernehmenden Lane (Objekt + Partizip Perfekt)
 - ✅ Happy Path ohne Alternativpfade
 - ✅ Umlaute korrekt ersetzt (ae, oe, ue, ss)
-- ✅ Message Flows mit `adonis:connector` Extension Elements
-- ✅ ID-Konvention eingehalten (siehe Template)
-- ✅ Waypoints mit 5px Abstand zu Pool-Grenzen (siehe Template)
+- ✅ Message Flows mit `adonis:connector` Extension Elements (siehe Beispielprozessmodell)
+- ✅ ID-Konvention eingehalten (siehe Guidelines Kap. 7)
+- ✅ Waypoints mit 5px Abstand zu Pool-Grenzen (Routing-Grundlagen siehe Guidelines Kap. 8)

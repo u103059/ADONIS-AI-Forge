@@ -56,11 +56,13 @@ Wenn der Nutzer die Erstellung eines BPMN-Modells bestaetigt:
 
 #### Vorbereitung: Referenzdokumente lesen
 **WICHTIG**: Vor der Erstellung des BPMN-Modells MUESSEN die folgenden Referenzdokumente gelesen werden:
-1. `BPMN_ADONIS/BPMN_ADONIS_Template.xml` - ADONIS-kompatibles KOI-Template mit 3-Pool-Struktur
-3. `BPMN-DI_Guidelines.md` - Technische BPMN-DI Standards und Layout-Regeln (als ergaenzende Referenz)
+1. `BPMN_ADONIS_Template.xml` - ADONIS-kompatibles KOI-Template mit 3-Pool-Struktur
+2. `ADONIS_BPMN_Guidelines.md` - ADONIS-spezifische Modellierungs-, Layout- und BPMN-DI-Regeln
+3. `.github/instructions/BPMN_Documentation.instructions.md` - Verbindliche Regel fuer Taskinformationen in Documentation - Element documentation
+4. `BPMN_ADONIS/ADONIS KOI Prozessmodell (3 Pools mit Lane).bpmn` - ADONIS-Beispiel mit 3 Pools
 
 #### BPMN-Modell-Struktur (ADONIS-kompatibel):
-- **Basis**: Verwende die Struktur aus `BPMN_ADONIS/BPMN_ADONIS_Template.xml`
+- **Basis**: Verwende die Struktur aus `BPMN_ADONIS_Template.xml`
 - **XML-Deklaration**: `<?xml version="1.0" encoding="utf-8"?>`
 - **Namespace-Deklarationen** (KRITISCH fuer ADONIS-Import):
   ```xml
@@ -128,14 +130,17 @@ Die erzeugten BPMN-Dateien koennen wie folgt in ADONIS importiert werden:
 
 Diese Dokumente MUESSEN vor der BPMN-Modell-Erstellung gelesen werden:
 
-### 1. BPMN_ADONIS/BPMN_ADONIS_Template.xml
+### 1. BPMN_ADONIS_Template.xml
 - ADONIS-kompatibles BPMN-Template mit 3-Pool-KOI-Struktur
 - Korrekte Namespace-Deklarationen fuer ADONIS-Import
 - Beispiel-Struktur fuer Kunde-, Organisation- und IT-Prozesse
 - Message Flow Definitionen zwischen Pools
 - Vollstaendige BPMN-DI Visualisierung mit ADONIS-konformen Koordinaten
 
-### 2. BPMN-DI_Guidelines.md
-- Technische Standards fuer BPMN Diagram Interchange
-- Layout-Regeln und Koordinaten-Standards
+### 2. ADONIS_BPMN_Guidelines.md
+- ADONIS-spezifische BPMN-Modellierungsrichtlinien (KOI-Struktur, Namespaces, IDs)
+- Layout-Regeln und Koordinaten-Standards fuer BPMN-DI
 - Ergaenzende Referenz fuer horizontale Task-Anordnung
+
+### 3. .github/instructions/BPMN_Documentation.instructions.md
+- Verbindliche Regel fuer Taskinformationen in Documentation - Element documentation

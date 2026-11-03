@@ -61,7 +61,8 @@ Falls der Nutzer eine Remodellierung wünscht, informiere ihn, dass er einen ent
 
 Vor der Pruefung koennen folgende Referenzdokumente herangezogen werden:
 - `Review_Template.md` - **Pruefbericht-Template** fuer die Dokumentation des Review-Outputs
-- `BPMN_ADONIS/BPMN_ADONIS_Template.xml` - ADONIS-kompatibles Template als Referenz
+- `BPMN_ADONIS_Template.xml` - ADONIS-kompatibles Template als Referenz
+- `.github/instructions/BPMN_Documentation.instructions.md` - Pruefgrundlage fuer die Taskdokumentation (Documentation - Element documentation)
 - `BPMN_ADONIS/ADONIS KOI-Prozessmodell (1 Pool mit Lane, 2 Black-Box Pools).bpmn` - Beispiel mit Black-Box-Pools
 - `ADONIS_BPMN_Guidelines.md` - ADONIS-spezifische BPMN-Modellierungsrichtlinien
 
