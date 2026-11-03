@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:adonis="http://www.boc-group.com"
+             xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             id="definition_meldebescheinigung_ausstellen"
+             typeLanguage="http://www.w3.org/2001/XMLSchema"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd"
+             targetNamespace="http://www.boc-group.com">
+
+  <!-- =====================================================
+       COLLABORATION: Meldebescheinigung ausstellen
+       KOI-Struktur: Kunde (oben) | IT (Mitte) | Organisation (unten)
+       ===================================================== -->
+  <collaboration id="Collaboration_Meldebescheinigung_ausstellen"
+                 name="Meldebescheinigung ausstellen"
+                 isClosed="false">
+
+    <participant processRef="process_Kunde"
+                 name="Kunde"
+                 id="_Kunde_Participant"/>
+    <participant processRef="process_IT"
+                 name="IT"
+                 id="_IT_Participant"/>
+    <participant processRef="process_Organisation"
+                 name="Organisation"
+                 id="_Org_Participant"/>
+
+    <!-- Message Flows -->
+    <!-- Kunde K1 → IT Start: Antrag auf Meldebescheinigung -->
+    <messageFlow id="_MF_Kunde_to_IT"
+                 name="Antrag auf Meldebescheinigung"
+                 sourceRef="_Kunde_Task_K1"
+                 targetRef="_IT_Start"/>
+
+    <!-- IT I3 → Organisation Start: Melderegisterdaten angefordert -->
+    <messageFlow id="_MF_IT_to_Org"
+                 name="Melderegisterdaten angefordert"
+                 sourceRef="_IT_Task_I3"
+                 targetRef="_Org_Start"/>
+
+    <!-- IT I6 → Kunde K4: Meldebescheinigung digital zugestellt -->
+    <messageFlow id="_MF_IT_to_Kunde"
+                 name="Meldebescheinigung digital zugestellt"
+                 sourceRef="_IT_Task_I6"
+                 targetRef="_Kunde_Task_K4"/>
+
+  </collaboration>
+
+  <!-- =====================================================
+       PROZESS: Kunde
+       ===================================================== -->
+  <process name="Kunde"
+           id="process_Kunde"
+           isExecutable="false"
+           isClosed="false"
+           processType="None">
+
+    <laneSet id="laneSet_Kunde">
+      <lane name="Antragstellende/r" id="_Kunde_Lane">
+        <flowNodeRef>_Kunde_Start</flowNodeRef>
+        <flowNodeRef>_Kunde_Task_K1</flowNodeRef>
+        <flowNodeRef>_Kunde_Task_K2</flowNodeRef>
+        <flowNodeRef>_Kunde_Task_K3</flowNodeRef>
+        <flowNodeRef>_Kunde_Task_K4</flowNodeRef>
+        <flowNodeRef>_Kunde_End</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <startEvent name="Meldebescheinigung&#10;benoetigt" id="_Kunde_Start">
+      <outgoing>_Kunde_Flow_01</outgoing>
+    </startEvent>
+
+    <task name="Meldebescheinigung&#10;beantragen" id="_Kunde_Task_K1" isForCompensation="false">
+      <incoming>_Kunde_Flow_01</incoming>
+      <outgoing>_Kunde_Flow_02</outgoing>
+    </task>
+
+    <task name="Identitaet&#10;nachweisen" id="_Kunde_Task_K2" isForCompensation="false">
+      <incoming>_Kunde_Flow_02</incoming>
+      <outgoing>_Kunde_Flow_03</outgoing>
+    </task>
+
+    <task name="Gebuehr&#10;bezahlen" id="_Kunde_Task_K3" isForCompensation="false">
+      <incoming>_Kunde_Flow_03</incoming>
+      <outgoing>_Kunde_Flow_04</outgoing>
+    </task>
+
+    <task name="Meldebescheinigung&#10;empfangen" id="_Kunde_Task_K4" isForCompensation="false">
+      <incoming>_Kunde_Flow_04</incoming>
+      <outgoing>_Kunde_Flow_05</outgoing>
+    </task>
+
+    <endEvent name="Meldebescheinigung&#10;erhalten" id="_Kunde_End">
+      <incoming>_Kunde_Flow_05</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_Kunde_Start"    targetRef="_Kunde_Task_K1" id="_Kunde_Flow_01"/>
+    <sequenceFlow sourceRef="_Kunde_Task_K1"  targetRef="_Kunde_Task_K2" id="_Kunde_Flow_02"/>
+    <sequenceFlow sourceRef="_Kunde_Task_K2"  targetRef="_Kunde_Task_K3" id="_Kunde_Flow_03"/>
+    <sequenceFlow sourceRef="_Kunde_Task_K3"  targetRef="_Kunde_Task_K4" id="_Kunde_Flow_04"/>
+    <sequenceFlow sourceRef="_Kunde_Task_K4"  targetRef="_Kunde_End"     id="_Kunde_Flow_05"/>
+
+  </process>
+
+  <!-- =====================================================
+       PROZESS: IT
+       ===================================================== -->
+  <process name="IT"
+           id="process_IT"
+           isExecutable="false"
+           isClosed="false"
+           processType="None">
+
+    <laneSet id="laneSet_IT">
+      <lane name="IT-System" id="_IT_Lane">
+        <flowNodeRef>_IT_Start</flowNodeRef>
+        <flowNodeRef>_IT_Task_I1</flowNodeRef>
+        <flowNodeRef>_IT_Task_I2</flowNodeRef>
+        <flowNodeRef>_IT_Task_I3</flowNodeRef>
+        <flowNodeRef>_IT_Task_I4</flowNodeRef>
+        <flowNodeRef>_IT_Task_I5</flowNodeRef>
+        <flowNodeRef>_IT_Task_I6</flowNodeRef>
+        <flowNodeRef>_IT_End</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <!-- Message Start Event: Antrag vom Kunden eingegangen -->
+    <startEvent name="Antrag auf&#10;Meldebescheinigung&#10;eingegangen" id="_IT_Start">
+      <outgoing>_IT_Flow_01</outgoing>
+      <messageEventDefinition id="msgEvtDef_IT_Start"/>
+    </startEvent>
+
+    <task name="Antrag digital&#10;entgegennehmen" id="_IT_Task_I1" isForCompensation="false">
+      <incoming>_IT_Flow_01</incoming>
+      <outgoing>_IT_Flow_02</outgoing>
+    </task>
+
+    <task name="Identitaet&#10;automatisiert pruefen" id="_IT_Task_I2" isForCompensation="false">
+      <incoming>_IT_Flow_02</incoming>
+      <outgoing>_IT_Flow_03</outgoing>
+    </task>
+
+    <task name="Melderegisterdaten&#10;abrufen" id="_IT_Task_I3" isForCompensation="false">
+      <incoming>_IT_Flow_03</incoming>
+      <outgoing>_IT_Flow_04</outgoing>
+    </task>
+
+    <task name="Zahlungseingang&#10;bestaetigen" id="_IT_Task_I4" isForCompensation="false">
+      <incoming>_IT_Flow_04</incoming>
+      <outgoing>_IT_Flow_05</outgoing>
+    </task>
+
+    <task name="Meldebescheinigung&#10;generieren" id="_IT_Task_I5" isForCompensation="false">
+      <incoming>_IT_Flow_05</incoming>
+      <outgoing>_IT_Flow_06</outgoing>
+    </task>
+
+    <task name="Meldebescheinigung&#10;digital zustellen" id="_IT_Task_I6" isForCompensation="false">
+      <incoming>_IT_Flow_06</incoming>
+      <outgoing>_IT_Flow_07</outgoing>
+    </task>
+
+    <endEvent name="Meldebescheinigung&#10;zugestellt" id="_IT_End">
+      <incoming>_IT_Flow_07</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_IT_Start"      targetRef="_IT_Task_I1" id="_IT_Flow_01"/>
+    <sequenceFlow sourceRef="_IT_Task_I1"    targetRef="_IT_Task_I2" id="_IT_Flow_02"/>
+    <sequenceFlow sourceRef="_IT_Task_I2"    targetRef="_IT_Task_I3" id="_IT_Flow_03"/>
+    <sequenceFlow sourceRef="_IT_Task_I3"    targetRef="_IT_Task_I4" id="_IT_Flow_04"/>
+    <sequenceFlow sourceRef="_IT_Task_I4"    targetRef="_IT_Task_I5" id="_IT_Flow_05"/>
+    <sequenceFlow sourceRef="_IT_Task_I5"    targetRef="_IT_Task_I6" id="_IT_Flow_06"/>
+    <sequenceFlow sourceRef="_IT_Task_I6"    targetRef="_IT_End"     id="_IT_Flow_07"/>
+
+  </process>
+
+  <!-- =====================================================
+       PROZESS: Organisation
+       ===================================================== -->
+  <process name="Organisation"
+           id="process_Organisation"
+           isExecutable="false"
+           isClosed="false"
+           processType="None">
+
+    <laneSet id="laneSet_Organisation">
+      <lane name="Einwohnermeldeamt" id="_Org_Lane">
+        <flowNodeRef>_Org_Start</flowNodeRef>
+        <flowNodeRef>_Org_Task_O1</flowNodeRef>
+        <flowNodeRef>_Org_Task_O2</flowNodeRef>
+        <flowNodeRef>_Org_Task_O3</flowNodeRef>
+        <flowNodeRef>_Org_End</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <!-- Message Start Event: Melderegisterdaten von IT angefordert -->
+    <startEvent name="Melderegisterdaten-&#10;anfrage eingegangen" id="_Org_Start">
+      <outgoing>_Org_Flow_01</outgoing>
+      <messageEventDefinition id="msgEvtDef_Org_Start"/>
+    </startEvent>
+
+    <task name="Antrag fachlich&#10;pruefen" id="_Org_Task_O1" isForCompensation="false">
+      <incoming>_Org_Flow_01</incoming>
+      <outgoing>_Org_Flow_02</outgoing>
+    </task>
+
+    <task name="Meldedaten&#10;bereitstellen" id="_Org_Task_O2" isForCompensation="false">
+      <incoming>_Org_Flow_02</incoming>
+      <outgoing>_Org_Flow_03</outgoing>
+    </task>
+
+    <task name="Dokument&#10;freigeben" id="_Org_Task_O3" isForCompensation="false">
+      <incoming>_Org_Flow_03</incoming>
+      <outgoing>_Org_Flow_04</outgoing>
+    </task>
+
+    <endEvent name="Meldebescheinigung&#10;ausgestellt" id="_Org_End">
+      <incoming>_Org_Flow_04</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_Org_Start"     targetRef="_Org_Task_O1" id="_Org_Flow_01"/>
+    <sequenceFlow sourceRef="_Org_Task_O1"   targetRef="_Org_Task_O2" id="_Org_Flow_02"/>
+    <sequenceFlow sourceRef="_Org_Task_O2"   targetRef="_Org_Task_O3" id="_Org_Flow_03"/>
+    <sequenceFlow sourceRef="_Org_Task_O3"   targetRef="_Org_End"     id="_Org_Flow_04"/>
+
+  </process>
+
+  <!-- =====================================================
+       BPMN-DI: Diagramm-Visualisierung
+       
+       Pool-Layout (vertikal, KOI-Reihenfolge):
+         Kunde:        y=0,    Hoehe=380  | Tasks y=152, Events y=172, Center y=190
+         IT:           y=390,  Hoehe=380  | Tasks y=542, Events y=562, Center y=580
+         Organisation: y=780,  Hoehe=380  | Tasks y=932, Events y=952, Center y=970
+
+       Task-Dimensionen:  151 x 76 px
+       Event-Dimensionen:  36 x 36 px
+       Horizontaler Abstand: 60 px
+       X-Positionen: Start=120, T1=220, T2=431, T3=642, T4=853, T5=1064, T6=1275, End=1486
+       ===================================================== -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Meldebescheinigung">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration_Meldebescheinigung_ausstellen">
+
+      <!-- ===== POOL: Kunde (oben, y=0..380) ===== -->
+      <bpmndi:BPMNShape bpmnElement="_Kunde_Participant" isHorizontal="true">
+        <omgdc:Bounds x="10" y="0" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_Kunde_Lane" isHorizontal="true">
+        <omgdc:Bounds x="40" y="0" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: Start Event -->
+      <bpmndi:BPMNShape bpmnElement="_Kunde_Start">
+        <omgdc:Bounds x="120" y="172" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: K1 - Meldebescheinigung beantragen -->
+      <bpmndi:BPMNShape bpmnElement="_Kunde_Task_K1">
+        <omgdc:Bounds x="220" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: K2 - Identitaet nachweisen -->
+      <bpmndi:BPMNShape bpmnElement="_Kunde_Task_K2">
+        <omgdc:Bounds x="431" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: K3 - Gebuehr bezahlen -->
+      <bpmndi:BPMNShape bpmnElement="_Kunde_Task_K3">
+        <omgdc:Bounds x="642" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: K4 - Meldebescheinigung empfangen -->
+      <bpmndi:BPMNShape bpmnElement="_Kunde_Task_K4">
+        <omgdc:Bounds x="853" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: End Event -->
+      <bpmndi:BPMNShape bpmnElement="_Kunde_End">
+        <omgdc:Bounds x="1064" y="172" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: Sequence Flows -->
+      <bpmndi:BPMNEdge bpmnElement="_Kunde_Flow_01">
+        <omgdi:waypoint x="156" y="190"/>
+        <omgdi:waypoint x="220" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_Kunde_Flow_02">
+        <omgdi:waypoint x="371" y="190"/>
+        <omgdi:waypoint x="431" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_Kunde_Flow_03">
+        <omgdi:waypoint x="582" y="190"/>
+        <omgdi:waypoint x="642" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_Kunde_Flow_04">
+        <omgdi:waypoint x="793" y="190"/>
+        <omgdi:waypoint x="853" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_Kunde_Flow_05">
+        <omgdi:waypoint x="1004" y="190"/>
+        <omgdi:waypoint x="1064" y="190"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- ===== POOL: IT (Mitte, y=390..770) ===== -->
+      <bpmndi:BPMNShape bpmnElement="_IT_Participant" isHorizontal="true">
+        <omgdc:Bounds x="10" y="390" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_IT_Lane" isHorizontal="true">
+        <omgdc:Bounds x="40" y="390" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Message Start Event -->
+      <bpmndi:BPMNShape bpmnElement="_IT_Start">
+        <omgdc:Bounds x="120" y="562" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: I1 - Antrag digital entgegennehmen -->
+      <bpmndi:BPMNShape bpmnElement="_IT_Task_I1">
+        <omgdc:Bounds x="220" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: I2 - Identitaet automatisiert pruefen -->
+      <bpmndi:BPMNShape bpmnElement="_IT_Task_I2">
+        <omgdc:Bounds x="431" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: I3 - Melderegisterdaten abrufen -->
+      <bpmndi:BPMNShape bpmnElement="_IT_Task_I3">
+        <omgdc:Bounds x="642" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: I4 - Zahlungseingang bestaetigen -->
+      <bpmndi:BPMNShape bpmnElement="_IT_Task_I4">
+        <omgdc:Bounds x="853" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: I5 - Meldebescheinigung generieren -->
+      <bpmndi:BPMNShape bpmnElement="_IT_Task_I5">
+        <omgdc:Bounds x="1064" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: I6 - Meldebescheinigung digital zustellen -->
+      <bpmndi:BPMNShape bpmnElement="_IT_Task_I6">
+        <omgdc:Bounds x="1275" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: End Event -->
+      <bpmndi:BPMNShape bpmnElement="_IT_End">
+        <omgdc:Bounds x="1486" y="562" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Sequence Flows -->
+      <bpmndi:BPMNEdge bpmnElement="_IT_Flow_01">
+        <omgdi:waypoint x="156" y="580"/>
+        <omgdi:waypoint x="220" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_IT_Flow_02">
+        <omgdi:waypoint x="371" y="580"/>
+        <omgdi:waypoint x="431" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_IT_Flow_03">
+        <omgdi:waypoint x="582" y="580"/>
+        <omgdi:waypoint x="642" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_IT_Flow_04">
+        <omgdi:waypoint x="793" y="580"/>
+        <omgdi:waypoint x="853" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_IT_Flow_05">
+        <omgdi:waypoint x="1004" y="580"/>
+        <omgdi:waypoint x="1064" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_IT_Flow_06">
+        <omgdi:waypoint x="1215" y="580"/>
+        <omgdi:waypoint x="1275" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_IT_Flow_07">
+        <omgdi:waypoint x="1426" y="580"/>
+        <omgdi:waypoint x="1486" y="580"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- ===== POOL: Organisation (unten, y=780..1160) ===== -->
+      <bpmndi:BPMNShape bpmnElement="_Org_Participant" isHorizontal="true">
+        <omgdc:Bounds x="10" y="780" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_Org_Lane" isHorizontal="true">
+        <omgdc:Bounds x="40" y="780" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Message Start Event -->
+      <bpmndi:BPMNShape bpmnElement="_Org_Start">
+        <omgdc:Bounds x="120" y="952" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: O1 - Antrag fachlich pruefen -->
+      <bpmndi:BPMNShape bpmnElement="_Org_Task_O1">
+        <omgdc:Bounds x="220" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: O2 - Meldedaten bereitstellen -->
+      <bpmndi:BPMNShape bpmnElement="_Org_Task_O2">
+        <omgdc:Bounds x="431" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: O3 - Dokument freigeben -->
+      <bpmndi:BPMNShape bpmnElement="_Org_Task_O3">
+        <omgdc:Bounds x="642" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: End Event -->
+      <bpmndi:BPMNShape bpmnElement="_Org_End">
+        <omgdc:Bounds x="853" y="952" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Sequence Flows -->
+      <bpmndi:BPMNEdge bpmnElement="_Org_Flow_01">
+        <omgdi:waypoint x="156" y="970"/>
+        <omgdi:waypoint x="220" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_Org_Flow_02">
+        <omgdi:waypoint x="371" y="970"/>
+        <omgdi:waypoint x="431" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_Org_Flow_03">
+        <omgdi:waypoint x="582" y="970"/>
+        <omgdi:waypoint x="642" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_Org_Flow_04">
+        <omgdi:waypoint x="793" y="970"/>
+        <omgdi:waypoint x="853" y="970"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- ===== MESSAGE FLOWS ===== -->
+
+      <!-- MF 1: Kunde K1 → IT Start (Antrag auf Meldebescheinigung) -->
+      <!-- K1 Mitte-unten (295, 228) → Pool-Grenze Kunde/IT (y=390) → IT_Start oben (138, 562) -->
+      <bpmndi:BPMNEdge bpmnElement="_MF_Kunde_to_IT">
+        <omgdi:waypoint x="295" y="228"/>
+        <omgdi:waypoint x="295" y="390"/>
+        <omgdi:waypoint x="138" y="390"/>
+        <omgdi:waypoint x="138" y="562"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- MF 2: IT I3 → Organisation Start (Melderegisterdaten angefordert) -->
+      <!-- I3 Mitte-unten (717, 618) → Pool-Grenze IT/Org (y=780) → Org_Start oben (138, 952) -->
+      <bpmndi:BPMNEdge bpmnElement="_MF_IT_to_Org">
+        <omgdi:waypoint x="717" y="618"/>
+        <omgdi:waypoint x="717" y="780"/>
+        <omgdi:waypoint x="138" y="780"/>
+        <omgdi:waypoint x="138" y="952"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- MF 3: IT I6 → Kunde K4 (Meldebescheinigung digital zugestellt) -->
+      <!-- I6 Mitte-oben (1350, 542) → Pool-Grenze IT/Kunde (y=390) → K4 Mitte-unten (928, 228) -->
+      <bpmndi:BPMNEdge bpmnElement="_MF_IT_to_Kunde">
+        <omgdi:waypoint x="1350" y="542"/>
+        <omgdi:waypoint x="1350" y="390"/>
+        <omgdi:waypoint x="928" y="390"/>
+        <omgdi:waypoint x="928" y="228"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>

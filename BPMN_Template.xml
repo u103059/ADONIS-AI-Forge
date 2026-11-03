@@ -1,0 +1,962 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions
+  xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:camunda="http://camunda.org/schema/1.0/bpmn"
+  targetNamespace="http://example.com/bpmn"
+  exporter="GitHub-Copilot-GovModeler"
+  exporterVersion="2.0"
+  modeler:executionPlatform="Camunda Platform"
+  modeler:executionPlatformVersion="7.20.0">
+
+  <!-- =====================================================
+       COLLABORATION - Haupt-Container für Prozess-Interaktion
+       ===================================================== -->
+  <bpmn:collaboration id="Collab_[PROZESSNAME]">
+    
+    <!-- Participant: Bürger/Antragsteller -->
+    <bpmn:participant id="Participant_Buerger"
+                      name="Bürger"
+                      processRef="Process_Buerger" />
+    
+    <!-- Participant: IT -->
+    <bpmn:participant id="Participant_IT"
+                      name="IT"
+                      processRef="Process_IT" />
+    
+    <!-- Participant: Behörde/Amt -->
+    <bpmn:participant id="Participant_Behoerde"
+                      name="[BEHÖRDENNAME]"
+                      processRef="Process_Behoerde" />
+    
+    <!-- Message Flows zwischen Participanten -->
+    <bpmn:messageFlow id="MsgFlow_Antrag"
+                      name="[ANTRAGSNAME]"
+                      sourceRef="Task_Antrag_stellen"
+                      targetRef="StartEvent_Antrag_eingegangen" />
+    
+    <bpmn:messageFlow id="MsgFlow_Bescheid"
+                      name="[BESCHEIDNAME]"
+                      sourceRef="Task_Bescheid_erstellen"
+                      targetRef="Event_Bescheid_erhalten" />
+    
+    <!-- Optional: Weitere Message Flows -->
+    <bpmn:messageFlow id="MsgFlow_Nachforderung"
+                      name="Nachforderung"
+                      sourceRef="Task_Nachforderung_senden"
+                      targetRef="Event_Nachforderung_erhalten" />
+                      
+    <!-- IT Message Flows -->
+    <bpmn:messageFlow id="MsgFlow_IT_Anfrage"
+                      name="IT-Anfrage"
+                      sourceRef="Task_IT_Anfrage_stellen"
+                      targetRef="StartEvent_IT_Anfrage_erhalten" />
+                      
+    <bpmn:messageFlow id="MsgFlow_IT_Antwort"
+                      name="IT-Antwort"
+                      sourceRef="Task_IT_Antwort_senden"
+                      targetRef="Event_IT_Antwort_erhalten" />
+  </bpmn:collaboration>
+
+  <!-- =====================================================
+       BÜRGER PROZESS - Standard Antragsteller-Prozess
+       ===================================================== -->
+  <bpmn:process id="Process_Buerger"
+                name="[PROZESSNAME]_Buerger"
+                isExecutable="true">
+    
+    <!-- Start Event -->
+    <bpmn:startEvent id="StartEvent_Buerger" name="[AUSLÖSER BESCHREIBUNG]">
+      <bpmn:outgoing>Flow_Start_Antrag</bpmn:outgoing>
+    </bpmn:startEvent>
+    
+    <!-- User Task: Antrag stellen -->
+    <bpmn:userTask id="Task_Antrag_stellen" name="[ANTRAG] stellen">
+      <bpmn:incoming>Flow_Start_Antrag</bpmn:incoming>
+      <bpmn:outgoing>Flow_Antrag_Warten</bpmn:outgoing>
+    </bpmn:userTask>
+    
+    <!-- Event-Based Gateway für Reaktionen -->
+    <bpmn:eventBasedGateway id="Gateway_Event_Buerger" name="Warten auf Antwort">
+      <bpmn:incoming>Flow_Antrag_Warten</bpmn:incoming>
+      <bpmn:incoming>Flow_Nachbesserung_Zurueck</bpmn:incoming>
+      <bpmn:outgoing>Flow_Gateway_Nachforderung</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Gateway_Bescheid</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    
+    <!-- Intermediate Catch Event: Nachforderung -->
+    <bpmn:intermediateCatchEvent id="Event_Nachforderung_erhalten" name="Nachforderung erhalten">
+      <bpmn:incoming>Flow_Gateway_Nachforderung</bpmn:incoming>
+      <bpmn:outgoing>Flow_Nachforderung_Bearbeiten</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDef_Nachforderung" messageRef="Message_Nachforderung" />
+    </bpmn:intermediateCatchEvent>
+    
+    <!-- User Task: Nachbesserung -->
+    <bpmn:userTask id="Task_Nachbesserung" name="Unterlagen nachreichen">
+      <bpmn:incoming>Flow_Nachforderung_Bearbeiten</bpmn:incoming>
+      <bpmn:outgoing>Flow_Nachbesserung_Zurueck</bpmn:outgoing>
+    </bpmn:userTask>
+    
+    <!-- Intermediate Catch Event: Bescheid -->
+    <bpmn:intermediateCatchEvent id="Event_Bescheid_erhalten" name="[BESCHEID] erhalten">
+      <bpmn:incoming>Flow_Gateway_Bescheid</bpmn:incoming>
+      <bpmn:outgoing>Flow_Bescheid_Ende</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDef_Bescheid" messageRef="Message_Bescheid" />
+    </bpmn:intermediateCatchEvent>
+    
+    <!-- End Event -->
+    <bpmn:endEvent id="EndEvent_Buerger" name="Prozess abgeschlossen">
+      <bpmn:incoming>Flow_Bescheid_Ende</bpmn:incoming>
+    </bpmn:endEvent>
+    
+    <!-- Sequence Flows - Bürger -->
+    <bpmn:sequenceFlow id="Flow_Start_Antrag"
+                       sourceRef="StartEvent_Buerger"
+                       targetRef="Task_Antrag_stellen" />
+    
+    <bpmn:sequenceFlow id="Flow_Antrag_Warten"
+                       sourceRef="Task_Antrag_stellen"
+                       targetRef="Gateway_Event_Buerger" />
+    
+    <bpmn:sequenceFlow id="Flow_Gateway_Nachforderung"
+                       sourceRef="Gateway_Event_Buerger"
+                       targetRef="Event_Nachforderung_erhalten" />
+    
+    <bpmn:sequenceFlow id="Flow_Gateway_Bescheid"
+                       sourceRef="Gateway_Event_Buerger"
+                       targetRef="Event_Bescheid_erhalten" />
+    
+    <bpmn:sequenceFlow id="Flow_Nachforderung_Bearbeiten"
+                       sourceRef="Event_Nachforderung_erhalten"
+                       targetRef="Task_Nachbesserung" />
+    
+    <bpmn:sequenceFlow id="Flow_Nachbesserung_Zurueck"
+                       sourceRef="Task_Nachbesserung"
+                       targetRef="Gateway_Event_Buerger" />
+    
+    <bpmn:sequenceFlow id="Flow_Bescheid_Ende"
+                       sourceRef="Event_Bescheid_erhalten"
+                       targetRef="EndEvent_Buerger" />
+  </bpmn:process>
+
+  <!-- =====================================================
+       BEHÖRDEN PROZESS - Standard Bearbeitungs-Prozess
+       ===================================================== -->
+  <bpmn:process id="Process_Behoerde"
+                name="[PROZESSNAME]_Behoerde"
+                isExecutable="true">
+    
+    <!-- Start Event -->
+    <bpmn:startEvent id="StartEvent_Antrag_eingegangen" name="[ANTRAG] eingegangen">
+      <bpmn:outgoing>Flow_Start_Zustaendigkeit</bpmn:outgoing>
+    </bpmn:startEvent>
+    
+    <!-- Service Task: Automatische Prüfungen -->
+    <bpmn:serviceTask id="Task_Zustaendigkeit_pruefen" name="Zuständigkeit prüfen">
+      <bpmn:incoming>Flow_Start_Zustaendigkeit</bpmn:incoming>
+      <bpmn:outgoing>Flow_Zustaendigkeit_Vollstaendigkeit</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <bpmn:serviceTask id="Task_Vollstaendigkeit_pruefen" name="Vollständigkeit prüfen">
+      <bpmn:incoming>Flow_Zustaendigkeit_Vollstaendigkeit</bpmn:incoming>
+      <bpmn:outgoing>Flow_Vollstaendigkeit_Gateway</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- Exclusive Gateway: Vollständigkeitsprüfung -->
+    <bpmn:exclusiveGateway id="Gateway_Vollstaendig" name="Vollständig?">
+      <bpmn:incoming>Flow_Vollstaendigkeit_Gateway</bpmn:incoming>
+      <bpmn:outgoing>Flow_Gateway_Nachforderung</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Gateway_Sachpruefung</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    
+    <!-- User Task: Nachforderung -->
+    <bpmn:userTask id="Task_Nachforderung_senden" name="Nachforderung senden">
+      <bpmn:incoming>Flow_Gateway_Nachforderung</bpmn:incoming>
+      <bpmn:outgoing>Flow_Nachforderung_Warten</bpmn:outgoing>
+    </bpmn:userTask>
+    
+    <!-- Event-Based Gateway: Warten auf Nachlieferung -->
+    <bpmn:eventBasedGateway id="Gateway_Event_Behoerde" name="Warten auf Nachweise">
+      <bpmn:incoming>Flow_Nachforderung_Warten</bpmn:incoming>
+      <bpmn:outgoing>Flow_Gateway_Timer</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Gateway_Message</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    
+    <!-- Timer Event: Frist abgelaufen -->
+    <bpmn:intermediateCatchEvent id="Event_Frist_abgelaufen" name="Frist abgelaufen">
+      <bpmn:incoming>Flow_Gateway_Timer</bpmn:incoming>
+      <bpmn:outgoing>Flow_Timer_Ablehnung</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDef_Frist">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P30D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    
+    <!-- Message Event: Nachweise eingegangen -->
+    <bpmn:intermediateCatchEvent id="Event_Nachweise_eingereicht" name="Nachweise eingereicht">
+      <bpmn:incoming>Flow_Gateway_Message</bpmn:incoming>
+      <bpmn:outgoing>Flow_Message_Sachpruefung</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDef_Nachweise" messageRef="Message_Nachweise" />
+    </bpmn:intermediateCatchEvent>
+    
+    <!-- User Tasks: Sachbearbeitung -->
+    <bpmn:userTask id="Task_Sachpruefung" name="Sachliche Prüfung durchführen">
+      <bpmn:incoming>Flow_Gateway_Sachpruefung</bpmn:incoming>
+      <bpmn:incoming>Flow_Message_Sachpruefung</bpmn:incoming>
+      <bpmn:incoming>Flow_IT_Antwort_Sachpruefung</bpmn:incoming>
+      <bpmn:outgoing>Flow_Sachpruefung_Entscheidung</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Sachpruefung_IT</bpmn:outgoing>
+    </bpmn:userTask>
+    
+    <!-- Exclusive Gateway: IT nötig? -->
+    <bpmn:exclusiveGateway id="Gateway_IT_Noetig" name="IT nötig?">
+      <bpmn:incoming>Flow_Sachpruefung_IT</bpmn:incoming>
+      <bpmn:outgoing>Flow_IT_Ja</bpmn:outgoing>
+      <bpmn:outgoing>Flow_IT_Nein</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    
+    <!-- User Task: IT-Anfrage stellen -->
+    <bpmn:userTask id="Task_IT_Anfrage_stellen" name="IT abfragen">
+      <bpmn:incoming>Flow_IT_Ja</bpmn:incoming>
+      <bpmn:outgoing>Flow_IT_Anfrage_Gateway</bpmn:outgoing>
+    </bpmn:userTask>
+    
+    <!-- Event-Based Gateway: Warten auf IT -->
+    <bpmn:eventBasedGateway id="Gateway_Event_IT_Warten" name="Warten auf IT">
+      <bpmn:incoming>Flow_IT_Anfrage_Gateway</bpmn:incoming>
+      <bpmn:outgoing>Flow_Gateway_IT_Antwort</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    
+    <!-- Intermediate Catch Event: IT-Antwort erhalten -->
+    <bpmn:intermediateCatchEvent id="Event_IT_Antwort_erhalten" name="IT-Antwort erhalten">
+      <bpmn:incoming>Flow_Gateway_IT_Antwort</bpmn:incoming>
+      <bpmn:outgoing>Flow_IT_Antwort_Sachpruefung</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDef_IT_Antwort" messageRef="Message_IT_Antwort" />
+    </bpmn:intermediateCatchEvent>
+    
+    <!-- Exclusive Gateway: Entscheidung -->
+    <bpmn:exclusiveGateway id="Gateway_Entscheidung" name="Genehmigt?">
+      <bpmn:incoming>Flow_Sachpruefung_Entscheidung</bpmn:incoming>
+      <bpmn:outgoing>Flow_Entscheidung_Genehmigung</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Entscheidung_Ablehnung</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    
+    <!-- Service Task: Genehmigung verarbeiten -->
+    <bpmn:serviceTask id="Task_Genehmigung_verarbeiten" name="Genehmigung verarbeiten">
+      <bpmn:incoming>Flow_Entscheidung_Genehmigung</bpmn:incoming>
+      <bpmn:outgoing>Flow_Genehmigung_Bescheid</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- Task: Bescheid erstellen -->
+    <bpmn:userTask id="Task_Bescheid_erstellen" name="[BESCHEID] erstellen">
+      <bpmn:incoming>Flow_Genehmigung_Bescheid</bpmn:incoming>
+      <bpmn:incoming>Flow_Entscheidung_Ablehnung</bpmn:incoming>
+      <bpmn:incoming>Flow_Timer_Ablehnung</bpmn:incoming>
+      <bpmn:outgoing>Flow_Bescheid_Ende</bpmn:outgoing>
+    </bpmn:userTask>
+    
+    <!-- End Event -->
+    <bpmn:endEvent id="EndEvent_Behoerde" name="Bescheid zugestellt">
+      <bpmn:incoming>Flow_Bescheid_Ende</bpmn:incoming>
+    </bpmn:endEvent>
+    
+    <!-- Sequence Flows - Behörde -->
+    <bpmn:sequenceFlow id="Flow_Start_Zustaendigkeit"
+                       sourceRef="StartEvent_Antrag_eingegangen"
+                       targetRef="Task_Zustaendigkeit_pruefen" />
+    
+    <bpmn:sequenceFlow id="Flow_Zustaendigkeit_Vollstaendigkeit"
+                       sourceRef="Task_Zustaendigkeit_pruefen"
+                       targetRef="Task_Vollstaendigkeit_pruefen" />
+    
+    <bpmn:sequenceFlow id="Flow_Vollstaendigkeit_Gateway"
+                       sourceRef="Task_Vollstaendigkeit_pruefen"
+                       targetRef="Gateway_Vollstaendig" />
+    
+    <bpmn:sequenceFlow id="Flow_Gateway_Nachforderung"
+                       name="Unvollständig"
+                       sourceRef="Gateway_Vollstaendig"
+                       targetRef="Task_Nachforderung_senden">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${vollstaendig == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    
+    <bpmn:sequenceFlow id="Flow_Gateway_Sachpruefung"
+                       name="Vollständig"
+                       sourceRef="Gateway_Vollstaendig"
+                       targetRef="Task_Sachpruefung">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${vollstaendig == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    
+    <bpmn:sequenceFlow id="Flow_Nachforderung_Warten"
+                       sourceRef="Task_Nachforderung_senden"
+                       targetRef="Gateway_Event_Behoerde" />
+    
+    <bpmn:sequenceFlow id="Flow_Gateway_Timer"
+                       sourceRef="Gateway_Event_Behoerde"
+                       targetRef="Event_Frist_abgelaufen" />
+    
+    <bpmn:sequenceFlow id="Flow_Gateway_Message"
+                       sourceRef="Gateway_Event_Behoerde"
+                       targetRef="Event_Nachweise_eingereicht" />
+    
+    <bpmn:sequenceFlow id="Flow_Timer_Ablehnung"
+                       sourceRef="Event_Frist_abgelaufen"
+                       targetRef="Task_Bescheid_erstellen" />
+    
+    <bpmn:sequenceFlow id="Flow_Message_Sachpruefung"
+                       sourceRef="Event_Nachweise_eingereicht"
+                       targetRef="Task_Sachpruefung" />
+    
+    <bpmn:sequenceFlow id="Flow_Sachpruefung_Entscheidung"
+                       sourceRef="Task_Sachpruefung"
+                       targetRef="Gateway_Entscheidung" />
+    
+    <bpmn:sequenceFlow id="Flow_Sachpruefung_IT"
+                       sourceRef="Task_Sachpruefung"
+                       targetRef="Gateway_IT_Noetig" />
+                       
+    <bpmn:sequenceFlow id="Flow_IT_Ja"
+                       name="Ja"
+                       sourceRef="Gateway_IT_Noetig"
+                       targetRef="Task_IT_Anfrage_stellen">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${it_noetig == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    
+    <bpmn:sequenceFlow id="Flow_IT_Nein"
+                       name="Nein"
+                       sourceRef="Gateway_IT_Noetig"
+                       targetRef="Task_Sachpruefung">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${it_noetig == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    
+    <bpmn:sequenceFlow id="Flow_IT_Anfrage_Gateway"
+                       sourceRef="Task_IT_Anfrage_stellen"
+                       targetRef="Gateway_Event_IT_Warten" />
+                       
+    <bpmn:sequenceFlow id="Flow_Gateway_IT_Antwort"
+                       sourceRef="Gateway_Event_IT_Warten"
+                       targetRef="Event_IT_Antwort_erhalten" />
+                       
+    <bpmn:sequenceFlow id="Flow_IT_Antwort_Sachpruefung"
+                       sourceRef="Event_IT_Antwort_erhalten"
+                       targetRef="Task_Sachpruefung" />
+    
+    <bpmn:sequenceFlow id="Flow_Entscheidung_Genehmigung"
+                       name="Genehmigt"
+                       sourceRef="Gateway_Entscheidung"
+                       targetRef="Task_Genehmigung_verarbeiten">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${genehmigt == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    
+    <bpmn:sequenceFlow id="Flow_Entscheidung_Ablehnung"
+                       name="Abgelehnt"
+                       sourceRef="Gateway_Entscheidung"
+                       targetRef="Task_Bescheid_erstellen">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${genehmigt == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    
+    <bpmn:sequenceFlow id="Flow_Genehmigung_Bescheid"
+                       sourceRef="Task_Genehmigung_verarbeiten"
+                       targetRef="Task_Bescheid_erstellen" />
+    
+    <bpmn:sequenceFlow id="Flow_Bescheid_Ende"
+                       sourceRef="Task_Bescheid_erstellen"
+                       targetRef="EndEvent_Behoerde" />
+  </bpmn:process>
+
+  <!-- =====================================================
+       IT-PROZESS
+       ===================================================== -->
+  <bpmn:process id="Process_IT"
+                name="IT_Prozess"
+                isExecutable="true">
+    
+    <!-- Start Event -->
+    <bpmn:startEvent id="StartEvent_IT_Anfrage_erhalten" name="Anfrage erhalten">
+      <bpmn:outgoing>Flow_IT_Start_Verarbeiten</bpmn:outgoing>
+    </bpmn:startEvent>
+    
+    <!-- Service Task: Daten verarbeiten -->
+    <bpmn:serviceTask id="Task_IT_Daten_verarbeiten" name="Daten verarbeiten">
+      <bpmn:incoming>Flow_IT_Start_Verarbeiten</bpmn:incoming>
+      <bpmn:outgoing>Flow_IT_Verarbeiten_Gateway</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- Exclusive Gateway: Verarbeitung erfolgreich? -->
+    <bpmn:exclusiveGateway id="Gateway_IT_Erfolg" name="Verarbeitung erfolgreich?">
+      <bpmn:incoming>Flow_IT_Verarbeiten_Gateway</bpmn:incoming>
+      <bpmn:outgoing>Flow_IT_Erfolgreich</bpmn:outgoing>
+      <bpmn:outgoing>Flow_IT_Fehlgeschlagen</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    
+    <!-- Service Task: Fehlermeldung erzeugen -->
+    <bpmn:serviceTask id="Task_IT_Fehler_erzeugen" name="Fehlermeldung erzeugen">
+      <bpmn:incoming>Flow_IT_Fehlgeschlagen</bpmn:incoming>
+      <bpmn:outgoing>Flow_IT_Fehler_Antwort</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- Service Task: Ergebnis bereitstellen -->
+    <bpmn:serviceTask id="Task_IT_Ergebnis_bereitstellen" name="Ergebnis bereitstellen">
+      <bpmn:incoming>Flow_IT_Erfolgreich</bpmn:incoming>
+      <bpmn:outgoing>Flow_IT_Ergebnis_Antwort</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- Service Task: Antwort senden -->
+    <bpmn:serviceTask id="Task_IT_Antwort_senden" name="Antwort senden">
+      <bpmn:incoming>Flow_IT_Ergebnis_Antwort</bpmn:incoming>
+      <bpmn:incoming>Flow_IT_Fehler_Antwort</bpmn:incoming>
+      <bpmn:outgoing>Flow_IT_Antwort_Ende</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- End Event -->
+    <bpmn:endEvent id="EndEvent_IT" name="Anfrage bearbeitet">
+      <bpmn:incoming>Flow_IT_Antwort_Ende</bpmn:incoming>
+    </bpmn:endEvent>
+    
+    <!-- Sequence Flows - IT-Prozess -->
+    <bpmn:sequenceFlow id="Flow_IT_Start_Verarbeiten"
+                       sourceRef="StartEvent_IT_Anfrage_erhalten"
+                       targetRef="Task_IT_Daten_verarbeiten" />
+    
+    <bpmn:sequenceFlow id="Flow_IT_Verarbeiten_Gateway"
+                       sourceRef="Task_IT_Daten_verarbeiten"
+                       targetRef="Gateway_IT_Erfolg" />
+    
+    <bpmn:sequenceFlow id="Flow_IT_Erfolgreich"
+                       name="Erfolgreich"
+                       sourceRef="Gateway_IT_Erfolg"
+                       targetRef="Task_IT_Ergebnis_bereitstellen">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${verarbeitung_erfolgreich == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    
+    <bpmn:sequenceFlow id="Flow_IT_Fehlgeschlagen"
+                       name="Fehlgeschlagen"
+                       sourceRef="Gateway_IT_Erfolg"
+                       targetRef="Task_IT_Fehler_erzeugen">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${verarbeitung_erfolgreich == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    
+    <bpmn:sequenceFlow id="Flow_IT_Ergebnis_Antwort"
+                       sourceRef="Task_IT_Ergebnis_bereitstellen"
+                       targetRef="Task_IT_Antwort_senden" />
+    
+    <bpmn:sequenceFlow id="Flow_IT_Fehler_Antwort"
+                       sourceRef="Task_IT_Fehler_erzeugen"
+                       targetRef="Task_IT_Antwort_senden" />
+    
+    <bpmn:sequenceFlow id="Flow_IT_Antwort_Ende"
+                       sourceRef="Task_IT_Antwort_senden"
+                       targetRef="EndEvent_IT" />
+  </bpmn:process>
+
+  <!-- =====================================================
+       MESSAGE DEFINITIONEN
+       ===================================================== -->
+  <bpmn:message id="Message_Nachforderung" name="Nachforderung" />
+  <bpmn:message id="Message_Nachweise" name="Nachweise eingereicht" />
+  <bpmn:message id="Message_Bescheid" name="[BESCHEID]" />
+  <bpmn:message id="Message_IT_Anfrage" name="IT-Anfrage" />
+  <bpmn:message id="Message_IT_Antwort" name="IT-Antwort" />
+
+  <!-- =====================================================
+       BPMN-DI VISUALISIERUNG - Basiert auf Guidelines
+       ===================================================== -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_[PROZESSNAME]">
+    <bpmndi:BPMNPlane id="BPMNPlane_[PROZESSNAME]" bpmnElement="Collab_[PROZESSNAME]">
+      
+      <!-- ===============================
+           POOL: BÜRGER
+           =============================== -->
+      <bpmndi:BPMNShape id="Participant_Buerger_di" bpmnElement="Participant_Buerger" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="1200" height="300" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="170" y="215" width="20" height="50" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <!-- Bürger Process Elements -->
+      <bpmndi:BPMNShape id="StartEvent_Buerger_di" bpmnElement="StartEvent_Buerger">
+        <dc:Bounds x="222" y="200" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="200" y="243" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Task_Antrag_stellen_di" bpmnElement="Task_Antrag_stellen">
+        <dc:Bounds x="310" y="178" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Gateway_Event_Buerger_di" bpmnElement="Gateway_Event_Buerger">
+        <dc:Bounds x="460" y="193" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="445" y="163" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Event_Nachforderung_erhalten_di" bpmnElement="Event_Nachforderung_erhalten">
+        <dc:Bounds x="570" y="130" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="550" y="100" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Task_Nachbesserung_di" bpmnElement="Task_Nachbesserung">
+        <dc:Bounds x="660" y="108" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Event_Bescheid_erhalten_di" bpmnElement="Event_Bescheid_erhalten">
+        <dc:Bounds x="570" y="260" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="550" y="303" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="EndEvent_Buerger_di" bpmnElement="EndEvent_Buerger">
+        <dc:Bounds x="1212" y="200" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1190" y="243" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <!-- ===============================
+           POOL: IT
+           =============================== -->
+      <bpmndi:BPMNShape id="Participant_IT_di" bpmnElement="Participant_IT" isHorizontal="true">
+        <dc:Bounds x="160" y="420" width="1200" height="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="170" y="530" width="20" height="80" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <!-- ===============================
+           POOL: BEHÖRDE
+           =============================== -->
+      <bpmndi:BPMNShape id="Participant_Behoerde_di" bpmnElement="Participant_Behoerde" isHorizontal="true">
+        <dc:Bounds x="160" y="710" width="1200" height="400" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="170" y="895" width="20" height="80" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <!-- IT Process Elements -->
+      <bpmndi:BPMNShape id="StartEvent_IT_Anfrage_erhalten_di" bpmnElement="StartEvent_IT_Anfrage_erhalten">
+        <dc:Bounds x="222" y="527" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="200" y="570" width="80" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Task_IT_Daten_verarbeiten_di" bpmnElement="Task_IT_Daten_verarbeiten">
+        <dc:Bounds x="310" y="505" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Gateway_IT_Erfolg_di" bpmnElement="Gateway_IT_Erfolg" isMarkerVisible="true">
+        <dc:Bounds x="465" y="520" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="465" y="470" width="90" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Task_IT_Fehler_erzeugen_di" bpmnElement="Task_IT_Fehler_erzeugen">
+        <dc:Bounds x="570" y="580" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Task_IT_Ergebnis_bereitstellen_di" bpmnElement="Task_IT_Ergebnis_bereitstellen">
+        <dc:Bounds x="570" y="460" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Task_IT_Antwort_senden_di" bpmnElement="Task_IT_Antwort_senden">
+        <dc:Bounds x="730" y="505" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="EndEvent_IT_di" bpmnElement="EndEvent_IT">
+        <dc:Bounds x="892" y="527" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="870" y="570" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <!-- Behörde Process Elements -->
+      <bpmndi:BPMNShape id="StartEvent_Antrag_eingegangen_di" bpmnElement="StartEvent_Antrag_eingegangen">
+        <dc:Bounds x="222" y="810" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="200" y="853" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Task_Zustaendigkeit_pruefen_di" bpmnElement="Task_Zustaendigkeit_pruefen">
+        <dc:Bounds x="310" y="788" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Task_Vollstaendigkeit_pruefen_di" bpmnElement="Task_Vollstaendigkeit_pruefen">
+        <dc:Bounds x="460" y="788" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Gateway_Vollstaendig_di" bpmnElement="Gateway_Vollstaendig" isMarkerVisible="true">
+        <dc:Bounds x="615" y="803" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="605" y="773" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Task_Nachforderung_senden_di" bpmnElement="Task_Nachforderung_senden">
+        <dc:Bounds x="590" y="910" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Gateway_Event_Behoerde_di" bpmnElement="Gateway_Event_Behoerde">
+        <dc:Bounds x="745" y="925" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="730" y="895" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Event_Frist_abgelaufen_di" bpmnElement="Event_Frist_abgelaufen">
+        <dc:Bounds x="850" y="1012" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="830" y="1055" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Event_Nachweise_eingereicht_di" bpmnElement="Event_Nachweise_eingereicht">
+        <dc:Bounds x="850" y="870" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="830" y="840" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Task_Sachpruefung_di" bpmnElement="Task_Sachpruefung">
+        <dc:Bounds x="730" y="788" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Gateway_Entscheidung_di" bpmnElement="Gateway_Entscheidung" isMarkerVisible="true">
+        <dc:Bounds x="885" y="803" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="875" y="773" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Task_Genehmigung_verarbeiten_di" bpmnElement="Task_Genehmigung_verarbeiten">
+        <dc:Bounds x="990" y="738" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Task_Bescheid_erstellen_di" bpmnElement="Task_Bescheid_erstellen">
+        <dc:Bounds x="1140" y="838" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="EndEvent_Behoerde_di" bpmnElement="EndEvent_Behoerde">
+        <dc:Bounds x="1292" y="860" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1270" y="903" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <!-- ===============================
+           SEQUENCE FLOWS - BÜRGER
+           =============================== -->
+      <bpmndi:BPMNEdge id="Flow_Start_Antrag_di" bpmnElement="Flow_Start_Antrag">
+        <di:waypoint x="258" y="218" />
+        <di:waypoint x="310" y="218" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Antrag_Warten_di" bpmnElement="Flow_Antrag_Warten">
+        <di:waypoint x="410" y="218" />
+        <di:waypoint x="460" y="218" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Gateway_Nachforderung_di" bpmnElement="Flow_Gateway_Nachforderung">
+        <di:waypoint x="485" y="193" />
+        <di:waypoint x="485" y="148" />
+        <di:waypoint x="570" y="148" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Gateway_Bescheid_di" bpmnElement="Flow_Gateway_Bescheid">
+        <di:waypoint x="485" y="243" />
+        <di:waypoint x="485" y="278" />
+        <di:waypoint x="570" y="278" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Nachforderung_Bearbeiten_di" bpmnElement="Flow_Nachforderung_Bearbeiten">
+        <di:waypoint x="606" y="148" />
+        <di:waypoint x="660" y="148" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Nachbesserung_Zurueck_di" bpmnElement="Flow_Nachbesserung_Zurueck">
+        <di:waypoint x="710" y="188" />
+        <di:waypoint x="710" y="218" />
+        <di:waypoint x="510" y="218" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Bescheid_Ende_di" bpmnElement="Flow_Bescheid_Ende">
+        <di:waypoint x="606" y="278" />
+        <di:waypoint x="909" y="278" />
+        <di:waypoint x="909" y="218" />
+        <di:waypoint x="1212" y="218" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- ===============================
+           SEQUENCE FLOWS - BEHÖRDE
+           =============================== -->
+      <bpmndi:BPMNEdge id="Flow_Start_Zustaendigkeit_di" bpmnElement="Flow_Start_Zustaendigkeit">
+        <di:waypoint x="258" y="828" />
+        <di:waypoint x="310" y="828" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Zustaendigkeit_Vollstaendigkeit_di" bpmnElement="Flow_Zustaendigkeit_Vollstaendigkeit">
+        <di:waypoint x="410" y="828" />
+        <di:waypoint x="460" y="828" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Vollstaendigkeit_Gateway_di" bpmnElement="Flow_Vollstaendigkeit_Gateway">
+        <di:waypoint x="560" y="828" />
+        <di:waypoint x="615" y="828" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Gateway_Nachforderung_di" bpmnElement="Flow_Gateway_Nachforderung">
+        <di:waypoint x="640" y="853" />
+        <di:waypoint x="640" y="910" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="650" y="873" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Gateway_Sachpruefung_di" bpmnElement="Flow_Gateway_Sachpruefung">
+        <di:waypoint x="665" y="828" />
+        <di:waypoint x="730" y="828" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="675" y="810" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Nachforderung_Warten_di" bpmnElement="Flow_Nachforderung_Warten">
+        <di:waypoint x="690" y="950" />
+        <di:waypoint x="745" y="950" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Gateway_Timer_di" bpmnElement="Flow_Gateway_Timer">
+        <di:waypoint x="770" y="975" />
+        <di:waypoint x="770" y="1030" />
+        <di:waypoint x="850" y="1030" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Gateway_Message_di" bpmnElement="Flow_Gateway_Message">
+        <di:waypoint x="770" y="925" />
+        <di:waypoint x="770" y="888" />
+        <di:waypoint x="850" y="888" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Timer_Ablehnung_di" bpmnElement="Flow_Timer_Ablehnung">
+        <di:waypoint x="886" y="1030" />
+        <di:waypoint x="1190" y="1030" />
+        <di:waypoint x="1190" y="918" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Message_Sachpruefung_di" bpmnElement="Flow_Message_Sachpruefung">
+        <di:waypoint x="868" y="870" />
+        <di:waypoint x="868" y="828" />
+        <di:waypoint x="830" y="828" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Sachpruefung_Entscheidung_di" bpmnElement="Flow_Sachpruefung_Entscheidung">
+        <di:waypoint x="830" y="828" />
+        <di:waypoint x="885" y="828" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Entscheidung_Genehmigung_di" bpmnElement="Flow_Entscheidung_Genehmigung">
+        <di:waypoint x="910" y="803" />
+        <di:waypoint x="910" y="778" />
+        <di:waypoint x="990" y="778" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="925" y="758" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Entscheidung_Ablehnung_di" bpmnElement="Flow_Entscheidung_Ablehnung">
+        <di:waypoint x="935" y="828" />
+        <di:waypoint x="1038" y="828" />
+        <di:waypoint x="1038" y="878" />
+        <di:waypoint x="1140" y="878" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="950" y="810" width="55" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Genehmigung_Bescheid_di" bpmnElement="Flow_Genehmigung_Bescheid">
+        <di:waypoint x="1090" y="778" />
+        <di:waypoint x="1115" y="778" />
+        <di:waypoint x="1115" y="878" />
+        <di:waypoint x="1140" y="878" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Bescheid_Ende_di" bpmnElement="Flow_Bescheid_Ende">
+        <di:waypoint x="1240" y="878" />
+        <di:waypoint x="1292" y="878" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- ITelemente im Behörden-Pool -->
+      <bpmndi:BPMNShape id="Gateway_IT_Noetig_di" bpmnElement="Gateway_IT_Noetig" isMarkerVisible="true">
+        <dc:Bounds x="615" y="890" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="670" y="905" width="90" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Task_IT_Anfrage_stellen_di" bpmnElement="Task_IT_Anfrage_stellen">
+        <dc:Bounds x="500" y="970" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Gateway_Event_IT_Warten_di" bpmnElement="Gateway_Event_IT_Warten">
+        <dc:Bounds x="385" y="985" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="385" y="955" width="90" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNShape id="Event_IT_Antwort_erhalten_di" bpmnElement="Event_IT_Antwort_erhalten">
+        <dc:Bounds x="300" y="992" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="280" y="1035" width="90" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <bpmndi:BPMNEdge id="Flow_Sachpruefung_IT_di" bpmnElement="Flow_Sachpruefung_IT">
+        <di:waypoint x="680" y="868" />
+        <di:waypoint x="640" y="890" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_IT_Ja_di" bpmnElement="Flow_IT_Ja">
+        <di:waypoint x="615" y="915" />
+        <di:waypoint x="550" y="970" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="575" y="935" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_IT_Nein_di" bpmnElement="Flow_IT_Nein">
+        <di:waypoint x="640" y="890" />
+        <di:waypoint x="680" y="828" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="645" y="860" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_IT_Anfrage_Gateway_di" bpmnElement="Flow_IT_Anfrage_Gateway">
+        <di:waypoint x="500" y="1010" />
+        <di:waypoint x="435" y="1010" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_Gateway_IT_Antwort_di" bpmnElement="Flow_Gateway_IT_Antwort">
+        <di:waypoint x="385" y="1010" />
+        <di:waypoint x="336" y="1010" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_IT_Antwort_Sachpruefung_di" bpmnElement="Flow_IT_Antwort_Sachpruefung">
+        <di:waypoint x="300" y="992" />
+        <di:waypoint x="300" y="910" />
+        <di:waypoint x="730" y="830" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- IT Sequence Flows -->
+      <bpmndi:BPMNEdge id="Flow_IT_Start_Verarbeiten_di" bpmnElement="Flow_IT_Start_Verarbeiten">
+        <di:waypoint x="258" y="545" />
+        <di:waypoint x="310" y="545" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_IT_Verarbeiten_Gateway_di" bpmnElement="Flow_IT_Verarbeiten_Gateway">
+        <di:waypoint x="410" y="545" />
+        <di:waypoint x="465" y="545" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_IT_Erfolgreich_di" bpmnElement="Flow_IT_Erfolgreich">
+        <di:waypoint x="490" y="520" />
+        <di:waypoint x="490" y="500" />
+        <di:waypoint x="570" y="500" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="510" y="482" width="50" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_IT_Fehlgeschlagen_di" bpmnElement="Flow_IT_Fehlgeschlagen">
+        <di:waypoint x="490" y="570" />
+        <di:waypoint x="490" y="620" />
+        <di:waypoint x="570" y="620" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="495" y="628" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_IT_Ergebnis_Antwort_di" bpmnElement="Flow_IT_Ergebnis_Antwort">
+        <di:waypoint x="670" y="500" />
+        <di:waypoint x="730" y="505" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_IT_Fehler_Antwort_di" bpmnElement="Flow_IT_Fehler_Antwort">
+        <di:waypoint x="670" y="620" />
+        <di:waypoint x="780" y="620" />
+        <di:waypoint x="780" y="585" />
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="Flow_IT_Antwort_Ende_di" bpmnElement="Flow_IT_Antwort_Ende">
+        <di:waypoint x="830" y="545" />
+        <di:waypoint x="892" y="545" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- ===============================
+           MESSAGE FLOWS
+           =============================== -->
+      <bpmndi:BPMNEdge id="MsgFlow_Antrag_di" bpmnElement="MsgFlow_Antrag">
+        <di:waypoint x="360" y="258" />
+        <di:waypoint x="360" y="500" />
+        <di:waypoint x="240" y="500" />
+        <di:waypoint x="240" y="810" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="280" y="480" width="80" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="MsgFlow_Bescheid_di" bpmnElement="MsgFlow_Bescheid">
+        <di:waypoint x="1190" y="838" />
+        <di:waypoint x="1190" y="500" />
+        <di:waypoint x="588" y="500" />
+        <di:waypoint x="588" y="296" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="850" y="480" width="80" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="MsgFlow_Nachforderung_di" bpmnElement="MsgFlow_Nachforderung">
+        <di:waypoint x="640" y="910" />
+        <di:waypoint x="640" y="500" />
+        <di:waypoint x="588" y="500" />
+        <di:waypoint x="588" y="166" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="590" y="480" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <!-- IT Message Flows -->
+      <bpmndi:BPMNEdge id="MsgFlow_IT_Anfrage_di" bpmnElement="MsgFlow_IT_Anfrage">
+        <di:waypoint x="550" y="970" />
+        <di:waypoint x="550" y="750" />
+        <di:waypoint x="240" y="750" />
+        <di:waypoint x="240" y="563" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="360" y="732" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <bpmndi:BPMNEdge id="MsgFlow_IT_Antwort_di" bpmnElement="MsgFlow_IT_Antwort">
+        <di:waypoint x="780" y="505" />
+        <di:waypoint x="780" y="700" />
+        <di:waypoint x="318" y="700" />
+        <di:waypoint x="318" y="992" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="525" y="682" width="120" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</bpmn:definitions>

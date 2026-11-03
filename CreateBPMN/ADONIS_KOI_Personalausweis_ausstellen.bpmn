@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:adonis="http://www.boc-group.com"
+             xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             id="definition__pa-ausstellen-2026"
+             typeLanguage="http://www.w3.org/2001/XMLSchema"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd"
+             targetNamespace="http://www.boc-group.com">
+
+  <!-- =====================================================
+       COLLABORATION - Personalausweis ausstellen
+       3-Pool-KOI-Kollaboration: Kunde, IT, Organisation
+       ===================================================== -->
+  <collaboration id="Collaboration_pa_ausstellen"
+                 name="Personalausweis ausstellen"
+                 isClosed="false">
+
+    <participant processRef="process_kunde_pa"
+                 name="Kunde"
+                 id="_kunde_participant_pa"/>
+    <participant processRef="process_it_pa"
+                 name="IT"
+                 id="_it_participant_pa"/>
+    <participant processRef="process_org_pa"
+                 name="Organisation"
+                 id="_org_participant_pa"/>
+
+    <!-- Message Flows -->
+    <!-- Kunde → Organisation: Antrag einreichen -->
+    <messageFlow id="_msgflow_k_o_pa"
+                 name="Antrag und Unterlagen"
+                 sourceRef="_kunde_task1_pa"
+                 targetRef="_org_start_pa"/>
+
+    <!-- Organisation → IT: Antragsdaten zur Verarbeitung übermitteln -->
+    <messageFlow id="_msgflow_o_it_pa"
+                 name="Antragsdaten zur Verarbeitung"
+                 sourceRef="_org_task4_pa"
+                 targetRef="_it_start_pa"/>
+
+    <!-- IT → Organisation: Abholbereitschaft melden -->
+    <messageFlow id="_msgflow_it_o_pa"
+                 name="Abholbereitschaft gemeldet"
+                 sourceRef="_it_task5_pa"
+                 targetRef="_org_task5_pa"/>
+
+    <!-- Organisation → Kunde: Abholbenachrichtigung weiterleiten -->
+    <messageFlow id="_msgflow_o_k_pa"
+                 name="Abholbenachrichtigung"
+                 sourceRef="_org_task5_pa"
+                 targetRef="_kunde_task3_pa"/>
+
+  </collaboration>
+
+  <!-- =====================================================
+       PROZESS: Kunde
+       ===================================================== -->
+  <process name="Kunde"
+           id="process_kunde_pa"
+           isExecutable="false"
+           isClosed="false"
+           processType="None">
+
+    <laneSet id="laneSet_kunde_pa">
+      <lane name="Antragsteller" id="_kunde_lane_pa">
+        <flowNodeRef>_kunde_start_pa</flowNodeRef>
+        <flowNodeRef>_kunde_task1_pa</flowNodeRef>
+        <flowNodeRef>_kunde_task2_pa</flowNodeRef>
+        <flowNodeRef>_kunde_task3_pa</flowNodeRef>
+        <flowNodeRef>_kunde_end_pa</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <!-- Start Event -->
+    <startEvent name="Personalausweis beantragen gestartet" id="_kunde_start_pa">
+      <outgoing>_kunde_flow1_pa</outgoing>
+    </startEvent>
+
+    <!-- Task 1: Antrag einreichen -->
+    <task name="Antrag einreichen" id="_kunde_task1_pa" isForCompensation="false">
+      <incoming>_kunde_flow1_pa</incoming>
+      <outgoing>_kunde_flow2_pa</outgoing>
+    </task>
+
+    <!-- Task 2: Gebühr entrichten -->
+    <task name="Gebühr entrichten" id="_kunde_task2_pa" isForCompensation="false">
+      <incoming>_kunde_flow2_pa</incoming>
+      <outgoing>_kunde_flow3_pa</outgoing>
+    </task>
+
+    <!-- Task 3: Personalausweis abholen -->
+    <task name="Personalausweis abholen" id="_kunde_task3_pa" isForCompensation="false">
+      <incoming>_kunde_flow3_pa</incoming>
+      <outgoing>_kunde_flow4_pa</outgoing>
+    </task>
+
+    <!-- End Event -->
+    <endEvent name="Personalausweis ausgehändigt" id="_kunde_end_pa">
+      <incoming>_kunde_flow4_pa</incoming>
+    </endEvent>
+
+    <!-- Sequence Flows -->
+    <sequenceFlow sourceRef="_kunde_start_pa" targetRef="_kunde_task1_pa" id="_kunde_flow1_pa"/>
+    <sequenceFlow sourceRef="_kunde_task1_pa" targetRef="_kunde_task2_pa" id="_kunde_flow2_pa"/>
+    <sequenceFlow sourceRef="_kunde_task2_pa" targetRef="_kunde_task3_pa" id="_kunde_flow3_pa"/>
+    <sequenceFlow sourceRef="_kunde_task3_pa" targetRef="_kunde_end_pa"   id="_kunde_flow4_pa"/>
+
+  </process>
+
+  <!-- =====================================================
+       PROZESS: IT
+       ===================================================== -->
+  <process name="IT"
+           id="process_it_pa"
+           isExecutable="false"
+           isClosed="false"
+           processType="None">
+
+    <laneSet id="laneSet_it_pa">
+      <lane name="IT-Fachverfahren (AUTISTA/PA-System)" id="_it_lane_pa">
+        <flowNodeRef>_it_start_pa</flowNodeRef>
+        <flowNodeRef>_it_task1_pa</flowNodeRef>
+        <flowNodeRef>_it_task2_pa</flowNodeRef>
+        <flowNodeRef>_it_task3_pa</flowNodeRef>
+        <flowNodeRef>_it_task4_pa</flowNodeRef>
+        <flowNodeRef>_it_task5_pa</flowNodeRef>
+        <flowNodeRef>_it_end_pa</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <!-- Start Event (Message Start: Datenverarbeitungsauftrag eingegangen) -->
+    <startEvent name="Datenverarbeitungsauftrag eingegangen" id="_it_start_pa">
+      <outgoing>_it_flow1_pa</outgoing>
+      <messageEventDefinition id="msgEvtDef_it_start_pa"/>
+    </startEvent>
+
+    <!-- Task 1: Antragsdaten erfassen -->
+    <task name="Antragsdaten erfassen" id="_it_task1_pa" isForCompensation="false">
+      <incoming>_it_flow1_pa</incoming>
+      <outgoing>_it_flow2_pa</outgoing>
+    </task>
+
+    <!-- Task 2: Meldedaten abfragen -->
+    <task name="Meldedaten abfragen" id="_it_task2_pa" isForCompensation="false">
+      <incoming>_it_flow2_pa</incoming>
+      <outgoing>_it_flow3_pa</outgoing>
+    </task>
+
+    <!-- Task 3: Biometriedaten verarbeiten -->
+    <task name="Biometriedaten verarbeiten" id="_it_task3_pa" isForCompensation="false">
+      <incoming>_it_flow3_pa</incoming>
+      <outgoing>_it_flow4_pa</outgoing>
+    </task>
+
+    <!-- Task 4: Auftrag übermitteln -->
+    <task name="Auftrag übermitteln" id="_it_task4_pa" isForCompensation="false">
+      <incoming>_it_flow4_pa</incoming>
+      <outgoing>_it_flow5_pa</outgoing>
+    </task>
+
+    <!-- Task 5: Abrufbereitschaft bestätigen -->
+    <task name="Abrufbereitschaft bestätigen" id="_it_task5_pa" isForCompensation="false">
+      <incoming>_it_flow5_pa</incoming>
+      <outgoing>_it_flow6_pa</outgoing>
+    </task>
+
+    <!-- End Event -->
+    <endEvent name="Datenverarbeitung abgeschlossen" id="_it_end_pa">
+      <incoming>_it_flow6_pa</incoming>
+    </endEvent>
+
+    <!-- Sequence Flows -->
+    <sequenceFlow sourceRef="_it_start_pa"  targetRef="_it_task1_pa" id="_it_flow1_pa"/>
+    <sequenceFlow sourceRef="_it_task1_pa"  targetRef="_it_task2_pa" id="_it_flow2_pa"/>
+    <sequenceFlow sourceRef="_it_task2_pa"  targetRef="_it_task3_pa" id="_it_flow3_pa"/>
+    <sequenceFlow sourceRef="_it_task3_pa"  targetRef="_it_task4_pa" id="_it_flow4_pa"/>
+    <sequenceFlow sourceRef="_it_task4_pa"  targetRef="_it_task5_pa" id="_it_flow5_pa"/>
+    <sequenceFlow sourceRef="_it_task5_pa"  targetRef="_it_end_pa"   id="_it_flow6_pa"/>
+
+  </process>
+
+  <!-- =====================================================
+       PROZESS: Organisation
+       ===================================================== -->
+  <process name="Organisation"
+           id="process_org_pa"
+           isExecutable="false"
+           isClosed="false"
+           processType="None">
+
+    <laneSet id="laneSet_org_pa">
+      <lane name="Bürgeramt / Einwohnermeldeamt" id="_org_lane_pa">
+        <flowNodeRef>_org_start_pa</flowNodeRef>
+        <flowNodeRef>_org_task1_pa</flowNodeRef>
+        <flowNodeRef>_org_task2_pa</flowNodeRef>
+        <flowNodeRef>_org_task3_pa</flowNodeRef>
+        <flowNodeRef>_org_task4_pa</flowNodeRef>
+        <flowNodeRef>_org_task5_pa</flowNodeRef>
+        <flowNodeRef>_org_end_pa</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <!-- Start Event (Message Start: Antrag auf Personalausweis eingegangen) -->
+    <startEvent name="Antrag auf Personalausweis eingegangen" id="_org_start_pa">
+      <outgoing>_org_flow1_pa</outgoing>
+      <messageEventDefinition id="msgEvtDef_org_start_pa"/>
+    </startEvent>
+
+    <!-- Task 1: Zuständigkeit prüfen -->
+    <task name="Zuständigkeit prüfen" id="_org_task1_pa" isForCompensation="false">
+      <incoming>_org_flow1_pa</incoming>
+      <outgoing>_org_flow2_pa</outgoing>
+    </task>
+
+    <!-- Task 2: Unterlagen prüfen -->
+    <task name="Unterlagen prüfen" id="_org_task2_pa" isForCompensation="false">
+      <incoming>_org_flow2_pa</incoming>
+      <outgoing>_org_flow3_pa</outgoing>
+    </task>
+
+    <!-- Task 3: Biometriedaten aufnehmen -->
+    <task name="Biometriedaten aufnehmen" id="_org_task3_pa" isForCompensation="false">
+      <incoming>_org_flow3_pa</incoming>
+      <outgoing>_org_flow4_pa</outgoing>
+    </task>
+
+    <!-- Task 4: Antrag freigeben -->
+    <task name="Antrag freigeben" id="_org_task4_pa" isForCompensation="false">
+      <incoming>_org_flow4_pa</incoming>
+      <outgoing>_org_flow5_pa</outgoing>
+    </task>
+
+    <!-- Task 5: Personalausweis ausgeben -->
+    <task name="Personalausweis ausgeben" id="_org_task5_pa" isForCompensation="false">
+      <incoming>_org_flow5_pa</incoming>
+      <outgoing>_org_flow6_pa</outgoing>
+    </task>
+
+    <!-- End Event -->
+    <endEvent name="Personalausweis ausgehändigt" id="_org_end_pa">
+      <incoming>_org_flow6_pa</incoming>
+    </endEvent>
+
+    <!-- Sequence Flows -->
+    <sequenceFlow sourceRef="_org_start_pa"  targetRef="_org_task1_pa" id="_org_flow1_pa"/>
+    <sequenceFlow sourceRef="_org_task1_pa"  targetRef="_org_task2_pa" id="_org_flow2_pa"/>
+    <sequenceFlow sourceRef="_org_task2_pa"  targetRef="_org_task3_pa" id="_org_flow3_pa"/>
+    <sequenceFlow sourceRef="_org_task3_pa"  targetRef="_org_task4_pa" id="_org_flow4_pa"/>
+    <sequenceFlow sourceRef="_org_task4_pa"  targetRef="_org_task5_pa" id="_org_flow5_pa"/>
+    <sequenceFlow sourceRef="_org_task5_pa"  targetRef="_org_end_pa"   id="_org_flow6_pa"/>
+
+  </process>
+
+  <!-- =====================================================
+       BPMN-DI: Diagramm-Visualisierung
+       3-Pool-Layout (KOI):
+         Kunde:        y=0,    Höhe=380
+         IT:           y=390,  Höhe=380
+         Organisation: y=780,  Höhe=380
+
+       Task-Dimensionen: 151 x 76 px (ADONIS-Standard)
+       Event-Dimensionen: 36 x 36 px
+       Horizontale Schrittweite: 221 px (151 Task + 70 Abstand)
+
+       Kunde (3 Tasks):
+         Start:   x=120, y=172   → Center: (138, 190)
+         Task1:   x=220, y=152   → Center: (295, 190)
+         Task2:   x=441, y=152   → Center: (516, 190)
+         Task3:   x=662, y=152   → Center: (737, 190)
+         End:     x=883, y=172   → Center: (901, 190)
+
+       IT (5 Tasks):
+         Start:   x=120, y=562   → Center: (138, 580)
+         Task1:   x=220, y=542   → Center: (295, 580)
+         Task2:   x=441, y=542   → Center: (516, 580)
+         Task3:   x=662, y=542   → Center: (737, 580)
+         Task4:   x=883, y=542   → Center: (958, 580)
+         Task5:   x=1104, y=542  → Center: (1179, 580)
+         End:     x=1325, y=562  → Center: (1343, 580)
+
+       Organisation (5 Tasks):
+         Start:   x=120, y=952   → Center: (138, 970)
+         Task1:   x=220, y=932   → Center: (295, 970)
+         Task2:   x=441, y=932   → Center: (516, 970)
+         Task3:   x=662, y=932   → Center: (737, 970)
+         Task4:   x=883, y=932   → Center: (958, 970)
+         Task5:   x=1104, y=932  → Center: (1179, 970)
+         End:     x=1325, y=952  → Center: (1343, 970)
+
+       Message Flow Waypoints:
+         K1→Org-Start:  (295,228)→(295,780)→(138,780)→(138,952)
+         O4→IT-Start:   (958,932)→(958,780)→(138,780)→(138,562)
+         I5→O5:         (1179,618)→(1179,780)→(1179,932)
+         O5→K3:         (1179,932)→(1179,390)→(737,390)→(737,228)
+       ===================================================== -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration_pa_ausstellen">
+
+      <!-- ===== POOL: Kunde (oben, y=0) ===== -->
+      <bpmndi:BPMNShape bpmnElement="_kunde_participant_pa" isHorizontal="true">
+        <omgdc:Bounds x="10" y="0" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_kunde_lane_pa" isHorizontal="true">
+        <omgdc:Bounds x="40" y="0" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: Start Event -->
+      <bpmndi:BPMNShape bpmnElement="_kunde_start_pa">
+        <omgdc:Bounds x="120" y="172" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: Task 1 - Antrag einreichen -->
+      <bpmndi:BPMNShape bpmnElement="_kunde_task1_pa">
+        <omgdc:Bounds x="220" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: Task 2 - Gebühr entrichten -->
+      <bpmndi:BPMNShape bpmnElement="_kunde_task2_pa">
+        <omgdc:Bounds x="441" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: Task 3 - Personalausweis abholen -->
+      <bpmndi:BPMNShape bpmnElement="_kunde_task3_pa">
+        <omgdc:Bounds x="662" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: End Event -->
+      <bpmndi:BPMNShape bpmnElement="_kunde_end_pa">
+        <omgdc:Bounds x="883" y="172" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: Sequence Flows -->
+      <bpmndi:BPMNEdge bpmnElement="_kunde_flow1_pa">
+        <omgdi:waypoint x="156" y="190"/>
+        <omgdi:waypoint x="220" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_kunde_flow2_pa">
+        <omgdi:waypoint x="371" y="190"/>
+        <omgdi:waypoint x="441" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_kunde_flow3_pa">
+        <omgdi:waypoint x="592" y="190"/>
+        <omgdi:waypoint x="662" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_kunde_flow4_pa">
+        <omgdi:waypoint x="813" y="190"/>
+        <omgdi:waypoint x="883" y="190"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- ===== POOL: IT (Mitte, y=390) ===== -->
+      <bpmndi:BPMNShape bpmnElement="_it_participant_pa" isHorizontal="true">
+        <omgdc:Bounds x="10" y="390" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_it_lane_pa" isHorizontal="true">
+        <omgdc:Bounds x="40" y="390" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Start Event (Message) -->
+      <bpmndi:BPMNShape bpmnElement="_it_start_pa">
+        <omgdc:Bounds x="120" y="562" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Task 1 - Antragsdaten erfassen -->
+      <bpmndi:BPMNShape bpmnElement="_it_task1_pa">
+        <omgdc:Bounds x="220" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Task 2 - Meldedaten abfragen -->
+      <bpmndi:BPMNShape bpmnElement="_it_task2_pa">
+        <omgdc:Bounds x="441" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Task 3 - Biometriedaten verarbeiten -->
+      <bpmndi:BPMNShape bpmnElement="_it_task3_pa">
+        <omgdc:Bounds x="662" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Task 4 - Auftrag übermitteln -->
+      <bpmndi:BPMNShape bpmnElement="_it_task4_pa">
+        <omgdc:Bounds x="883" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Task 5 - Abrufbereitschaft bestätigen -->
+      <bpmndi:BPMNShape bpmnElement="_it_task5_pa">
+        <omgdc:Bounds x="1104" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: End Event -->
+      <bpmndi:BPMNShape bpmnElement="_it_end_pa">
+        <omgdc:Bounds x="1325" y="562" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Sequence Flows -->
+      <bpmndi:BPMNEdge bpmnElement="_it_flow1_pa">
+        <omgdi:waypoint x="156" y="580"/>
+        <omgdi:waypoint x="220" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_it_flow2_pa">
+        <omgdi:waypoint x="371" y="580"/>
+        <omgdi:waypoint x="441" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_it_flow3_pa">
+        <omgdi:waypoint x="592" y="580"/>
+        <omgdi:waypoint x="662" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_it_flow4_pa">
+        <omgdi:waypoint x="813" y="580"/>
+        <omgdi:waypoint x="883" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_it_flow5_pa">
+        <omgdi:waypoint x="1034" y="580"/>
+        <omgdi:waypoint x="1104" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_it_flow6_pa">
+        <omgdi:waypoint x="1255" y="580"/>
+        <omgdi:waypoint x="1325" y="580"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- ===== POOL: Organisation (unten, y=780) ===== -->
+      <bpmndi:BPMNShape bpmnElement="_org_participant_pa" isHorizontal="true">
+        <omgdc:Bounds x="10" y="780" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_org_lane_pa" isHorizontal="true">
+        <omgdc:Bounds x="40" y="780" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Start Event (Message) -->
+      <bpmndi:BPMNShape bpmnElement="_org_start_pa">
+        <omgdc:Bounds x="120" y="952" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Task 1 - Zuständigkeit prüfen -->
+      <bpmndi:BPMNShape bpmnElement="_org_task1_pa">
+        <omgdc:Bounds x="220" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Task 2 - Unterlagen prüfen -->
+      <bpmndi:BPMNShape bpmnElement="_org_task2_pa">
+        <omgdc:Bounds x="441" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Task 3 - Biometriedaten aufnehmen -->
+      <bpmndi:BPMNShape bpmnElement="_org_task3_pa">
+        <omgdc:Bounds x="662" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Task 4 - Antrag freigeben -->
+      <bpmndi:BPMNShape bpmnElement="_org_task4_pa">
+        <omgdc:Bounds x="883" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Task 5 - Personalausweis ausgeben -->
+      <bpmndi:BPMNShape bpmnElement="_org_task5_pa">
+        <omgdc:Bounds x="1104" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: End Event -->
+      <bpmndi:BPMNShape bpmnElement="_org_end_pa">
+        <omgdc:Bounds x="1325" y="952" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Sequence Flows -->
+      <bpmndi:BPMNEdge bpmnElement="_org_flow1_pa">
+        <omgdi:waypoint x="156" y="970"/>
+        <omgdi:waypoint x="220" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_org_flow2_pa">
+        <omgdi:waypoint x="371" y="970"/>
+        <omgdi:waypoint x="441" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_org_flow3_pa">
+        <omgdi:waypoint x="592" y="970"/>
+        <omgdi:waypoint x="662" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_org_flow4_pa">
+        <omgdi:waypoint x="813" y="970"/>
+        <omgdi:waypoint x="883" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_org_flow5_pa">
+        <omgdi:waypoint x="1034" y="970"/>
+        <omgdi:waypoint x="1104" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_org_flow6_pa">
+        <omgdi:waypoint x="1255" y="970"/>
+        <omgdi:waypoint x="1325" y="970"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- ===== MESSAGE FLOWS (Pool-übergreifend) ===== -->
+
+      <!-- MF1: K1 (Antrag einreichen) → Org-Start (Antrag eingegangen) -->
+      <!-- Pfad: Kunde (y=0..380) ↓ durch IT-Pool ↓ bis Org-Pool (y=780+) -->
+      <bpmndi:BPMNEdge bpmnElement="_msgflow_k_o_pa">
+        <omgdi:waypoint x="295" y="228"/>
+        <omgdi:waypoint x="295" y="780"/>
+        <omgdi:waypoint x="138" y="780"/>
+        <omgdi:waypoint x="138" y="952"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- MF2: O4 (Antrag freigeben) → IT-Start (Datenverarbeitungsauftrag) -->
+      <!-- Pfad: Org-Pool (y=780+) ↑ bis IT-Pool (y=390..770) -->
+      <bpmndi:BPMNEdge bpmnElement="_msgflow_o_it_pa">
+        <omgdi:waypoint x="958" y="932"/>
+        <omgdi:waypoint x="958" y="780"/>
+        <omgdi:waypoint x="138" y="780"/>
+        <omgdi:waypoint x="138" y="562"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- MF3: I5 (Abrufbereitschaft bestätigen) → O5 (Personalausweis ausgeben) -->
+      <!-- Pfad: IT-Pool (y=390..770) ↓ bis Org-Pool (y=780+) - gleiche x-Koordinate -->
+      <bpmndi:BPMNEdge bpmnElement="_msgflow_it_o_pa">
+        <omgdi:waypoint x="1179" y="618"/>
+        <omgdi:waypoint x="1179" y="780"/>
+        <omgdi:waypoint x="1179" y="932"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- MF4: O5 (Personalausweis ausgeben) → K3 (Personalausweis abholen) -->
+      <!-- Pfad: Org-Pool (y=780+) ↑ durch IT-Pool ↑ bis Kunde-Pool (y=0..380) -->
+      <bpmndi:BPMNEdge bpmnElement="_msgflow_o_k_pa">
+        <omgdi:waypoint x="1179" y="932"/>
+        <omgdi:waypoint x="1179" y="390"/>
+        <omgdi:waypoint x="737" y="390"/>
+        <omgdi:waypoint x="737" y="228"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>

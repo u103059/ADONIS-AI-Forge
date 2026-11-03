@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:adonis="http://www.boc-group.com"
+             xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             id="definition__a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+             typeLanguage="http://www.w3.org/2001/XMLSchema"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd"
+             targetNamespace="http://www.boc-group.com">
+
+  <!-- =====================================================
+       COLLABORATION - Wohngeld beantragen
+       3-Pool-KOI-Kollaboration: Kunde, Organisation, IT
+       ===================================================== -->
+  <collaboration id="Collaboration_wohngeld01"
+                 name="Wohngeld beantragen"
+                 isClosed="false">
+
+    <participant processRef="process_kunde01"
+                 name="Kunde"
+                 id="_kunde_participant_01"/>
+    <participant processRef="process_org01"
+                 name="Organisation"
+                 id="_org_participant_01"/>
+    <participant processRef="process_it01"
+                 name="IT"
+                 id="_it_participant_01"/>
+
+    <!-- Message Flows -->
+    <!-- Kunde → Organisation: Antrag einreichen -->
+    <messageFlow id="_msgflow_k_o_01"
+                 name="Wohngeldantrag mit Nachweisen"
+                 sourceRef="_kunde_task1_01"
+                 targetRef="_org_start_01"/>
+
+    <!-- Organisation → IT: Antragsdaten übermitteln -->
+    <messageFlow id="_msgflow_o_it_01"
+                 name="Antragsdaten zur Verarbeitung"
+                 sourceRef="_org_task2_01"
+                 targetRef="_it_start_01"/>
+
+    <!-- IT → Organisation: Bescheid generiert -->
+    <messageFlow id="_msgflow_it_o_01"
+                 name="Bewilligungsbescheid generiert"
+                 sourceRef="_it_task3_01"
+                 targetRef="_org_task3_01"/>
+
+    <!-- Organisation → Kunde: Bescheid versenden -->
+    <messageFlow id="_msgflow_o_k_01"
+                 name="Bewilligungsbescheid"
+                 sourceRef="_org_task4_01"
+                 targetRef="_kunde_task2_01"/>
+
+  </collaboration>
+
+  <!-- =====================================================
+       PROZESS: Kunde
+       ===================================================== -->
+  <process name="Kunde"
+           id="process_kunde01"
+           isExecutable="false"
+           isClosed="false"
+           processType="None">
+
+    <laneSet id="laneSet_kunde01">
+      <lane name="Antragsteller" id="_kunde_lane_01">
+        <flowNodeRef>_kunde_start_01</flowNodeRef>
+        <flowNodeRef>_kunde_task1_01</flowNodeRef>
+        <flowNodeRef>_kunde_task2_01</flowNodeRef>
+        <flowNodeRef>_kunde_end_01</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <!-- Start Event -->
+    <startEvent name="Wohngeld beantragen gestartet" id="_kunde_start_01">
+      <outgoing>_kunde_flow1_01</outgoing>
+    </startEvent>
+
+    <!-- Task 1: Antrag einreichen -->
+    <task name="Antrag einreichen" id="_kunde_task1_01" isForCompensation="false">
+      <incoming>_kunde_flow1_01</incoming>
+      <outgoing>_kunde_flow2_01</outgoing>
+    </task>
+
+    <!-- Task 2: Bescheid empfangen -->
+    <task name="Bescheid empfangen" id="_kunde_task2_01" isForCompensation="false">
+      <incoming>_kunde_flow2_01</incoming>
+      <outgoing>_kunde_flow3_01</outgoing>
+    </task>
+
+    <!-- End Event -->
+    <endEvent name="Wohngeld ausgezahlt" id="_kunde_end_01">
+      <incoming>_kunde_flow3_01</incoming>
+    </endEvent>
+
+    <!-- Sequence Flows -->
+    <sequenceFlow sourceRef="_kunde_start_01" targetRef="_kunde_task1_01" id="_kunde_flow1_01"/>
+    <sequenceFlow sourceRef="_kunde_task1_01" targetRef="_kunde_task2_01" id="_kunde_flow2_01"/>
+    <sequenceFlow sourceRef="_kunde_task2_01" targetRef="_kunde_end_01" id="_kunde_flow3_01"/>
+
+  </process>
+
+  <!-- =====================================================
+       PROZESS: Organisation
+       ===================================================== -->
+  <process name="Organisation"
+           id="process_org01"
+           isExecutable="false"
+           isClosed="false"
+           processType="None">
+
+    <laneSet id="laneSet_org01">
+      <lane name="Wohngeldbehörde" id="_org_lane_01">
+        <flowNodeRef>_org_start_01</flowNodeRef>
+        <flowNodeRef>_org_task1_01</flowNodeRef>
+        <flowNodeRef>_org_task2_01</flowNodeRef>
+        <flowNodeRef>_org_task3_01</flowNodeRef>
+        <flowNodeRef>_org_task4_01</flowNodeRef>
+        <flowNodeRef>_org_task5_01</flowNodeRef>
+        <flowNodeRef>_org_end_01</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <!-- Start Event (Message Start: Antrag eingegangen) -->
+    <startEvent name="Wohngeldantrag eingegangen" id="_org_start_01">
+      <outgoing>_org_flow1_01</outgoing>
+      <messageEventDefinition id="msgEvtDef_org_start_01"/>
+    </startEvent>
+
+    <!-- Task 1: Antrag prüfen -->
+    <task name="Antrag prüfen" id="_org_task1_01" isForCompensation="false">
+      <incoming>_org_flow1_01</incoming>
+      <outgoing>_org_flow2_01</outgoing>
+    </task>
+
+    <!-- Task 2: Antragsdaten übermitteln -->
+    <task name="Antragsdaten übermitteln" id="_org_task2_01" isForCompensation="false">
+      <incoming>_org_flow2_01</incoming>
+      <outgoing>_org_flow3_01</outgoing>
+    </task>
+
+    <!-- Task 3: Bescheid prüfen (Eingang von IT) -->
+    <task name="Bescheid prüfen" id="_org_task3_01" isForCompensation="false">
+      <incoming>_org_flow3_01</incoming>
+      <outgoing>_org_flow4_01</outgoing>
+    </task>
+
+    <!-- Task 4: Bescheid versenden -->
+    <task name="Bescheid versenden" id="_org_task4_01" isForCompensation="false">
+      <incoming>_org_flow4_01</incoming>
+      <outgoing>_org_flow5_01</outgoing>
+    </task>
+
+    <!-- Task 5: Auszahlung veranlassen -->
+    <task name="Auszahlung veranlassen" id="_org_task5_01" isForCompensation="false">
+      <incoming>_org_flow5_01</incoming>
+      <outgoing>_org_flow6_01</outgoing>
+    </task>
+
+    <!-- End Event -->
+    <endEvent name="Wohngeldverfahren abgeschlossen" id="_org_end_01">
+      <incoming>_org_flow6_01</incoming>
+    </endEvent>
+
+    <!-- Sequence Flows -->
+    <sequenceFlow sourceRef="_org_start_01"  targetRef="_org_task1_01" id="_org_flow1_01"/>
+    <sequenceFlow sourceRef="_org_task1_01"  targetRef="_org_task2_01" id="_org_flow2_01"/>
+    <sequenceFlow sourceRef="_org_task2_01"  targetRef="_org_task3_01" id="_org_flow3_01"/>
+    <sequenceFlow sourceRef="_org_task3_01"  targetRef="_org_task4_01" id="_org_flow4_01"/>
+    <sequenceFlow sourceRef="_org_task4_01"  targetRef="_org_task5_01" id="_org_flow5_01"/>
+    <sequenceFlow sourceRef="_org_task5_01"  targetRef="_org_end_01"   id="_org_flow6_01"/>
+
+  </process>
+
+  <!-- =====================================================
+       PROZESS: IT
+       ===================================================== -->
+  <process name="IT"
+           id="process_it01"
+           isExecutable="false"
+           isClosed="false"
+           processType="None">
+
+    <laneSet id="laneSet_it01">
+      <lane name="IT-Fachverfahren (WoGü/DiWo)" id="_it_lane_01">
+        <flowNodeRef>_it_start_01</flowNodeRef>
+        <flowNodeRef>_it_task1_01</flowNodeRef>
+        <flowNodeRef>_it_task2_01</flowNodeRef>
+        <flowNodeRef>_it_task3_01</flowNodeRef>
+        <flowNodeRef>_it_task4_01</flowNodeRef>
+        <flowNodeRef>_it_end_01</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <!-- Start Event (Message Start: Antragsdaten eingegangen) -->
+    <startEvent name="Antragsdaten eingegangen" id="_it_start_01">
+      <outgoing>_it_flow1_01</outgoing>
+      <messageEventDefinition id="msgEvtDef_it_start_01"/>
+    </startEvent>
+
+    <!-- Task 1: Antragsdaten erfassen -->
+    <task name="Antragsdaten erfassen" id="_it_task1_01" isForCompensation="false">
+      <incoming>_it_flow1_01</incoming>
+      <outgoing>_it_flow2_01</outgoing>
+    </task>
+
+    <!-- Task 2: Wohngeld berechnen -->
+    <task name="Wohngeld berechnen" id="_it_task2_01" isForCompensation="false">
+      <incoming>_it_flow2_01</incoming>
+      <outgoing>_it_flow3_01</outgoing>
+    </task>
+
+    <!-- Task 3: Bescheid generieren -->
+    <task name="Bescheid generieren" id="_it_task3_01" isForCompensation="false">
+      <incoming>_it_flow3_01</incoming>
+      <outgoing>_it_flow4_01</outgoing>
+    </task>
+
+    <!-- Task 4: Zahlungsauftrag übermitteln -->
+    <task name="Zahlungsauftrag übermitteln" id="_it_task4_01" isForCompensation="false">
+      <incoming>_it_flow4_01</incoming>
+      <outgoing>_it_flow5_01</outgoing>
+    </task>
+
+    <!-- End Event -->
+    <endEvent name="Zahlungsauftrag ausgeführt" id="_it_end_01">
+      <incoming>_it_flow5_01</incoming>
+    </endEvent>
+
+    <!-- Sequence Flows -->
+    <sequenceFlow sourceRef="_it_start_01"  targetRef="_it_task1_01" id="_it_flow1_01"/>
+    <sequenceFlow sourceRef="_it_task1_01"  targetRef="_it_task2_01" id="_it_flow2_01"/>
+    <sequenceFlow sourceRef="_it_task2_01"  targetRef="_it_task3_01" id="_it_flow3_01"/>
+    <sequenceFlow sourceRef="_it_task3_01"  targetRef="_it_task4_01" id="_it_flow4_01"/>
+    <sequenceFlow sourceRef="_it_task4_01"  targetRef="_it_end_01"   id="_it_flow5_01"/>
+
+  </process>
+
+  <!-- =====================================================
+       BPMN-DI: Diagramm-Visualisierung
+       3-Pool-Layout (KOI):
+         Kunde:        y=0,    Höhe=380
+         Organisation: y=390,  Höhe=380
+         IT:           y=780,  Höhe=380
+
+       Task-Dimensionen: 151 x 76 px
+       Event-Dimensionen: 36 x 36 px
+       Horizontaler Abstand zwischen Elementen: ~70px
+
+       Kunde (2 Tasks):
+         Start:   x=120, y=172
+         Task1:   x=220, y=152
+         Task2:   x=441, y=152
+         End:     x=662, y=172
+
+       Organisation (5 Tasks):
+         Start:   x=120, y=562
+         Task1:   x=220, y=542
+         Task2:   x=441, y=542
+         Task3:   x=662, y=542
+         Task4:   x=883, y=542
+         Task5:   x=1104,y=542
+         End:     x=1325,y=562
+
+       IT (4 Tasks):
+         Start:   x=120, y=952
+         Task1:   x=220, y=932
+         Task2:   x=441, y=932
+         Task3:   x=662, y=932
+         Task4:   x=883, y=932
+         End:     x=1104,y=952
+       ===================================================== -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration_wohngeld01">
+
+      <!-- ===== POOL: Kunde ===== -->
+      <bpmndi:BPMNShape bpmnElement="_kunde_participant_01" isHorizontal="true">
+        <omgdc:Bounds x="10" y="0" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_kunde_lane_01" isHorizontal="true">
+        <omgdc:Bounds x="40" y="0" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: Start Event -->
+      <bpmndi:BPMNShape bpmnElement="_kunde_start_01">
+        <omgdc:Bounds x="120" y="172" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: Task 1 - Antrag einreichen -->
+      <bpmndi:BPMNShape bpmnElement="_kunde_task1_01">
+        <omgdc:Bounds x="220" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: Task 2 - Bescheid empfangen -->
+      <bpmndi:BPMNShape bpmnElement="_kunde_task2_01">
+        <omgdc:Bounds x="441" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: End Event -->
+      <bpmndi:BPMNShape bpmnElement="_kunde_end_01">
+        <omgdc:Bounds x="662" y="172" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Kunde: Sequence Flows -->
+      <bpmndi:BPMNEdge bpmnElement="_kunde_flow1_01">
+        <omgdi:waypoint x="156" y="190"/>
+        <omgdi:waypoint x="220" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_kunde_flow2_01">
+        <omgdi:waypoint x="371" y="190"/>
+        <omgdi:waypoint x="441" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_kunde_flow3_01">
+        <omgdi:waypoint x="592" y="190"/>
+        <omgdi:waypoint x="662" y="190"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- ===== POOL: Organisation ===== -->
+      <bpmndi:BPMNShape bpmnElement="_org_participant_01" isHorizontal="true">
+        <omgdc:Bounds x="10" y="390" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_org_lane_01" isHorizontal="true">
+        <omgdc:Bounds x="40" y="390" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Start Event (Message) -->
+      <bpmndi:BPMNShape bpmnElement="_org_start_01">
+        <omgdc:Bounds x="120" y="562" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Task 1 - Antrag prüfen -->
+      <bpmndi:BPMNShape bpmnElement="_org_task1_01">
+        <omgdc:Bounds x="220" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Task 2 - Antragsdaten übermitteln -->
+      <bpmndi:BPMNShape bpmnElement="_org_task2_01">
+        <omgdc:Bounds x="441" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Task 3 - Bescheid prüfen -->
+      <bpmndi:BPMNShape bpmnElement="_org_task3_01">
+        <omgdc:Bounds x="662" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Task 4 - Bescheid versenden -->
+      <bpmndi:BPMNShape bpmnElement="_org_task4_01">
+        <omgdc:Bounds x="883" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Task 5 - Auszahlung veranlassen -->
+      <bpmndi:BPMNShape bpmnElement="_org_task5_01">
+        <omgdc:Bounds x="1104" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: End Event -->
+      <bpmndi:BPMNShape bpmnElement="_org_end_01">
+        <omgdc:Bounds x="1325" y="562" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Organisation: Sequence Flows -->
+      <bpmndi:BPMNEdge bpmnElement="_org_flow1_01">
+        <omgdi:waypoint x="156" y="580"/>
+        <omgdi:waypoint x="220" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_org_flow2_01">
+        <omgdi:waypoint x="371" y="580"/>
+        <omgdi:waypoint x="441" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_org_flow3_01">
+        <omgdi:waypoint x="592" y="580"/>
+        <omgdi:waypoint x="662" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_org_flow4_01">
+        <omgdi:waypoint x="813" y="580"/>
+        <omgdi:waypoint x="883" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_org_flow5_01">
+        <omgdi:waypoint x="1034" y="580"/>
+        <omgdi:waypoint x="1104" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_org_flow6_01">
+        <omgdi:waypoint x="1255" y="580"/>
+        <omgdi:waypoint x="1325" y="580"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- ===== POOL: IT ===== -->
+      <bpmndi:BPMNShape bpmnElement="_it_participant_01" isHorizontal="true">
+        <omgdc:Bounds x="10" y="780" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_it_lane_01" isHorizontal="true">
+        <omgdc:Bounds x="40" y="780" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Start Event (Message) -->
+      <bpmndi:BPMNShape bpmnElement="_it_start_01">
+        <omgdc:Bounds x="120" y="952" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Task 1 - Antragsdaten erfassen -->
+      <bpmndi:BPMNShape bpmnElement="_it_task1_01">
+        <omgdc:Bounds x="220" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Task 2 - Wohngeld berechnen -->
+      <bpmndi:BPMNShape bpmnElement="_it_task2_01">
+        <omgdc:Bounds x="441" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Task 3 - Bescheid generieren -->
+      <bpmndi:BPMNShape bpmnElement="_it_task3_01">
+        <omgdc:Bounds x="662" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Task 4 - Zahlungsauftrag übermitteln -->
+      <bpmndi:BPMNShape bpmnElement="_it_task4_01">
+        <omgdc:Bounds x="883" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: End Event -->
+      <bpmndi:BPMNShape bpmnElement="_it_end_01">
+        <omgdc:Bounds x="1104" y="952" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <!-- IT: Sequence Flows -->
+      <bpmndi:BPMNEdge bpmnElement="_it_flow1_01">
+        <omgdi:waypoint x="156" y="970"/>
+        <omgdi:waypoint x="220" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_it_flow2_01">
+        <omgdi:waypoint x="371" y="970"/>
+        <omgdi:waypoint x="441" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_it_flow3_01">
+        <omgdi:waypoint x="592" y="970"/>
+        <omgdi:waypoint x="662" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_it_flow4_01">
+        <omgdi:waypoint x="813" y="970"/>
+        <omgdi:waypoint x="883" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_it_flow5_01">
+        <omgdi:waypoint x="1034" y="970"/>
+        <omgdi:waypoint x="1104" y="970"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- ===== MESSAGE FLOWS (Pool-übergreifend) ===== -->
+
+      <!-- Kunde Task1 (Antrag einreichen) → Organisation Start (Antrag eingegangen) -->
+      <bpmndi:BPMNEdge bpmnElement="_msgflow_k_o_01">
+        <omgdi:waypoint x="295" y="228"/>
+        <omgdi:waypoint x="295" y="390"/>
+        <omgdi:waypoint x="138" y="390"/>
+        <omgdi:waypoint x="138" y="562"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- Organisation Task2 (Antragsdaten übermitteln) → IT Start (Antragsdaten eingegangen) -->
+      <bpmndi:BPMNEdge bpmnElement="_msgflow_o_it_01">
+        <omgdi:waypoint x="516" y="618"/>
+        <omgdi:waypoint x="516" y="780"/>
+        <omgdi:waypoint x="138" y="780"/>
+        <omgdi:waypoint x="138" y="952"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- IT Task3 (Bescheid generieren) → Organisation Task3 (Bescheid prüfen) -->
+      <bpmndi:BPMNEdge bpmnElement="_msgflow_it_o_01">
+        <omgdi:waypoint x="737" y="932"/>
+        <omgdi:waypoint x="737" y="780"/>
+        <omgdi:waypoint x="737" y="618"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- Organisation Task4 (Bescheid versenden) → Kunde Task2 (Bescheid empfangen) -->
+      <bpmndi:BPMNEdge bpmnElement="_msgflow_o_k_01">
+        <omgdi:waypoint x="958" y="542"/>
+        <omgdi:waypoint x="958" y="390"/>
+        <omgdi:waypoint x="516" y="390"/>
+        <omgdi:waypoint x="516" y="228"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>
