@@ -4,6 +4,7 @@ Aufruf:
     python fetch_models.py --discover   # Repositories und Beispiel-Attribute anzeigen
     python fetch_models.py --dry-run    # Nur Trefferliste anzeigen
     python fetch_models.py              # Modelle exportieren
+    python fetch_models.py --logout     # Gespeicherte Zugangsdaten loeschen
 """
 
 import argparse
@@ -14,6 +15,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+import keyring
 import requests
 import truststore
 from dotenv import load_dotenv
@@ -42,6 +44,7 @@ STATUS_ATTR = env("ADONIS_STATUS_ATTR", "MFB_RWF_STATE")
 STATUS_VALUE = env("ADONIS_STATUS_VALUE", "In methodischer Prüfung")
 # Pfadvorlage relativ zu API_ROOT; Platzhalter {repo_id} und {model_id}
 EXPORT_PATH = env("ADONIS_EXPORT_PATH", "/repos/{repo_id}/models/{model_id}/format?format=bpmn")
+KEYRING_SERVICE = f"ADONIS-REST {BASE_URL}"
 
 
 def ask_credentials() -> tuple[str, str]:
@@ -59,10 +62,28 @@ def ask_credentials() -> tuple[str, str]:
     return user, password
 
 
+def stored_credentials() -> tuple[str, str] | None:
+    cred = keyring.get_credential(KEYRING_SERVICE, env("ADONIS_USER"))
+    return (cred.username, cred.password) if cred and cred.username and cred.password else None
+
+
+def forget_credentials() -> None:
+    cred = keyring.get_credential(KEYRING_SERVICE, None)
+    if cred:
+        keyring.delete_password(KEYRING_SERVICE, cred.username)
+
+
 def create_session() -> requests.Session:
     session = requests.Session()
+    session.unsaved_auth = None
     user, password = env("ADONIS_USER"), env("ADONIS_PASSWORD")
-    session.auth = (user, password) if user and password else ask_credentials()
+    if user and password:
+        session.auth = (user, password)
+    elif stored := stored_credentials():
+        session.auth = stored
+        session.from_keyring = True
+    else:
+        session.auth = session.unsaved_auth = ask_credentials()
     session.headers.update({"Accept": "application/json"})
     session.verify = env("ADONIS_CA_BUNDLE") or True
     return session
@@ -72,7 +93,13 @@ def get(session: requests.Session, path: str, **kwargs) -> requests.Response:
     url = f"{BASE_URL}{API_ROOT}{path}"
     response = session.get(url, timeout=60, **kwargs)
     if response.status_code == 401:
+        if getattr(session, "from_keyring", False):
+            forget_credentials()
+            sys.exit("401 Unauthorized: Gespeicherte Zugangsdaten verworfen, beim naechsten Aufruf neu anmelden.")
         sys.exit("401 Unauthorized: Benutzer/Passwort pruefen bzw. Basic Auth in ADONIS aktivieren.")
+    if response.ok and getattr(session, "unsaved_auth", None):
+        keyring.set_password(KEYRING_SERVICE, *session.unsaved_auth)
+        session.unsaved_auth = None
     if response.status_code == 403:
         sys.exit(f"403 Forbidden: API-Nutzer hat keine Rechte fuer {path}.")
     if response.status_code == 404:
@@ -156,7 +183,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--discover", action="store_true", help="Repositories und Attribute anzeigen")
     parser.add_argument("--dry-run", action="store_true", help="Nur Treffer anzeigen, nichts speichern")
+    parser.add_argument("--logout", action="store_true", help="Gespeicherte Zugangsdaten loeschen")
     args = parser.parse_args()
+
+    if args.logout:
+        forget_credentials()
+        print("Gespeicherte Zugangsdaten geloescht.")
+        return
 
     session = create_session()
     if args.discover:
