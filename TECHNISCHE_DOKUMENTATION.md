@@ -75,6 +75,16 @@ Diese Dokumentation beschreibt die technischen Grundlagen und Voraussetzungen zu
 1. Agent "Steckbrief" auswählen
 2. Erstellung über Prompt anstoßen, z. B. "Erstelle Steckbrief"
 
+## ADONIS-Modelle per API abrufen und pruefen
+Voraussetzungen: Python 3.10+, lokaler Clone im Stadtnetz, REST-API und Basic Auth fuer den API-Nutzer in ADONIS aktiviert.
+
+1. `cd tools/adonis_fetch` und `pip install -r requirements.txt`
+2. `.env.example` nach `.env` kopieren und Zugangsdaten eintragen
+3. `python fetch_models.py --discover` - Repository-ID und Attributname des Freigabe-Workflow-Status ermitteln, ggf. in `.env` anpassen
+4. `python fetch_models.py --dry-run` - Trefferliste pruefen
+5. `python fetch_models.py` - Modelle nach `Import_ADONIS/` exportieren
+6. Agent "ADONIS_Review" auswaehlen und z. B. "Pruefe alle Modelle in Import_ADONIS" eingeben
+
 ## Troubleshooting
 
 ### Problem: Copilot bricht ab und generiert kein BPMN (Timeout)

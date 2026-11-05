@@ -43,6 +43,12 @@ Fuer jedes geprueftes Modell wird ein strukturierter Pruefbericht erstellt. Verw
 
 ## Workflow
 
+### Schritt 0: Modelle aus ADONIS abrufen (optional)
+Wenn der Nutzer die Pruefung der Modelle "in methodischer Pruefung" aus ADONIS anfordert:
+1. `python tools/adonis_fetch/fetch_models.py` ausfuehren (Zugangsdaten kommen aus `tools/adonis_fetch/.env`, niemals im Chat abfragen oder ausgeben)
+2. Alle Modelle in `Import_ADONIS/` nacheinander gemaess Schritt 1-3 pruefen; `.json`-Dateien sind ADONIS-Rohdaten, falls kein BPMN-Export verfuegbar war
+3. Modell-ID und Version aus `Import_ADONIS/manifest.json` in den Pruefbericht uebernehmen
+
 ### Schritt 1: Modell einlesen
 Wenn der Nutzer ein Modell zur Pruefung benennt oder bereitstellt:
 1. Datei lesen und XML-Struktur analysieren

@@ -1,6 +1,7 @@
 # Prüfbericht: `[Name des Prozessmodells]`
 
 > **Datei**: `[Dateiname.bpmn]`
+> **ADONIS-Modell-ID / Version**: `[ID]` / `[Version]` (nur bei Abruf aus ADONIS)
 > **Geprüft am**: `[TT.MM.JJJJ]`
 > **Geprüft durch**: GovModeler_ADONIS_Review
 
