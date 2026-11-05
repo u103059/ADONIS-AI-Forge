@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:adonis="http://www.boc-group.com"
+             xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             id="definition__17000000-0000-4000-8000-000000000000"
+             typeLanguage="http://www.w3.org/2001/XMLSchema"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd"
+             targetNamespace="http://www.boc-group.com">
+
+  <collaboration id="Collaboration_17000000-0000-4000-8000-000000000000"
+                 name="Incident bearbeiten"
+                 isClosed="false">
+    <participant processRef="process_f6000000-0000-4000-8000-000000000000" name="Self-Service-Portal" id="_e5000000-0000-4000-8000-000000000000"/>
+    <participant processRef="process_f6000000-0000-4000-8000-000000000001" name="ITSM-Ticketsystem" id="_e5000000-0000-4000-8000-000000000001"/>
+    <participant processRef="process_f6000000-0000-4000-8000-000000000002" name="CMDB" id="_e5000000-0000-4000-8000-000000000002"/>
+    <participant processRef="process_f6000000-0000-4000-8000-000000000003" name="Mail-Service" id="_e5000000-0000-4000-8000-000000000003"/>
+
+    <messageFlow id="_c3000000-0000-4000-8000-000000000001" name="Incident-Meldung (REST/JSON)" sourceRef="_a1000000-0000-4000-8000-000000000003" targetRef="_a1000000-0000-4000-8000-000000000004"/>
+    <messageFlow id="_c3000000-0000-4000-8000-000000000002" name="CI-Abfrage (REST/JSON)" sourceRef="_a1000000-0000-4000-8000-000000000009" targetRef="_a1000000-0000-4000-8000-000000000010"/>
+    <messageFlow id="_c3000000-0000-4000-8000-000000000003" name="CI-Daten (REST/JSON)" sourceRef="_a1000000-0000-4000-8000-000000000013" targetRef="_a1000000-0000-4000-8000-000000000015"/>
+    <messageFlow id="_c3000000-0000-4000-8000-000000000004" name="Benachrichtigungsauftrag (REST/JSON)" sourceRef="_a1000000-0000-4000-8000-000000000025" targetRef="_a1000000-0000-4000-8000-000000000026"/>
+    <messageFlow id="_c3000000-0000-4000-8000-000000000005" name="Versandstatus (REST/JSON)" sourceRef="_a1000000-0000-4000-8000-000000000029" targetRef="_a1000000-0000-4000-8000-000000000031"/>
+    <messageFlow id="_c3000000-0000-4000-8000-000000000006" name="Abschlussinformation (REST/JSON)" sourceRef="_a1000000-0000-4000-8000-000000000034" targetRef="_a1000000-0000-4000-8000-000000000036"/>
+  </collaboration>
+
+  <!-- ===== PROZESS: Self-Service-Portal ===== -->
+  <process name="Self-Service-Portal" id="process_f6000000-0000-4000-8000-000000000000" isExecutable="false" isClosed="false" processType="None">
+    <laneSet id="laneSet_f6000000-0000-4000-8000-000000000000">
+      <lane name="Self-Service-Portal" id="_d4000000-0000-4000-8000-000000000000">
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000000</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000001</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000002</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000003</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000036</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000037</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000038</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <startEvent name="Incident-Meldung erfasst" id="_a1000000-0000-4000-8000-000000000000">
+      <outgoing>_b2000000-0000-4000-8000-000000000000</outgoing>
+      <messageEventDefinition id="msgEvtDef_a1000000-0000-4000-8000-000000000000"/>
+    </startEvent>
+
+    <serviceTask name="Incident-Formular validieren" id="_a1000000-0000-4000-8000-000000000001" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: Self-Service-Portal, Formular-Validierung.
+Input: Formulardaten des Melders (Name, Kontaktdaten, betroffener Service, Kurzbeschreibung, Fehlerbeschreibung, Dringlichkeit).
+Verarbeitungslogik: Pflichtfelder und Formate (z. B. E-Mail-Adresse, Textlänge) werden geprüft. Nur valide Eingaben werden weiterverarbeitet.
+Output: Validierte Formulardaten.
+Persistierung: Keine.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000000</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000001</outgoing>
+    </serviceTask>
+
+    <scriptTask name="Incident-Meldung transformieren" id="_a1000000-0000-4000-8000-000000000002" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: Self-Service-Portal, Mapping-Komponente.
+Input: Validierte Formulardaten.
+Verarbeitungslogik: Die Formularfelder werden auf das JSON-Schema der Incident-Schnittstelle des Ticketsystems abgebildet. Meldezeitpunkt und Meldekanal "Portal" werden ergänzt.
+Output: Incident-Meldung als JSON-Dokument.
+Persistierung: Keine.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000001</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000002</outgoing>
+    </scriptTask>
+
+    <sendTask name="Incident-Meldung senden" id="_a1000000-0000-4000-8000-000000000003" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: Self-Service-Portal, Integrationsadapter.
+Input: Incident-Meldung als JSON-Dokument.
+Verarbeitungslogik: Die Meldung wird an die Incident-Schnittstelle des ITSM-Ticketsystems übermittelt.
+Output: Nachricht "Incident-Meldung" an das ITSM-Ticketsystem.
+Persistierung: Keine.
+Schnittstelle / Protokoll: REST-API, HTTPS, JSON.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000002</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000003</outgoing>
+    </sendTask>
+
+    <receiveTask name="Abschlussinformation empfangen" id="_a1000000-0000-4000-8000-000000000036" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: Self-Service-Portal, Integrationsadapter.
+Input: Abschlussinformation des ITSM-Ticketsystems (Incident-Nummer, Status, Lösungsbeschreibung) als JSON.
+Verarbeitungslogik: Die Nachricht wird empfangen und dem Incident des Melders zugeordnet.
+Output: Abschlussinformation zur weiteren Verarbeitung.
+Persistierung: Keine.
+Schnittstelle / Protokoll: REST-API, HTTPS, JSON.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000003</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000036</outgoing>
+    </receiveTask>
+
+    <serviceTask name="Incident-Status aktualisieren" id="_a1000000-0000-4000-8000-000000000037" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: Self-Service-Portal, Statusanzeige.
+Input: Abschlussinformation (Incident-Nummer, Status, Lösungsbeschreibung).
+Verarbeitungslogik: Der Status der Meldung wird auf "Geschlossen" gesetzt und die Lösungsbeschreibung in der Ticketübersicht des Melders bereitgestellt.
+Output: Aktualisierte Statusanzeige.
+Persistierung: Status der Meldung im Portal.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000036</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000037</outgoing>
+    </serviceTask>
+
+    <endEvent name="Incident-Status im Portal aktualisiert" id="_a1000000-0000-4000-8000-000000000038">
+      <incoming>_b2000000-0000-4000-8000-000000000037</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000000" targetRef="_a1000000-0000-4000-8000-000000000001" id="_b2000000-0000-4000-8000-000000000000"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000001" targetRef="_a1000000-0000-4000-8000-000000000002" id="_b2000000-0000-4000-8000-000000000001"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000002" targetRef="_a1000000-0000-4000-8000-000000000003" id="_b2000000-0000-4000-8000-000000000002"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000003" targetRef="_a1000000-0000-4000-8000-000000000036" id="_b2000000-0000-4000-8000-000000000003"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000036" targetRef="_a1000000-0000-4000-8000-000000000037" id="_b2000000-0000-4000-8000-000000000036"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000037" targetRef="_a1000000-0000-4000-8000-000000000038" id="_b2000000-0000-4000-8000-000000000037"/>
+  </process>
+
+  <!-- ===== PROZESS: ITSM-Ticketsystem ===== -->
+  <process name="ITSM-Ticketsystem" id="process_f6000000-0000-4000-8000-000000000001" isExecutable="false" isClosed="false" processType="None">
+    <laneSet id="laneSet_f6000000-0000-4000-8000-000000000001">
+      <lane name="ITSM-Ticketsystem" id="_d4000000-0000-4000-8000-000000000001">
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000004</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000005</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000006</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000007</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000008</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000009</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000015</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000016</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000017</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000018</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000019</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000020</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000021</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000022</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000023</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000024</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000025</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000031</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000032</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000033</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000034</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000035</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <startEvent name="Incident-Meldung empfangen" id="_a1000000-0000-4000-8000-000000000004">
+      <outgoing>_b2000000-0000-4000-8000-000000000004</outgoing>
+      <messageEventDefinition id="msgEvtDef_a1000000-0000-4000-8000-000000000004"/>
+    </startEvent>
+
+    <serviceTask name="Incident-Daten validieren" id="_a1000000-0000-4000-8000-000000000005" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Incident-Schnittstelle.
+Input: Incident-Meldung als JSON-Dokument.
+Verarbeitungslogik: Das JSON-Dokument wird gegen das Schnittstellenschema geprüft; Pflichtfelder und Datenformate werden kontrolliert. Nur valide Meldungen werden weiterverarbeitet.
+Output: Validierte Incident-Daten.
+Persistierung: Keine.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000004</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000005</outgoing>
+    </serviceTask>
+
+    <scriptTask name="Incident-Nummer generieren" id="_a1000000-0000-4000-8000-000000000006" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Nummernkreis-Service.
+Input: Validierte Incident-Daten.
+Verarbeitungslogik: Eine eindeutige, fortlaufende Incident-Nummer wird vergeben und der Eingangszeitpunkt ergänzt.
+Output: Incident-Daten mit Incident-Nummer und Eingangszeitpunkt.
+Persistierung: Keine.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000005</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000006</outgoing>
+    </scriptTask>
+
+    <serviceTask name="Incident-Datensatz speichern" id="_a1000000-0000-4000-8000-000000000007" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Datenbank-Service.
+Input: Incident-Daten mit Incident-Nummer.
+Verarbeitungslogik: Der Incident-Datensatz wird mit dem Status "Neu" angelegt.
+Output: Gespeicherter Incident-Datensatz.
+Persistierung: Incident-Tabelle der ITSM-Datenbank.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000006</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000007</outgoing>
+    </serviceTask>
+
+    <businessRuleTask name="Incident-Kategorie ermitteln" id="_a1000000-0000-4000-8000-000000000008" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Regelwerk Kategorisierung.
+Input: Betroffener Service, Kurz- und Fehlerbeschreibung.
+Verarbeitungslogik: Anhand des Regelwerks werden Kategorie und Unterkategorie des Incidents bestimmt.
+Output: Kategorie und Unterkategorie.
+Persistierung: Keine.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000007</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000008</outgoing>
+    </businessRuleTask>
+
+    <sendTask name="CI-Abfrage senden" id="_a1000000-0000-4000-8000-000000000009" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Integrationsadapter.
+Input: Betroffener Service, Kategorie, Incident-Nummer.
+Verarbeitungslogik: Die Anfrage nach dem betroffenen Konfigurationselement wird an die CMDB übermittelt.
+Output: Nachricht "CI-Abfrage" an die CMDB.
+Persistierung: Keine.
+Schnittstelle / Protokoll: REST-API, HTTPS, JSON.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000008</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000009</outgoing>
+    </sendTask>
+
+    <receiveTask name="CI-Daten empfangen" id="_a1000000-0000-4000-8000-000000000015" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Integrationsadapter.
+Input: CI-Daten der CMDB (CI-ID, CI-Typ, Betriebsverantwortliche, abhängige Business-Services) als JSON.
+Verarbeitungslogik: Die Antwort der CMDB wird empfangen und dem Incident zugeordnet.
+Output: CI-Daten zur weiteren Verarbeitung.
+Persistierung: Keine.
+Schnittstelle / Protokoll: REST-API, HTTPS, JSON.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000009</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000015</outgoing>
+    </receiveTask>
+
+    <scriptTask name="Auswirkung berechnen" id="_a1000000-0000-4000-8000-000000000016" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Berechnungs-Skript.
+Input: CI-Daten mit abhängigen Business-Services.
+Verarbeitungslogik: Aus der Anzahl und Kritikalität der abhängigen Business-Services wird die Auswirkungsstufe (hoch, mittel, niedrig) berechnet.
+Output: Auswirkungsstufe.
+Persistierung: Keine.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000015</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000016</outgoing>
+    </scriptTask>
+
+    <businessRuleTask name="Priorität ermitteln" id="_a1000000-0000-4000-8000-000000000017" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Prioritätsmatrix.
+Input: Auswirkungsstufe und Dringlichkeit der Meldung.
+Verarbeitungslogik: Die Priorität wird nach der Prioritätsmatrix aus Auswirkung und Dringlichkeit abgeleitet.
+Output: Priorität (P1 bis P4).
+Persistierung: Keine.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000016</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000017</outgoing>
+    </businessRuleTask>
+
+    <scriptTask name="SLA-Fristen berechnen" id="_a1000000-0000-4000-8000-000000000018" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, SLA-Berechnung.
+Input: Priorität und Eingangszeitpunkt.
+Verarbeitungslogik: Reaktions- und Lösungsfrist werden gemäß der Vorgaben je Priorität ab dem Eingangszeitpunkt berechnet.
+Output: Reaktionsfrist und Lösungsfrist.
+Persistierung: Keine.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000017</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000018</outgoing>
+    </scriptTask>
+
+    <businessRuleTask name="Support-Gruppe zuweisen" id="_a1000000-0000-4000-8000-000000000019" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Zuweisungsregeln.
+Input: Kategorie, Betriebsverantwortliche des Konfigurationselements.
+Verarbeitungslogik: Anhand der Zuweisungsregeln wird die zuständige Support-Gruppe bestimmt.
+Output: Zugewiesene Support-Gruppe.
+Persistierung: Keine.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000018</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000019</outgoing>
+    </businessRuleTask>
+
+    <serviceTask name="Klassifizierungsdaten speichern" id="_a1000000-0000-4000-8000-000000000020" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Datenbank-Service.
+Input: Kategorie, CI-Referenz, Priorität, SLA-Fristen, Support-Gruppe.
+Verarbeitungslogik: Der Incident-Datensatz wird um die Klassifizierungsdaten ergänzt und der Status auf "Zugewiesen" gesetzt.
+Output: Aktualisierter Incident-Datensatz.
+Persistierung: Incident-Tabelle der ITSM-Datenbank.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000019</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000020</outgoing>
+    </serviceTask>
+
+    <userTask name="Incident analysieren und lösen" id="_a1000000-0000-4000-8000-000000000021" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Bearbeitungsoberfläche.
+Input: Incident-Datensatz mit Klassifizierungs- und CI-Daten.
+Verarbeitungslogik: Ein Mitarbeitender der zugewiesenen Support-Gruppe analysiert die Ursache und führt die Lösungsmaßnahme durch.
+Output: Lösungsergebnis.
+Persistierung: Keine.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000020</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000021</outgoing>
+    </userTask>
+
+    <userTask name="Lösung dokumentieren" id="_a1000000-0000-4000-8000-000000000022" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Bearbeitungsoberfläche.
+Input: Lösungsergebnis der Analyse.
+Verarbeitungslogik: Der Mitarbeitende erfasst Lösungsbeschreibung und Ursache im Incident-Datensatz.
+Output: Dokumentierte Lösung.
+Persistierung: Incident-Tabelle der ITSM-Datenbank.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000021</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000022</outgoing>
+    </userTask>
+
+    <serviceTask name="Incident-Status auf gelöst setzen" id="_a1000000-0000-4000-8000-000000000023" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Statusverwaltung.
+Input: Incident-Datensatz mit dokumentierter Lösung.
+Verarbeitungslogik: Der Status wird auf "Gelöst" gesetzt und der Lösungszeitpunkt erfasst.
+Output: Aktualisierter Incident-Datensatz.
+Persistierung: Incident-Tabelle der ITSM-Datenbank.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000022</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000023</outgoing>
+    </serviceTask>
+
+    <scriptTask name="Lösungsmitteilung generieren" id="_a1000000-0000-4000-8000-000000000024" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Benachrichtigungs-Skript.
+Input: Incident-Nummer, Kontaktdaten des Melders, Lösungsbeschreibung.
+Verarbeitungslogik: Die Benachrichtigungsdaten für den Melder werden zu einem Auftrag zusammengestellt.
+Output: Benachrichtigungsauftrag als JSON-Dokument.
+Persistierung: Keine.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000023</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000024</outgoing>
+    </scriptTask>
+
+    <sendTask name="Benachrichtigungsauftrag senden" id="_a1000000-0000-4000-8000-000000000025" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Integrationsadapter.
+Input: Benachrichtigungsauftrag als JSON-Dokument.
+Verarbeitungslogik: Der Auftrag wird an den Mail-Service übermittelt.
+Output: Nachricht "Benachrichtigungsauftrag" an den Mail-Service.
+Persistierung: Keine.
+Schnittstelle / Protokoll: REST-API, HTTPS, JSON.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000024</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000025</outgoing>
+    </sendTask>
+
+    <receiveTask name="Versandstatus empfangen" id="_a1000000-0000-4000-8000-000000000031" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Integrationsadapter.
+Input: Versandstatus des Mail-Service als JSON.
+Verarbeitungslogik: Die Versandbestätigung wird empfangen und dem Incident zugeordnet.
+Output: Versandstatus zur weiteren Verarbeitung.
+Persistierung: Keine.
+Schnittstelle / Protokoll: REST-API, HTTPS, JSON.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000025</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000031</outgoing>
+    </receiveTask>
+
+    <serviceTask name="Incident schließen" id="_a1000000-0000-4000-8000-000000000032" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Statusverwaltung.
+Input: Incident-Datensatz mit bestätigtem Versandstatus.
+Verarbeitungslogik: Der Status wird auf "Geschlossen" gesetzt und der Abschlusszeitpunkt erfasst.
+Output: Geschlossener Incident-Datensatz.
+Persistierung: Incident-Tabelle der ITSM-Datenbank.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000031</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000032</outgoing>
+    </serviceTask>
+
+    <serviceTask name="Incident-Protokoll speichern" id="_a1000000-0000-4000-8000-000000000033" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Protokollierungs-Service.
+Input: Statuswechsel und Zeitstempel des Incidents.
+Verarbeitungslogik: Der Bearbeitungsverlauf des Incidents wird als Protokoll abgelegt.
+Output: Gespeichertes Incident-Protokoll.
+Persistierung: Protokolltabelle der ITSM-Datenbank.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000032</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000033</outgoing>
+    </serviceTask>
+
+    <sendTask name="Abschlussinformation senden" id="_a1000000-0000-4000-8000-000000000034" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: ITSM-Ticketsystem, Integrationsadapter.
+Input: Incident-Nummer, Status, Lösungsbeschreibung.
+Verarbeitungslogik: Die Abschlussinformation wird an das Self-Service-Portal übermittelt.
+Output: Nachricht "Abschlussinformation" an das Self-Service-Portal.
+Persistierung: Keine.
+Schnittstelle / Protokoll: REST-API, HTTPS, JSON.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000033</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000034</outgoing>
+    </sendTask>
+
+    <endEvent name="Incident abgeschlossen" id="_a1000000-0000-4000-8000-000000000035">
+      <incoming>_b2000000-0000-4000-8000-000000000034</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000004" targetRef="_a1000000-0000-4000-8000-000000000005" id="_b2000000-0000-4000-8000-000000000004"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000005" targetRef="_a1000000-0000-4000-8000-000000000006" id="_b2000000-0000-4000-8000-000000000005"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000006" targetRef="_a1000000-0000-4000-8000-000000000007" id="_b2000000-0000-4000-8000-000000000006"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000007" targetRef="_a1000000-0000-4000-8000-000000000008" id="_b2000000-0000-4000-8000-000000000007"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000008" targetRef="_a1000000-0000-4000-8000-000000000009" id="_b2000000-0000-4000-8000-000000000008"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000009" targetRef="_a1000000-0000-4000-8000-000000000015" id="_b2000000-0000-4000-8000-000000000009"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000015" targetRef="_a1000000-0000-4000-8000-000000000016" id="_b2000000-0000-4000-8000-000000000015"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000016" targetRef="_a1000000-0000-4000-8000-000000000017" id="_b2000000-0000-4000-8000-000000000016"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000017" targetRef="_a1000000-0000-4000-8000-000000000018" id="_b2000000-0000-4000-8000-000000000017"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000018" targetRef="_a1000000-0000-4000-8000-000000000019" id="_b2000000-0000-4000-8000-000000000018"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000019" targetRef="_a1000000-0000-4000-8000-000000000020" id="_b2000000-0000-4000-8000-000000000019"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000020" targetRef="_a1000000-0000-4000-8000-000000000021" id="_b2000000-0000-4000-8000-000000000020"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000021" targetRef="_a1000000-0000-4000-8000-000000000022" id="_b2000000-0000-4000-8000-000000000021"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000022" targetRef="_a1000000-0000-4000-8000-000000000023" id="_b2000000-0000-4000-8000-000000000022"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000023" targetRef="_a1000000-0000-4000-8000-000000000024" id="_b2000000-0000-4000-8000-000000000023"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000024" targetRef="_a1000000-0000-4000-8000-000000000025" id="_b2000000-0000-4000-8000-000000000024"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000025" targetRef="_a1000000-0000-4000-8000-000000000031" id="_b2000000-0000-4000-8000-000000000025"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000031" targetRef="_a1000000-0000-4000-8000-000000000032" id="_b2000000-0000-4000-8000-000000000031"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000032" targetRef="_a1000000-0000-4000-8000-000000000033" id="_b2000000-0000-4000-8000-000000000032"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000033" targetRef="_a1000000-0000-4000-8000-000000000034" id="_b2000000-0000-4000-8000-000000000033"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000034" targetRef="_a1000000-0000-4000-8000-000000000035" id="_b2000000-0000-4000-8000-000000000034"/>
+  </process>
+
+  <!-- ===== PROZESS: CMDB ===== -->
+  <process name="CMDB" id="process_f6000000-0000-4000-8000-000000000002" isExecutable="false" isClosed="false" processType="None">
+    <laneSet id="laneSet_f6000000-0000-4000-8000-000000000002">
+      <lane name="CMDB" id="_d4000000-0000-4000-8000-000000000002">
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000010</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000011</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000012</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000013</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000014</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <startEvent name="CI-Abfrage empfangen" id="_a1000000-0000-4000-8000-000000000010">
+      <outgoing>_b2000000-0000-4000-8000-000000000010</outgoing>
+      <messageEventDefinition id="msgEvtDef_a1000000-0000-4000-8000-000000000010"/>
+    </startEvent>
+
+    <serviceTask name="Konfigurationselement ermitteln" id="_a1000000-0000-4000-8000-000000000011" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: CMDB, Abfrage-Service.
+Input: Betroffener Service und Kategorie aus der CI-Abfrage.
+Verarbeitungslogik: Das zum betroffenen Service gehörende Konfigurationselement (CI) wird in der CMDB gesucht.
+Output: CI-ID, CI-Typ und Betriebsverantwortliche.
+Persistierung: Keine (lesender Zugriff auf die CMDB-Datenbank).</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000010</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000011</outgoing>
+    </serviceTask>
+
+    <serviceTask name="Abhängige Business-Services abrufen" id="_a1000000-0000-4000-8000-000000000012" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: CMDB, Relationen-Service.
+Input: CI-ID des Konfigurationselements.
+Verarbeitungslogik: Die Beziehungen des CI zu Business-Services werden abgerufen.
+Output: Liste abhängiger Business-Services.
+Persistierung: Keine (lesender Zugriff auf die CMDB-Datenbank).</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000011</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000012</outgoing>
+    </serviceTask>
+
+    <sendTask name="CI-Daten senden" id="_a1000000-0000-4000-8000-000000000013" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: CMDB, Integrationsadapter.
+Input: CI-ID, CI-Typ, Betriebsverantwortliche, abhängige Business-Services.
+Verarbeitungslogik: Die CI-Daten werden als Antwort an das ITSM-Ticketsystem übermittelt.
+Output: Nachricht "CI-Daten" an das ITSM-Ticketsystem.
+Persistierung: Keine.
+Schnittstelle / Protokoll: REST-API, HTTPS, JSON.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000012</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000013</outgoing>
+    </sendTask>
+
+    <endEvent name="CI-Daten bereitgestellt" id="_a1000000-0000-4000-8000-000000000014">
+      <incoming>_b2000000-0000-4000-8000-000000000013</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000010" targetRef="_a1000000-0000-4000-8000-000000000011" id="_b2000000-0000-4000-8000-000000000010"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000011" targetRef="_a1000000-0000-4000-8000-000000000012" id="_b2000000-0000-4000-8000-000000000011"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000012" targetRef="_a1000000-0000-4000-8000-000000000013" id="_b2000000-0000-4000-8000-000000000012"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000013" targetRef="_a1000000-0000-4000-8000-000000000014" id="_b2000000-0000-4000-8000-000000000013"/>
+  </process>
+
+  <!-- ===== PROZESS: Mail-Service ===== -->
+  <process name="Mail-Service" id="process_f6000000-0000-4000-8000-000000000003" isExecutable="false" isClosed="false" processType="None">
+    <laneSet id="laneSet_f6000000-0000-4000-8000-000000000003">
+      <lane name="Mail-Service" id="_d4000000-0000-4000-8000-000000000003">
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000026</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000027</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000028</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000029</flowNodeRef>
+        <flowNodeRef>_a1000000-0000-4000-8000-000000000030</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <startEvent name="Benachrichtigungsauftrag empfangen" id="_a1000000-0000-4000-8000-000000000026">
+      <outgoing>_b2000000-0000-4000-8000-000000000026</outgoing>
+      <messageEventDefinition id="msgEvtDef_a1000000-0000-4000-8000-000000000026"/>
+    </startEvent>
+
+    <scriptTask name="E-Mail-Vorlage generieren" id="_a1000000-0000-4000-8000-000000000027" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: Mail-Service, Template-Engine.
+Input: Benachrichtigungsauftrag (Incident-Nummer, Empfänger, Lösungsbeschreibung).
+Verarbeitungslogik: Die Vorlage für die Lösungsmitteilung wird mit den Daten des Auftrags befüllt.
+Output: Versandfertige E-Mail.
+Persistierung: Keine.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000026</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000027</outgoing>
+    </scriptTask>
+
+    <serviceTask name="E-Mail versenden" id="_a1000000-0000-4000-8000-000000000028" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: Mail-Service, SMTP-Versand.
+Input: Versandfertige E-Mail.
+Verarbeitungslogik: Die Lösungsmitteilung wird an die E-Mail-Adresse des Melders versendet.
+Output: Versandstatus.
+Persistierung: Keine.
+Schnittstelle / Protokoll: SMTP.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000027</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000028</outgoing>
+    </serviceTask>
+
+    <sendTask name="Versandstatus senden" id="_a1000000-0000-4000-8000-000000000029" isForCompensation="false">
+      <documentation textFormat="text/plain">System / Komponente: Mail-Service, Integrationsadapter.
+Input: Versandstatus und Incident-Nummer.
+Verarbeitungslogik: Die Versandbestätigung wird an das ITSM-Ticketsystem zurückgemeldet.
+Output: Nachricht "Versandstatus" an das ITSM-Ticketsystem.
+Persistierung: Keine.
+Schnittstelle / Protokoll: REST-API, HTTPS, JSON.</documentation>
+      <incoming>_b2000000-0000-4000-8000-000000000028</incoming>
+      <outgoing>_b2000000-0000-4000-8000-000000000029</outgoing>
+    </sendTask>
+
+    <endEvent name="Benachrichtigung versendet" id="_a1000000-0000-4000-8000-000000000030">
+      <incoming>_b2000000-0000-4000-8000-000000000029</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000026" targetRef="_a1000000-0000-4000-8000-000000000027" id="_b2000000-0000-4000-8000-000000000026"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000027" targetRef="_a1000000-0000-4000-8000-000000000028" id="_b2000000-0000-4000-8000-000000000027"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000028" targetRef="_a1000000-0000-4000-8000-000000000029" id="_b2000000-0000-4000-8000-000000000028"/>
+    <sequenceFlow sourceRef="_a1000000-0000-4000-8000-000000000029" targetRef="_a1000000-0000-4000-8000-000000000030" id="_b2000000-0000-4000-8000-000000000029"/>
+  </process>
+
+  <!-- ===== BPMN-DI ===== -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration_17000000-0000-4000-8000-000000000000">
+
+      <!-- Pools und Lanes (Breite = max(1830, 220*38+330) = 8690) -->
+      <bpmndi:BPMNShape bpmnElement="_e5000000-0000-4000-8000-000000000000" isHorizontal="true"><omgdc:Bounds x="10" y="0" width="8690" height="380"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_d4000000-0000-4000-8000-000000000000" isHorizontal="true"><omgdc:Bounds x="40" y="0" width="8660" height="380"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e5000000-0000-4000-8000-000000000001" isHorizontal="true"><omgdc:Bounds x="10" y="390" width="8690" height="380"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_d4000000-0000-4000-8000-000000000001" isHorizontal="true"><omgdc:Bounds x="40" y="390" width="8660" height="380"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e5000000-0000-4000-8000-000000000002" isHorizontal="true"><omgdc:Bounds x="10" y="780" width="8690" height="380"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_d4000000-0000-4000-8000-000000000002" isHorizontal="true"><omgdc:Bounds x="40" y="780" width="8660" height="380"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e5000000-0000-4000-8000-000000000003" isHorizontal="true"><omgdc:Bounds x="10" y="1170" width="8690" height="380"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_d4000000-0000-4000-8000-000000000003" isHorizontal="true"><omgdc:Bounds x="40" y="1170" width="8660" height="380"/></bpmndi:BPMNShape>
+
+      <!-- Self-Service-Portal -->
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000000"><omgdc:Bounds x="120" y="172" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000001"><omgdc:Bounds x="220" y="152" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000002"><omgdc:Bounds x="440" y="152" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000003"><omgdc:Bounds x="660" y="152" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000036"><omgdc:Bounds x="7920" y="152" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000037"><omgdc:Bounds x="8140" y="152" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000038"><omgdc:Bounds x="8417" y="172" width="36" height="36"/></bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000000"><omgdi:waypoint x="156" y="190"/><omgdi:waypoint x="220" y="190"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000001"><omgdi:waypoint x="371" y="190"/><omgdi:waypoint x="440" y="190"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000002"><omgdi:waypoint x="591" y="190"/><omgdi:waypoint x="660" y="190"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000003"><omgdi:waypoint x="811" y="190"/><omgdi:waypoint x="7920" y="190"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000036"><omgdi:waypoint x="8071" y="190"/><omgdi:waypoint x="8140" y="190"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000037"><omgdi:waypoint x="8291" y="190"/><omgdi:waypoint x="8417" y="190"/></bpmndi:BPMNEdge>
+
+      <!-- ITSM-Ticketsystem -->
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000004"><omgdc:Bounds x="937" y="562" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000005"><omgdc:Bounds x="1100" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000006"><omgdc:Bounds x="1320" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000007"><omgdc:Bounds x="1540" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000008"><omgdc:Bounds x="1760" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000009"><omgdc:Bounds x="1980" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000015"><omgdc:Bounds x="3300" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000016"><omgdc:Bounds x="3520" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000017"><omgdc:Bounds x="3740" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000018"><omgdc:Bounds x="3960" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000019"><omgdc:Bounds x="4180" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000020"><omgdc:Bounds x="4400" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000021"><omgdc:Bounds x="4620" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000022"><omgdc:Bounds x="4840" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000023"><omgdc:Bounds x="5060" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000024"><omgdc:Bounds x="5280" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000025"><omgdc:Bounds x="5500" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000031"><omgdc:Bounds x="6820" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000032"><omgdc:Bounds x="7040" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000033"><omgdc:Bounds x="7260" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000034"><omgdc:Bounds x="7480" y="542" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000035"><omgdc:Bounds x="7757" y="562" width="36" height="36"/></bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000004"><omgdi:waypoint x="973" y="580"/><omgdi:waypoint x="1100" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000005"><omgdi:waypoint x="1251" y="580"/><omgdi:waypoint x="1320" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000006"><omgdi:waypoint x="1471" y="580"/><omgdi:waypoint x="1540" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000007"><omgdi:waypoint x="1691" y="580"/><omgdi:waypoint x="1760" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000008"><omgdi:waypoint x="1911" y="580"/><omgdi:waypoint x="1980" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000009"><omgdi:waypoint x="2131" y="580"/><omgdi:waypoint x="3300" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000015"><omgdi:waypoint x="3451" y="580"/><omgdi:waypoint x="3520" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000016"><omgdi:waypoint x="3671" y="580"/><omgdi:waypoint x="3740" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000017"><omgdi:waypoint x="3891" y="580"/><omgdi:waypoint x="3960" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000018"><omgdi:waypoint x="4111" y="580"/><omgdi:waypoint x="4180" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000019"><omgdi:waypoint x="4331" y="580"/><omgdi:waypoint x="4400" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000020"><omgdi:waypoint x="4551" y="580"/><omgdi:waypoint x="4620" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000021"><omgdi:waypoint x="4771" y="580"/><omgdi:waypoint x="4840" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000022"><omgdi:waypoint x="4991" y="580"/><omgdi:waypoint x="5060" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000023"><omgdi:waypoint x="5211" y="580"/><omgdi:waypoint x="5280" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000024"><omgdi:waypoint x="5431" y="580"/><omgdi:waypoint x="5500" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000025"><omgdi:waypoint x="5651" y="580"/><omgdi:waypoint x="6820" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000031"><omgdi:waypoint x="6971" y="580"/><omgdi:waypoint x="7040" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000032"><omgdi:waypoint x="7191" y="580"/><omgdi:waypoint x="7260" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000033"><omgdi:waypoint x="7411" y="580"/><omgdi:waypoint x="7480" y="580"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000034"><omgdi:waypoint x="7631" y="580"/><omgdi:waypoint x="7757" y="580"/></bpmndi:BPMNEdge>
+
+      <!-- CMDB -->
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000010"><omgdc:Bounds x="2257" y="952" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000011"><omgdc:Bounds x="2420" y="932" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000012"><omgdc:Bounds x="2640" y="932" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000013"><omgdc:Bounds x="2860" y="932" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000014"><omgdc:Bounds x="3137" y="952" width="36" height="36"/></bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000010"><omgdi:waypoint x="2293" y="970"/><omgdi:waypoint x="2420" y="970"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000011"><omgdi:waypoint x="2571" y="970"/><omgdi:waypoint x="2640" y="970"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000012"><omgdi:waypoint x="2791" y="970"/><omgdi:waypoint x="2860" y="970"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000013"><omgdi:waypoint x="3011" y="970"/><omgdi:waypoint x="3137" y="970"/></bpmndi:BPMNEdge>
+
+      <!-- Mail-Service -->
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000026"><omgdc:Bounds x="5777" y="1342" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000027"><omgdc:Bounds x="5940" y="1322" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000028"><omgdc:Bounds x="6160" y="1322" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000029"><omgdc:Bounds x="6380" y="1322" width="151" height="76"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_a1000000-0000-4000-8000-000000000030"><omgdc:Bounds x="6657" y="1342" width="36" height="36"/></bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000026"><omgdi:waypoint x="5813" y="1360"/><omgdi:waypoint x="5940" y="1360"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000027"><omgdi:waypoint x="6091" y="1360"/><omgdi:waypoint x="6160" y="1360"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000028"><omgdi:waypoint x="6311" y="1360"/><omgdi:waypoint x="6380" y="1360"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b2000000-0000-4000-8000-000000000029"><omgdi:waypoint x="6531" y="1360"/><omgdi:waypoint x="6657" y="1360"/></bpmndi:BPMNEdge>
+
+      <!-- Message Flows -->
+      <bpmndi:BPMNEdge bpmnElement="_c3000000-0000-4000-8000-000000000001"><omgdi:waypoint x="735" y="228"/><omgdi:waypoint x="735" y="385"/><omgdi:waypoint x="955" y="385"/><omgdi:waypoint x="955" y="562"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_c3000000-0000-4000-8000-000000000002"><omgdi:waypoint x="2055" y="618"/><omgdi:waypoint x="2055" y="775"/><omgdi:waypoint x="2275" y="775"/><omgdi:waypoint x="2275" y="952"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_c3000000-0000-4000-8000-000000000003"><omgdi:waypoint x="2935" y="932"/><omgdi:waypoint x="2935" y="775"/><omgdi:waypoint x="3375" y="775"/><omgdi:waypoint x="3375" y="618"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_c3000000-0000-4000-8000-000000000004"><omgdi:waypoint x="5575" y="618"/><omgdi:waypoint x="5575" y="775"/><omgdi:waypoint x="5795" y="775"/><omgdi:waypoint x="5795" y="1342"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_c3000000-0000-4000-8000-000000000005"><omgdi:waypoint x="6455" y="1322"/><omgdi:waypoint x="6455" y="1165"/><omgdi:waypoint x="6895" y="1165"/><omgdi:waypoint x="6895" y="618"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_c3000000-0000-4000-8000-000000000006"><omgdi:waypoint x="7555" y="542"/><omgdi:waypoint x="7555" y="385"/><omgdi:waypoint x="7995" y="385"/><omgdi:waypoint x="7995" y="228"/></bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>
