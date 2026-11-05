@@ -6,26 +6,27 @@
              xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
              xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             id="definition__3f6a9c21-7b84-4e15-9d02-5c1e8a7b4f30"
+             id="definition__5b2e7a10-3c4d-4e5f-8a6b-7c8d9e0f0000"
              typeLanguage="http://www.w3.org/2001/XMLSchema"
              xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd"
              targetNamespace="http://www.boc-group.com">
 
-  <collaboration id="Collaboration_3f6a9c21-7b84-4e15-9d02-5c1e8a7b4f30"
+  <!-- Pools: Kunde (oben), Organisation (unten, 2 Lanes) -->
+  <collaboration id="Collaboration_5b2e7a10-3c4d-4e5f-8a6b-7c8d9e0f0001"
                  name="Wohngeld beantragen"
                  isClosed="false">
-    <participant processRef="process_c7e41a92-5d3b-4f08-a6c1-92b0d8e3f517"
+    <participant processRef="process_b0000001-3c4d-4e5f-8a6b-7c8d9e0f0001"
                  name="Kunde"
-                 id="_c7e41a92-5d3b-4f08-a6c1-92b0d8e3f517"/>
-    <participant processRef="process_5b2d90e8-1c47-4a63-8f9e-d4a7c6015b82"
+                 id="_a0000001-3c4d-4e5f-8a6b-7c8d9e0f0001"/>
+    <participant processRef="process_b0000001-3c4d-4e5f-8a6b-7c8d9e0f0002"
                  name="Organisation"
-                 id="_5b2d90e8-1c47-4a63-8f9e-d4a7c6015b82"/>
+                 id="_a0000001-3c4d-4e5f-8a6b-7c8d9e0f0002"/>
 
-    <!-- Kunde -> Organisation: Antrag einreichen -->
-    <messageFlow id="_e5d3a7b2-8c10-4f49-a6e1-2b9f0c4d7a85"
-                 name="Antrag mit Nachweisen"
-                 sourceRef="_b93e5d17-0a8c-4d64-b2f3-6c1a9e7d8045"
-                 targetRef="_a8f3b6d2-1e75-4c09-b4a8-59d0e2c7f361">
+    <!-- Kunde → Organisation: Wohngeldantrag -->
+    <messageFlow id="_f3000001-3c4d-4e5f-8a6b-7c8d9e0f0001"
+                 name="Wohngeldantrag mit Nachweisen"
+                 sourceRef="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0004"
+                 targetRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0001">
       <extensionElements>
         <adonis:connector>
           <adonis:attribute name="DISPLAY_DENOMNIATION" type="BOOL" notebook="1" sourcelang="" novalue="0">
@@ -40,11 +41,11 @@
       </extensionElements>
     </messageFlow>
 
-    <!-- Organisation -> Kunde: Wohngeldbescheid -->
-    <messageFlow id="_16b8f0d4-a9e3-4c72-8d05-e7c1a5b3f290"
-                 name="Wohngeldbescheid"
-                 sourceRef="_85d0c3b7-e6a1-4f49-92e8-0b4d7a1c5f93"
-                 targetRef="_6f0d2a8c-e4b7-4135-9c68-a5b3d1f29e70">
+    <!-- Organisation → Kunde: Bewilligungsbescheid -->
+    <messageFlow id="_f3000001-3c4d-4e5f-8a6b-7c8d9e0f0002"
+                 name="Bewilligungsbescheid"
+                 sourceRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0008"
+                 targetRef="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0005">
       <extensionElements>
         <adonis:connector>
           <adonis:attribute name="DISPLAY_DENOMNIATION" type="BOOL" notebook="1" sourcelang="" novalue="0">
@@ -59,11 +60,11 @@
       </extensionElements>
     </messageFlow>
 
-    <!-- Organisation -> Kunde: Wohngeldzahlung -->
-    <messageFlow id="_ad07e2c9-5f4b-4186-b3a9-0d6c8e1f7524"
+    <!-- Organisation → Kunde: Wohngeldzahlung -->
+    <messageFlow id="_f3000001-3c4d-4e5f-8a6b-7c8d9e0f0003"
                  name="Wohngeldzahlung"
-                 sourceRef="_3b7f1e92-a4d8-4c65-b0a3-d6c9e2f8714a"
-                 targetRef="_d1a58c3f-72e9-4b06-8d14-f0c7e6a3b925">
+                 sourceRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0010"
+                 targetRef="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0007">
       <extensionElements>
         <adonis:connector>
           <adonis:attribute name="DISPLAY_DENOMNIATION" type="BOOL" notebook="1" sourcelang="" novalue="0">
@@ -79,301 +80,360 @@
     </messageFlow>
   </collaboration>
 
-  <!-- PROZESS: Kunde -->
-  <process name="Kunde"
-           id="process_c7e41a92-5d3b-4f08-a6c1-92b0d8e3f517"
-           isExecutable="false"
-           isClosed="false"
-           processType="None">
-
-    <laneSet id="laneSet_c7e41a92-5d3b-4f08-a6c1-92b0d8e3f517">
-      <lane name="Antragstellende Person" id="_1d9a7e34-c2b5-4086-b3f1-7a6e05d9c428">
-        <flowNodeRef>_e2b6d815-9f4a-4c37-8a1e-3d70b5c9f162</flowNodeRef>
-        <flowNodeRef>_47c8a3e0-6b1d-4f92-95a7-e8d2c1b40f36</flowNodeRef>
-        <flowNodeRef>_b93e5d17-0a8c-4d64-b2f3-6c1a9e7d8045</flowNodeRef>
-        <flowNodeRef>_6f0d2a8c-e4b7-4135-9c68-a5b3d1f29e70</flowNodeRef>
-        <flowNodeRef>_d1a58c3f-72e9-4b06-8d14-f0c7e6a3b925</flowNodeRef>
-        <flowNodeRef>_2c7b9e41-d5a0-4f83-a6d2-8b4e1f0c7a59</flowNodeRef>
+  <!-- ===== PROZESS: Kunde ===== -->
+  <process name="Kunde" id="process_b0000001-3c4d-4e5f-8a6b-7c8d9e0f0001" isExecutable="false" isClosed="false" processType="None">
+    <laneSet id="laneSet_c0000001-3c4d-4e5f-8a6b-7c8d9e0f0001">
+      <lane name="Antragsteller" id="_d0000001-3c4d-4e5f-8a6b-7c8d9e0f0001">
+        <flowNodeRef>_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0001</flowNodeRef>
+        <flowNodeRef>_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0002</flowNodeRef>
+        <flowNodeRef>_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0003</flowNodeRef>
+        <flowNodeRef>_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0004</flowNodeRef>
+        <flowNodeRef>_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0005</flowNodeRef>
+        <flowNodeRef>_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0006</flowNodeRef>
+        <flowNodeRef>_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0007</flowNodeRef>
+        <flowNodeRef>_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0008</flowNodeRef>
       </lane>
     </laneSet>
 
-    <startEvent name="Wohngeldbedarf entstanden" id="_e2b6d815-9f4a-4c37-8a1e-3d70b5c9f162">
-      <outgoing>_5c3e8b0a-d791-4a26-8f15-b2e6a0d4c973</outgoing>
+    <startEvent name="Wohnkostenzuschuss benötigt" id="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0001">
+      <outgoing>_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0001</outgoing>
     </startEvent>
 
-    <task name="Antrag ausfüllen" id="_47c8a3e0-6b1d-4f92-95a7-e8d2c1b40f36" isForCompensation="false">
-      <documentation textFormat="text/plain">Die antragstellende Person füllt das Antragsformular auf Wohngeld aus und stellt die erforderlichen Nachweise zu Einkommen, Miete bzw. Belastung und Haushaltsmitgliedern zusammen. Ergebnis ist ein ausgefüllter Antrag mit Nachweisen.</documentation>
-      <incoming>_5c3e8b0a-d791-4a26-8f15-b2e6a0d4c973</incoming>
-      <outgoing>_90b4f2d6-3a1c-4e58-b7d9-6f8a1c5e0b32</outgoing>
+    <task name="Wohngeldanspruch prüfen" id="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0002" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Antragsteller prüft anhand von Haushaltseinkommen, Anzahl der Haushaltsmitglieder und Höhe der Miete bzw. Belastung, ob ein Wohngeldanspruch in Betracht kommt. Ergebnis ist die Entscheidung, einen Wohngeldantrag zu stellen.</documentation>
+      <incoming>_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0001</incoming>
+      <outgoing>_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0002</outgoing>
     </task>
 
-    <task name="Antrag einreichen" id="_b93e5d17-0a8c-4d64-b2f3-6c1a9e7d8045" isForCompensation="false">
-      <documentation textFormat="text/plain">Die antragstellende Person übermittelt den ausgefüllten Antrag samt Nachweisen an die zuständige Wohngeldbehörde. Mit der Übermittlung ist der Antrag gestellt.</documentation>
-      <incoming>_90b4f2d6-3a1c-4e58-b7d9-6f8a1c5e0b32</incoming>
-      <outgoing>_2f8a6c1d-e5b9-4073-a4e2-9d0b7f3c1a68</outgoing>
+    <task name="Antragsunterlagen zusammenstellen" id="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0003" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Antragsteller füllt das Antragsformular aus und stellt die erforderlichen Nachweise zusammen, insbesondere Einkommensnachweise aller Haushaltsmitglieder sowie den Miet- bzw. Belastungsnachweis. Ergebnis ist ein vollständiger Antragssatz.</documentation>
+      <incoming>_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0002</incoming>
+      <outgoing>_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0003</outgoing>
     </task>
 
-    <intermediateCatchEvent name="Wohngeldbescheid erhalten" id="_6f0d2a8c-e4b7-4135-9c68-a5b3d1f29e70">
-      <incoming>_2f8a6c1d-e5b9-4073-a4e2-9d0b7f3c1a68</incoming>
-      <outgoing>_ba1d7e43-9c06-4f2a-8e35-c4a9f0b2d617</outgoing>
-      <messageEventDefinition id="messageEventDefinition_6f0d2a8c-e4b7-4135-9c68-a5b3d1f29e70"/>
+    <task name="Wohngeldantrag stellen" id="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0004" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Antragsteller reicht den Wohngeldantrag mit den Nachweisen bei der zuständigen Wohngeldbehörde ein. Ergebnis ist die Übermittlung des Antrags an die Organisation (Nachricht: Wohngeldantrag mit Nachweisen).</documentation>
+      <incoming>_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0003</incoming>
+      <outgoing>_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0004</outgoing>
+    </task>
+
+    <intermediateCatchEvent name="Bewilligungsbescheid erhalten" id="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0005">
+      <incoming>_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0004</incoming>
+      <outgoing>_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0005</outgoing>
+      <messageEventDefinition id="messageEventDefinition_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0005"/>
     </intermediateCatchEvent>
 
-    <intermediateCatchEvent name="Wohngeld erhalten" id="_d1a58c3f-72e9-4b06-8d14-f0c7e6a3b925">
-      <incoming>_ba1d7e43-9c06-4f2a-8e35-c4a9f0b2d617</incoming>
-      <outgoing>_61e9c5a8-4f2b-4d90-b3c7-a8d1e6f07245</outgoing>
-      <messageEventDefinition id="messageEventDefinition_d1a58c3f-72e9-4b06-8d14-f0c7e6a3b925"/>
+    <task name="Bewilligungsbescheid prüfen" id="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0006" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Antragsteller prüft den Bewilligungsbescheid auf Bewilligungszeitraum, Höhe des Wohngelds und Rechtsbehelfsbelehrung. Ergebnis ist die Kenntnisnahme der Bewilligung.</documentation>
+      <incoming>_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0005</incoming>
+      <outgoing>_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0006</outgoing>
+    </task>
+
+    <intermediateCatchEvent name="Wohngeld eingegangen" id="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0007">
+      <incoming>_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0006</incoming>
+      <outgoing>_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0007</outgoing>
+      <messageEventDefinition id="messageEventDefinition_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0007"/>
     </intermediateCatchEvent>
 
-    <endEvent name="Wohngeld bewilligt" id="_2c7b9e41-d5a0-4f83-a6d2-8b4e1f0c7a59">
-      <incoming>_61e9c5a8-4f2b-4d90-b3c7-a8d1e6f07245</incoming>
+    <endEvent name="Wohngeld erhalten" id="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0008">
+      <incoming>_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0007</incoming>
     </endEvent>
 
-    <sequenceFlow sourceRef="_e2b6d815-9f4a-4c37-8a1e-3d70b5c9f162" targetRef="_47c8a3e0-6b1d-4f92-95a7-e8d2c1b40f36" id="_5c3e8b0a-d791-4a26-8f15-b2e6a0d4c973"/>
-    <sequenceFlow sourceRef="_47c8a3e0-6b1d-4f92-95a7-e8d2c1b40f36" targetRef="_b93e5d17-0a8c-4d64-b2f3-6c1a9e7d8045" id="_90b4f2d6-3a1c-4e58-b7d9-6f8a1c5e0b32"/>
-    <sequenceFlow sourceRef="_b93e5d17-0a8c-4d64-b2f3-6c1a9e7d8045" targetRef="_6f0d2a8c-e4b7-4135-9c68-a5b3d1f29e70" id="_2f8a6c1d-e5b9-4073-a4e2-9d0b7f3c1a68"/>
-    <sequenceFlow sourceRef="_6f0d2a8c-e4b7-4135-9c68-a5b3d1f29e70" targetRef="_d1a58c3f-72e9-4b06-8d14-f0c7e6a3b925" id="_ba1d7e43-9c06-4f2a-8e35-c4a9f0b2d617"/>
-    <sequenceFlow sourceRef="_d1a58c3f-72e9-4b06-8d14-f0c7e6a3b925" targetRef="_2c7b9e41-d5a0-4f83-a6d2-8b4e1f0c7a59" id="_61e9c5a8-4f2b-4d90-b3c7-a8d1e6f07245"/>
+    <sequenceFlow sourceRef="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0001" targetRef="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0002" id="_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0001"/>
+    <sequenceFlow sourceRef="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0002" targetRef="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0003" id="_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0002"/>
+    <sequenceFlow sourceRef="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0003" targetRef="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0004" id="_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0003"/>
+    <sequenceFlow sourceRef="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0004" targetRef="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0005" id="_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0004"/>
+    <sequenceFlow sourceRef="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0005" targetRef="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0006" id="_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0005"/>
+    <sequenceFlow sourceRef="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0006" targetRef="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0007" id="_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0006"/>
+    <sequenceFlow sourceRef="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0007" targetRef="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0008" id="_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0007"/>
   </process>
 
-  <!-- PROZESS: Organisation -->
-  <process name="Organisation"
-           id="process_5b2d90e8-1c47-4a63-8f9e-d4a7c6015b82"
-           isExecutable="false"
-           isClosed="false"
-           processType="None">
-
-    <laneSet id="laneSet_5b2d90e8-1c47-4a63-8f9e-d4a7c6015b82">
-      <lane name="Sachbearbeitung Wohngeld" id="_9a4c2f6b-3e81-47d5-a0b9-1f8d6c3e7254">
-        <flowNodeRef>_a8f3b6d2-1e75-4c09-b4a8-59d0e2c7f361</flowNodeRef>
-        <flowNodeRef>_0e5d7a93-b2c6-4818-9f40-c3a1d8e6b727</flowNodeRef>
-        <flowNodeRef>_f4c1e8b0-3a96-4d72-8e5b-7d2f0a9c1b48</flowNodeRef>
-        <flowNodeRef>_73a9d0c5-8f2e-4b61-a3d7-e1b5c4f98206</flowNodeRef>
-        <flowNodeRef>_c6b2f7e1-5d08-49a3-b71c-2e9a6d0f4583</flowNodeRef>
-        <flowNodeRef>_19e4a6d8-c3f7-4520-8b9d-a7f1e3b0c264</flowNodeRef>
-        <flowNodeRef>_85d0c3b7-e6a1-4f49-92e8-0b4d7a1c5f93</flowNodeRef>
-        <flowNodeRef>_3b7f1e92-a4d8-4c65-b0a3-d6c9e2f8714a</flowNodeRef>
-        <flowNodeRef>_ea62c9f5-0b3d-4817-a5e4-1c8f7b3d9026</flowNodeRef>
+  <!-- ===== PROZESS: Organisation ===== -->
+  <process name="Organisation" id="process_b0000001-3c4d-4e5f-8a6b-7c8d9e0f0002" isExecutable="false" isClosed="false" processType="None">
+    <laneSet id="laneSet_c0000001-3c4d-4e5f-8a6b-7c8d9e0f0002">
+      <lane name="Sachbearbeitung Wohngeld" id="_d0000001-3c4d-4e5f-8a6b-7c8d9e0f0002">
+        <flowNodeRef>_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0001</flowNodeRef>
+        <flowNodeRef>_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0002</flowNodeRef>
+        <flowNodeRef>_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0003</flowNodeRef>
+        <flowNodeRef>_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0004</flowNodeRef>
+        <flowNodeRef>_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0005</flowNodeRef>
+        <flowNodeRef>_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0006</flowNodeRef>
+        <flowNodeRef>_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0007</flowNodeRef>
+        <flowNodeRef>_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0008</flowNodeRef>
+      </lane>
+      <lane name="Zahlstelle" id="_d0000001-3c4d-4e5f-8a6b-7c8d9e0f0003">
+        <flowNodeRef>_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0009</flowNodeRef>
+        <flowNodeRef>_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0010</flowNodeRef>
+        <flowNodeRef>_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0011</flowNodeRef>
       </lane>
     </laneSet>
 
-    <startEvent name="Antrag eingegangen" id="_a8f3b6d2-1e75-4c09-b4a8-59d0e2c7f361">
-      <outgoing>_d8a2f0c4-7e1b-4635-9a8d-3c5e1b9f6072</outgoing>
-      <messageEventDefinition id="messageEventDefinition_a8f3b6d2-1e75-4c09-b4a8-59d0e2c7f361"/>
+    <startEvent name="Wohngeldantrag eingegangen" id="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0001">
+      <outgoing>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0001</outgoing>
+      <messageEventDefinition id="messageEventDefinition_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0001"/>
     </startEvent>
 
-    <task name="Antrag erfassen" id="_0e5d7a93-b2c6-4818-9f40-c3a1d8e6b727" isForCompensation="false">
-      <documentation textFormat="text/plain">Die Sachbearbeitung nimmt den eingegangenen Wohngeldantrag mit den Nachweisen entgegen und erfasst ihn mit Eingangsdatum in der Fachanwendung. Ergebnis ist ein registrierter Antrag.</documentation>
-      <incoming>_d8a2f0c4-7e1b-4635-9a8d-3c5e1b9f6072</incoming>
-      <outgoing>_4a6e1d9b-c0f3-4782-b5a1-e9d7c2f38a06</outgoing>
+    <task name="Antrag erfassen" id="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0002" isForCompensation="false">
+      <documentation textFormat="text/plain">Die Sachbearbeitung erfasst den eingegangenen Wohngeldantrag im Fachverfahren und vergibt ein Aktenzeichen. Ergebnis ist ein angelegter Vorgang mit den Antragsdaten.</documentation>
+      <incoming>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0001</incoming>
+      <outgoing>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0002</outgoing>
     </task>
 
-    <task name="Zuständigkeit und Vollständigkeit prüfen" id="_f4c1e8b0-3a96-4d72-8e5b-7d2f0a9c1b48" isForCompensation="false">
-      <documentation textFormat="text/plain">Die Sachbearbeitung prüft die örtliche Zuständigkeit der Behörde und die Vollständigkeit der Antragsunterlagen. Ergebnis ist ein zuständigkeitsgeprüfter und vollständiger Antrag.</documentation>
-      <incoming>_4a6e1d9b-c0f3-4782-b5a1-e9d7c2f38a06</incoming>
-      <outgoing>_f7c3a5e2-1b84-4d09-8c6f-0a2d9e7b4135</outgoing>
+    <task name="Zuständigkeit prüfen" id="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0003" isForCompensation="false">
+      <documentation textFormat="text/plain">Die Sachbearbeitung prüft die sachliche und örtliche Zuständigkeit der Wohngeldbehörde anhand der Wohnanschrift des Antragstellers. Ergebnis ist die festgestellte Zuständigkeit.</documentation>
+      <incoming>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0002</incoming>
+      <outgoing>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0003</outgoing>
     </task>
 
-    <task name="Anspruchsvoraussetzungen prüfen" id="_73a9d0c5-8f2e-4b61-a3d7-e1b5c4f98206" isForCompensation="false">
-      <documentation textFormat="text/plain">Die Sachbearbeitung prüft anhand der Nachweise zu Wohnkosten, Einkommen und Haushaltsgröße, ob die Voraussetzungen für einen Wohngeldanspruch vorliegen. Ergebnis ist die festgestellte Anspruchsberechtigung.</documentation>
-      <incoming>_f7c3a5e2-1b84-4d09-8c6f-0a2d9e7b4135</incoming>
-      <outgoing>_08d9b1f6-a5c2-4e37-96b4-d1f8a3c7e520</outgoing>
+    <task name="Vollständigkeit prüfen" id="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0004" isForCompensation="false">
+      <documentation textFormat="text/plain">Die Sachbearbeitung prüft, ob Antragsformular und Nachweise (Einkommens- sowie Miet- bzw. Belastungsnachweise) vollständig vorliegen. Ergebnis ist die festgestellte Vollständigkeit der Antragsunterlagen.</documentation>
+      <incoming>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0003</incoming>
+      <outgoing>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0004</outgoing>
     </task>
 
-    <task name="Wohngeld berechnen" id="_c6b2f7e1-5d08-49a3-b71c-2e9a6d0f4583" isForCompensation="false">
-      <documentation textFormat="text/plain">Die Sachbearbeitung ermittelt auf Grundlage der geprüften Angaben die Höhe des monatlichen Wohngeldanspruchs. Ergebnis ist der berechnete Wohngeldbetrag.</documentation>
-      <incoming>_08d9b1f6-a5c2-4e37-96b4-d1f8a3c7e520</incoming>
-      <outgoing>_9d2e7c40-6f1a-4b85-a3d8-5e0c9b2f1a74</outgoing>
+    <task name="Anspruchsvoraussetzungen prüfen" id="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0005" isForCompensation="false">
+      <documentation textFormat="text/plain">Die Sachbearbeitung prüft nach dem Wohngeldgesetz die Antragsberechtigung und ob ein Ausschluss durch den Bezug anderer Transferleistungen vorliegt. Ergebnis ist der festgestellte Wohngeldanspruch dem Grunde nach.</documentation>
+      <incoming>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0004</incoming>
+      <outgoing>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0005</outgoing>
     </task>
 
-    <task name="Bescheid erstellen" id="_19e4a6d8-c3f7-4520-8b9d-a7f1e3b0c264" isForCompensation="false">
-      <documentation textFormat="text/plain">Die Sachbearbeitung fertigt den Bewilligungsbescheid mit Wohngeldbetrag und Bewilligungszeitraum. Ergebnis ist der Wohngeldbescheid.</documentation>
-      <incoming>_9d2e7c40-6f1a-4b85-a3d8-5e0c9b2f1a74</incoming>
-      <outgoing>_3e5a0f8b-d2c7-4961-b84e-7a1f6d3c9052</outgoing>
+    <task name="Wohngeld berechnen" id="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0006" isForCompensation="false">
+      <documentation textFormat="text/plain">Die Sachbearbeitung ermittelt Gesamteinkommen, zu berücksichtigende Miete bzw. Belastung und Anzahl der Haushaltsmitglieder und berechnet daraus den monatlichen Wohngeldbetrag sowie den Bewilligungszeitraum. Ergebnis ist der Wohngeldbetrag.</documentation>
+      <incoming>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0005</incoming>
+      <outgoing>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0006</outgoing>
     </task>
 
-    <task name="Bescheid versenden" id="_85d0c3b7-e6a1-4f49-92e8-0b4d7a1c5f93" isForCompensation="false">
-      <documentation textFormat="text/plain">Die Sachbearbeitung übermittelt den Wohngeldbescheid an die antragstellende Person. Ergebnis ist der bekanntgegebene Bescheid.</documentation>
-      <incoming>_3e5a0f8b-d2c7-4961-b84e-7a1f6d3c9052</incoming>
-      <outgoing>_c2f6b9d1-0e8a-4753-a1c9-f4b7e5d20a38</outgoing>
+    <task name="Bewilligungsbescheid erstellen" id="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0007" isForCompensation="false">
+      <documentation textFormat="text/plain">Die Sachbearbeitung erstellt den Bewilligungsbescheid mit Wohngeldbetrag, Bewilligungszeitraum, Berechnungsgrundlagen und Rechtsbehelfsbelehrung und gibt ihn frei. Ergebnis ist der freigegebene Bewilligungsbescheid.</documentation>
+      <incoming>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0006</incoming>
+      <outgoing>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0007</outgoing>
     </task>
 
-    <task name="Wohngeld auszahlen" id="_3b7f1e92-a4d8-4c65-b0a3-d6c9e2f8714a" isForCompensation="false">
-      <documentation textFormat="text/plain">Die Sachbearbeitung veranlasst die Auszahlung des bewilligten Wohngeldes an die antragstellende Person. Ergebnis ist die angewiesene Zahlung.</documentation>
-      <incoming>_c2f6b9d1-0e8a-4753-a1c9-f4b7e5d20a38</incoming>
-      <outgoing>_7a1c4e95-b3d0-4f68-9e27-c8a5d0f1b346</outgoing>
+    <task name="Bewilligungsbescheid versenden" id="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0008" isForCompensation="false">
+      <documentation textFormat="text/plain">Die Sachbearbeitung übermittelt den Bewilligungsbescheid an den Antragsteller (Nachricht: Bewilligungsbescheid) und gibt die Zahlung an die Zahlstelle weiter. Ergebnis ist der zugestellte Bescheid.</documentation>
+      <incoming>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0007</incoming>
+      <outgoing>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0008</outgoing>
     </task>
 
-    <endEvent name="Wohngeld ausgezahlt" id="_ea62c9f5-0b3d-4817-a5e4-1c8f7b3d9026">
-      <incoming>_7a1c4e95-b3d0-4f68-9e27-c8a5d0f1b346</incoming>
+    <intermediateThrowEvent name="Zahlung angewiesen" id="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0009">
+      <incoming>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0008</incoming>
+      <outgoing>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0009</outgoing>
+    </intermediateThrowEvent>
+
+    <task name="Wohngeld auszahlen" id="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0010" isForCompensation="false">
+      <documentation textFormat="text/plain">Die Zahlstelle überweist das bewilligte Wohngeld auf das vom Antragsteller angegebene Konto (Nachricht: Wohngeldzahlung). Ergebnis ist die ausgeführte Auszahlung.</documentation>
+      <incoming>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0009</incoming>
+      <outgoing>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0010</outgoing>
+    </task>
+
+    <endEvent name="Wohngeld ausgezahlt" id="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0011">
+      <incoming>_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0010</incoming>
     </endEvent>
 
-    <sequenceFlow sourceRef="_a8f3b6d2-1e75-4c09-b4a8-59d0e2c7f361" targetRef="_0e5d7a93-b2c6-4818-9f40-c3a1d8e6b727" id="_d8a2f0c4-7e1b-4635-9a8d-3c5e1b9f6072"/>
-    <sequenceFlow sourceRef="_0e5d7a93-b2c6-4818-9f40-c3a1d8e6b727" targetRef="_f4c1e8b0-3a96-4d72-8e5b-7d2f0a9c1b48" id="_4a6e1d9b-c0f3-4782-b5a1-e9d7c2f38a06"/>
-    <sequenceFlow sourceRef="_f4c1e8b0-3a96-4d72-8e5b-7d2f0a9c1b48" targetRef="_73a9d0c5-8f2e-4b61-a3d7-e1b5c4f98206" id="_f7c3a5e2-1b84-4d09-8c6f-0a2d9e7b4135"/>
-    <sequenceFlow sourceRef="_73a9d0c5-8f2e-4b61-a3d7-e1b5c4f98206" targetRef="_c6b2f7e1-5d08-49a3-b71c-2e9a6d0f4583" id="_08d9b1f6-a5c2-4e37-96b4-d1f8a3c7e520"/>
-    <sequenceFlow sourceRef="_c6b2f7e1-5d08-49a3-b71c-2e9a6d0f4583" targetRef="_19e4a6d8-c3f7-4520-8b9d-a7f1e3b0c264" id="_9d2e7c40-6f1a-4b85-a3d8-5e0c9b2f1a74"/>
-    <sequenceFlow sourceRef="_19e4a6d8-c3f7-4520-8b9d-a7f1e3b0c264" targetRef="_85d0c3b7-e6a1-4f49-92e8-0b4d7a1c5f93" id="_3e5a0f8b-d2c7-4961-b84e-7a1f6d3c9052"/>
-    <sequenceFlow sourceRef="_85d0c3b7-e6a1-4f49-92e8-0b4d7a1c5f93" targetRef="_3b7f1e92-a4d8-4c65-b0a3-d6c9e2f8714a" id="_c2f6b9d1-0e8a-4753-a1c9-f4b7e5d20a38"/>
-    <sequenceFlow sourceRef="_3b7f1e92-a4d8-4c65-b0a3-d6c9e2f8714a" targetRef="_ea62c9f5-0b3d-4817-a5e4-1c8f7b3d9026" id="_7a1c4e95-b3d0-4f68-9e27-c8a5d0f1b346"/>
+    <sequenceFlow sourceRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0001" targetRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0002" id="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0001"/>
+    <sequenceFlow sourceRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0002" targetRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0003" id="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0002"/>
+    <sequenceFlow sourceRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0003" targetRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0004" id="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0003"/>
+    <sequenceFlow sourceRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0004" targetRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0005" id="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0004"/>
+    <sequenceFlow sourceRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0005" targetRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0006" id="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0005"/>
+    <sequenceFlow sourceRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0006" targetRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0007" id="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0006"/>
+    <sequenceFlow sourceRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0007" targetRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0008" id="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0007"/>
+    <sequenceFlow sourceRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0008" targetRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0009" id="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0008"/>
+    <sequenceFlow sourceRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0009" targetRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0010" id="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0009"/>
+    <sequenceFlow sourceRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0010" targetRef="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0011" id="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0010"/>
   </process>
 
-  <!-- BPMN-DI: Kunde y=0, Organisation y=390 (Hoehe je 380) -->
-  <bpmndi:BPMNDiagram id="BPMNDiagram_3f6a9c21-7b84-4e15-9d02-5c1e8a7b4f30">
-    <bpmndi:BPMNPlane bpmnElement="Collaboration_3f6a9c21-7b84-4e15-9d02-5c1e8a7b4f30">
+  <!-- Pool-Breite 2100 statt 1830, da der Organisationsprozess mehr Schritte enthaelt -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_5b2e7a10-3c4d-4e5f-8a6b-7c8d9e0f0002">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration_5b2e7a10-3c4d-4e5f-8a6b-7c8d9e0f0001">
 
-      <!-- POOL: Kunde -->
-      <bpmndi:BPMNShape bpmnElement="_c7e41a92-5d3b-4f08-a6c1-92b0d8e3f517" isHorizontal="true">
-        <omgdc:Bounds x="10" y="0" width="1830" height="380"/>
+      <!-- ===== POOL: Kunde (y=0) ===== -->
+      <bpmndi:BPMNShape bpmnElement="_a0000001-3c4d-4e5f-8a6b-7c8d9e0f0001" isHorizontal="true">
+        <omgdc:Bounds x="10" y="0" width="2100" height="380"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_1d9a7e34-c2b5-4086-b3f1-7a6e05d9c428" isHorizontal="true">
-        <omgdc:Bounds x="40" y="0" width="1800" height="380"/>
+      <bpmndi:BPMNShape bpmnElement="_d0000001-3c4d-4e5f-8a6b-7c8d9e0f0001" isHorizontal="true">
+        <omgdc:Bounds x="40" y="0" width="2070" height="380"/>
       </bpmndi:BPMNShape>
 
-      <bpmndi:BPMNShape bpmnElement="_e2b6d815-9f4a-4c37-8a1e-3d70b5c9f162">
+      <bpmndi:BPMNShape bpmnElement="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0001">
         <omgdc:Bounds x="120" y="172" width="36" height="36"/>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="108" y="212" width="60" height="40"/>
+          <omgdc:Bounds x="88" y="213" width="100" height="40"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_47c8a3e0-6b1d-4f92-95a7-e8d2c1b40f36">
+      <bpmndi:BPMNShape bpmnElement="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0002">
         <omgdc:Bounds x="220" y="152" width="151" height="76"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_b93e5d17-0a8c-4d64-b2f3-6c1a9e7d8045">
-        <omgdc:Bounds x="441" y="152" width="151" height="76"/>
+      <bpmndi:BPMNShape bpmnElement="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0003">
+        <omgdc:Bounds x="440" y="152" width="151" height="76"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_6f0d2a8c-e4b7-4135-9c68-a5b3d1f29e70">
-        <omgdc:Bounds x="1382" y="172" width="36" height="36"/>
+      <bpmndi:BPMNShape bpmnElement="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0004">
+        <omgdc:Bounds x="660" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0005">
+        <omgdc:Bounds x="1598" y="172" width="36" height="36"/>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="1370" y="128" width="60" height="40"/>
+          <omgdc:Bounds x="1566" y="127" width="100" height="40"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_d1a58c3f-72e9-4b06-8d14-f0c7e6a3b925">
-        <omgdc:Bounds x="1603" y="172" width="36" height="36"/>
+      <bpmndi:BPMNShape bpmnElement="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0006">
+        <omgdc:Bounds x="1700" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0007">
+        <omgdc:Bounds x="1920" y="172" width="36" height="36"/>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="1591" y="128" width="60" height="40"/>
+          <omgdc:Bounds x="1888" y="127" width="100" height="40"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_2c7b9e41-d5a0-4f83-a6d2-8b4e1f0c7a59">
-        <omgdc:Bounds x="1700" y="172" width="36" height="36"/>
+      <bpmndi:BPMNShape bpmnElement="_e1000001-3c4d-4e5f-8a6b-7c8d9e0f0008">
+        <omgdc:Bounds x="2020" y="172" width="36" height="36"/>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="1688" y="212" width="60" height="40"/>
+          <omgdc:Bounds x="1988" y="213" width="100" height="40"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
 
-      <bpmndi:BPMNEdge bpmnElement="_5c3e8b0a-d791-4a26-8f15-b2e6a0d4c973">
+      <bpmndi:BPMNEdge bpmnElement="_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0001">
         <omgdi:waypoint x="156" y="190"/>
         <omgdi:waypoint x="220" y="190"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_90b4f2d6-3a1c-4e58-b7d9-6f8a1c5e0b32">
+      <bpmndi:BPMNEdge bpmnElement="_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0002">
         <omgdi:waypoint x="371" y="190"/>
-        <omgdi:waypoint x="441" y="190"/>
+        <omgdi:waypoint x="440" y="190"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_2f8a6c1d-e5b9-4073-a4e2-9d0b7f3c1a68">
-        <omgdi:waypoint x="592" y="190"/>
-        <omgdi:waypoint x="1382" y="190"/>
+      <bpmndi:BPMNEdge bpmnElement="_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0003">
+        <omgdi:waypoint x="591" y="190"/>
+        <omgdi:waypoint x="660" y="190"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_ba1d7e43-9c06-4f2a-8e35-c4a9f0b2d617">
-        <omgdi:waypoint x="1418" y="190"/>
-        <omgdi:waypoint x="1603" y="190"/>
+      <bpmndi:BPMNEdge bpmnElement="_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0004">
+        <omgdi:waypoint x="811" y="190"/>
+        <omgdi:waypoint x="1598" y="190"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_61e9c5a8-4f2b-4d90-b3c7-a8d1e6f07245">
-        <omgdi:waypoint x="1639" y="190"/>
+      <bpmndi:BPMNEdge bpmnElement="_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0005">
+        <omgdi:waypoint x="1634" y="190"/>
         <omgdi:waypoint x="1700" y="190"/>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0006">
+        <omgdi:waypoint x="1851" y="190"/>
+        <omgdi:waypoint x="1920" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f1000001-3c4d-4e5f-8a6b-7c8d9e0f0007">
+        <omgdi:waypoint x="1956" y="190"/>
+        <omgdi:waypoint x="2020" y="190"/>
+      </bpmndi:BPMNEdge>
 
-      <!-- POOL: Organisation -->
-      <bpmndi:BPMNShape bpmnElement="_5b2d90e8-1c47-4a63-8f9e-d4a7c6015b82" isHorizontal="true">
-        <omgdc:Bounds x="10" y="390" width="1830" height="380"/>
+      <!-- ===== POOL: Organisation (y=390, 2 Lanes a 190) ===== -->
+      <bpmndi:BPMNShape bpmnElement="_a0000001-3c4d-4e5f-8a6b-7c8d9e0f0002" isHorizontal="true">
+        <omgdc:Bounds x="10" y="390" width="2100" height="380"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_9a4c2f6b-3e81-47d5-a0b9-1f8d6c3e7254" isHorizontal="true">
-        <omgdc:Bounds x="40" y="390" width="1800" height="380"/>
+      <bpmndi:BPMNShape bpmnElement="_d0000001-3c4d-4e5f-8a6b-7c8d9e0f0002" isHorizontal="true">
+        <omgdc:Bounds x="40" y="390" width="2070" height="190"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_d0000001-3c4d-4e5f-8a6b-7c8d9e0f0003" isHorizontal="true">
+        <omgdc:Bounds x="40" y="580" width="2070" height="190"/>
       </bpmndi:BPMNShape>
 
-      <bpmndi:BPMNShape bpmnElement="_a8f3b6d2-1e75-4c09-b4a8-59d0e2c7f361">
-        <omgdc:Bounds x="120" y="562" width="36" height="36"/>
+      <!-- Lane Sachbearbeitung Wohngeld (Mitte y=485) -->
+      <bpmndi:BPMNShape bpmnElement="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0001">
+        <omgdc:Bounds x="120" y="467" width="36" height="36"/>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="108" y="602" width="60" height="40"/>
+          <omgdc:Bounds x="88" y="508" width="100" height="40"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_0e5d7a93-b2c6-4818-9f40-c3a1d8e6b727">
-        <omgdc:Bounds x="220" y="542" width="151" height="76"/>
+      <bpmndi:BPMNShape bpmnElement="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0002">
+        <omgdc:Bounds x="220" y="447" width="151" height="76"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_f4c1e8b0-3a96-4d72-8e5b-7d2f0a9c1b48">
-        <omgdc:Bounds x="441" y="542" width="151" height="76"/>
+      <bpmndi:BPMNShape bpmnElement="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0003">
+        <omgdc:Bounds x="440" y="447" width="151" height="76"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_73a9d0c5-8f2e-4b61-a3d7-e1b5c4f98206">
-        <omgdc:Bounds x="662" y="542" width="151" height="76"/>
+      <bpmndi:BPMNShape bpmnElement="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0004">
+        <omgdc:Bounds x="660" y="447" width="151" height="76"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_c6b2f7e1-5d08-49a3-b71c-2e9a6d0f4583">
-        <omgdc:Bounds x="883" y="542" width="151" height="76"/>
+      <bpmndi:BPMNShape bpmnElement="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0005">
+        <omgdc:Bounds x="880" y="447" width="151" height="76"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_19e4a6d8-c3f7-4520-8b9d-a7f1e3b0c264">
-        <omgdc:Bounds x="1104" y="542" width="151" height="76"/>
+      <bpmndi:BPMNShape bpmnElement="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0006">
+        <omgdc:Bounds x="1100" y="447" width="151" height="76"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_85d0c3b7-e6a1-4f49-92e8-0b4d7a1c5f93">
-        <omgdc:Bounds x="1325" y="542" width="151" height="76"/>
+      <bpmndi:BPMNShape bpmnElement="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0007">
+        <omgdc:Bounds x="1320" y="447" width="151" height="76"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_3b7f1e92-a4d8-4c65-b0a3-d6c9e2f8714a">
-        <omgdc:Bounds x="1546" y="542" width="151" height="76"/>
+      <bpmndi:BPMNShape bpmnElement="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0008">
+        <omgdc:Bounds x="1540" y="447" width="151" height="76"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="_ea62c9f5-0b3d-4817-a5e4-1c8f7b3d9026">
-        <omgdc:Bounds x="1767" y="562" width="36" height="36"/>
+
+      <!-- Lane Zahlstelle (Mitte y=675) -->
+      <bpmndi:BPMNShape bpmnElement="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0009">
+        <omgdc:Bounds x="1598" y="657" width="36" height="36"/>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds x="1755" y="602" width="60" height="40"/>
+          <omgdc:Bounds x="1566" y="698" width="100" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0010">
+        <omgdc:Bounds x="1690" y="637" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e2000001-3c4d-4e5f-8a6b-7c8d9e0f0011">
+        <omgdc:Bounds x="1920" y="657" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1888" y="698" width="100" height="40"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
 
-      <bpmndi:BPMNEdge bpmnElement="_d8a2f0c4-7e1b-4635-9a8d-3c5e1b9f6072">
-        <omgdi:waypoint x="156" y="580"/>
-        <omgdi:waypoint x="220" y="580"/>
+      <bpmndi:BPMNEdge bpmnElement="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0001">
+        <omgdi:waypoint x="156" y="485"/>
+        <omgdi:waypoint x="220" y="485"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_4a6e1d9b-c0f3-4782-b5a1-e9d7c2f38a06">
-        <omgdi:waypoint x="371" y="580"/>
-        <omgdi:waypoint x="441" y="580"/>
+      <bpmndi:BPMNEdge bpmnElement="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0002">
+        <omgdi:waypoint x="371" y="485"/>
+        <omgdi:waypoint x="440" y="485"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_f7c3a5e2-1b84-4d09-8c6f-0a2d9e7b4135">
-        <omgdi:waypoint x="592" y="580"/>
-        <omgdi:waypoint x="662" y="580"/>
+      <bpmndi:BPMNEdge bpmnElement="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0003">
+        <omgdi:waypoint x="591" y="485"/>
+        <omgdi:waypoint x="660" y="485"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_08d9b1f6-a5c2-4e37-96b4-d1f8a3c7e520">
-        <omgdi:waypoint x="813" y="580"/>
-        <omgdi:waypoint x="883" y="580"/>
+      <bpmndi:BPMNEdge bpmnElement="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0004">
+        <omgdi:waypoint x="811" y="485"/>
+        <omgdi:waypoint x="880" y="485"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_9d2e7c40-6f1a-4b85-a3d8-5e0c9b2f1a74">
-        <omgdi:waypoint x="1034" y="580"/>
-        <omgdi:waypoint x="1104" y="580"/>
+      <bpmndi:BPMNEdge bpmnElement="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0005">
+        <omgdi:waypoint x="1031" y="485"/>
+        <omgdi:waypoint x="1100" y="485"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_3e5a0f8b-d2c7-4961-b84e-7a1f6d3c9052">
-        <omgdi:waypoint x="1255" y="580"/>
-        <omgdi:waypoint x="1325" y="580"/>
+      <bpmndi:BPMNEdge bpmnElement="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0006">
+        <omgdi:waypoint x="1251" y="485"/>
+        <omgdi:waypoint x="1320" y="485"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_c2f6b9d1-0e8a-4753-a1c9-f4b7e5d20a38">
-        <omgdi:waypoint x="1476" y="580"/>
-        <omgdi:waypoint x="1546" y="580"/>
+      <bpmndi:BPMNEdge bpmnElement="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0007">
+        <omgdi:waypoint x="1471" y="485"/>
+        <omgdi:waypoint x="1540" y="485"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="_7a1c4e95-b3d0-4f68-9e27-c8a5d0f1b346">
-        <omgdi:waypoint x="1697" y="580"/>
-        <omgdi:waypoint x="1767" y="580"/>
+      <bpmndi:BPMNEdge bpmnElement="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0008">
+        <omgdi:waypoint x="1616" y="523"/>
+        <omgdi:waypoint x="1616" y="657"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0009">
+        <omgdi:waypoint x="1634" y="675"/>
+        <omgdi:waypoint x="1690" y="675"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f2000001-3c4d-4e5f-8a6b-7c8d9e0f0010">
+        <omgdi:waypoint x="1841" y="675"/>
+        <omgdi:waypoint x="1920" y="675"/>
       </bpmndi:BPMNEdge>
 
-      <!-- MESSAGE FLOWS -->
-      <!-- Kunde (Antrag einreichen) -> Organisation (Antrag eingegangen) -->
-      <bpmndi:BPMNEdge bpmnElement="_e5d3a7b2-8c10-4f49-a6e1-2b9f0c4d7a85">
-        <omgdi:waypoint x="516" y="228"/>
-        <omgdi:waypoint x="516" y="385"/>
+      <!-- ===== MESSAGE FLOWS (Routing im Pool-Zwischenraum bei y=385) ===== -->
+      <bpmndi:BPMNEdge bpmnElement="_f3000001-3c4d-4e5f-8a6b-7c8d9e0f0001">
+        <omgdi:waypoint x="736" y="228"/>
+        <omgdi:waypoint x="736" y="385"/>
         <omgdi:waypoint x="138" y="385"/>
-        <omgdi:waypoint x="138" y="562"/>
+        <omgdi:waypoint x="138" y="467"/>
       </bpmndi:BPMNEdge>
-      <!-- Organisation (Bescheid versenden) -> Kunde (Wohngeldbescheid erhalten) -->
-      <bpmndi:BPMNEdge bpmnElement="_16b8f0d4-a9e3-4c72-8d05-e7c1a5b3f290">
-        <omgdi:waypoint x="1400" y="542"/>
-        <omgdi:waypoint x="1400" y="208"/>
+      <bpmndi:BPMNEdge bpmnElement="_f3000001-3c4d-4e5f-8a6b-7c8d9e0f0002">
+        <omgdi:waypoint x="1616" y="447"/>
+        <omgdi:waypoint x="1616" y="208"/>
       </bpmndi:BPMNEdge>
-      <!-- Organisation (Wohngeld auszahlen) -> Kunde (Wohngeld erhalten) -->
-      <bpmndi:BPMNEdge bpmnElement="_ad07e2c9-5f4b-4186-b3a9-0d6c8e1f7524">
-        <omgdi:waypoint x="1621" y="542"/>
-        <omgdi:waypoint x="1621" y="208"/>
+      <bpmndi:BPMNEdge bpmnElement="_f3000001-3c4d-4e5f-8a6b-7c8d9e0f0003">
+        <omgdi:waypoint x="1765" y="637"/>
+        <omgdi:waypoint x="1765" y="385"/>
+        <omgdi:waypoint x="1938" y="385"/>
+        <omgdi:waypoint x="1938" y="208"/>
       </bpmndi:BPMNEdge>
 
     </bpmndi:BPMNPlane>
