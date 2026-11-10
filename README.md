@@ -2,7 +2,7 @@
 
 ## Projektziel
 
-Dieses Repository dokumentiert einen innovativen Ansatz zur Erstellung von **BPMN-Prozessmodellen** mithilfe von **GitHub Copilot** und generativer KI. Ziel ist es, einen **reproduzierbaren Workflow** zu entwickeln, mit dem Kommunen, Verwaltungen und Organisationen schnell und standardisiert Prozessbeschreibungen und -modelle generieren können – insbesondere auf Basis von **BPMN 2.0**.
+Dieses Repository dokumentiert einen innovativen Ansatz zur Erstellung von **ADONIS-kompatiblen BPMN-Prozessmodellen** mithilfe von **GitHub Copilot** und generativer KI. Ziel ist es, einen **reproduzierbaren Workflow** zu entwickeln, mit dem Kommunen, Verwaltungen und Organisationen schnell und standardisiert Prozessbeschreibungen und -modelle generieren können – auf Basis von **BPMN 2.0** und importierbar in **ADONIS**.
 
 
 ## Hintergrund
@@ -14,15 +14,18 @@ Die öffentliche Verwaltung steht vor der Herausforderung, komplexe und heteroge
 * 🧠 **Prompting-Strategien** zur Erzeugung qualitativ hochwertiger Prozessbeschreibungen
 * 🔄 **Transformationsregeln** von Fließtext zu BPMN-Modellen
 * :eyeglasses: **Erstellung von e2e-Prozessmodellen** durch Einbeziehung der Perspektiven **Kunde, Organisation und IT (KOI)**
-* :clipboard: **Erstellung und Integration von Formularen in BPMN-Modelle**
-* :mag: **Erstellung von standardisierten Prozesssteckbriefen** mit KPIs für Gesamtprozess und Aktivitäen im BPMN-Modell
+* :microphone: **Geführte Prozessaufnahme** per Interview (Agent `Moritz`) mit Steckbrief und Ist-Prozessmodell
+* :mag: **Erstellung von standardisierten Prozesssteckbriefen** mit KPIs für Gesamtprozess und Aktivitäten im BPMN-Modell
+* :white_check_mark: **Methodische Prüfung** von ADONIS-Prozessmodellen, inkl. Abruf über die ADONIS-REST-API
 
 ## Technologische Basis
 
-* **GitHub Copilot** zur KI-unterstützten Erstellung von BPMN-XML
+* **GitHub Copilot** mit Custom Agents zur KI-unterstützten Erstellung von BPMN-XML
 * **BPMN 2.0** als Modellierungsstandard
-* **Camunda Modeler** zur Darstellung und Bearbeitung der BPMN-Prozessmodelle genutzt
-* **Camunda Form** zur Darstellung und Bearbeitung von Formularen
+* **ADONIS** als Zielsystem für Import und Review der Prozessmodelle
+* **Camunda Modeler (Miragon)** zur Darstellung und Bearbeitung der BPMN-Prozessmodelle in VS Code
+
+Details zu Voraussetzungen, Agenten und Abläufen: [TECHNISCHE_DOKUMENTATION.md](TECHNISCHE_DOKUMENTATION.md)
 
 ## Warum das wichtig ist
 
