@@ -71,12 +71,12 @@ Wenn der Nutzer die Erstellung eines BPMN-Modells bestaetigt:
 
 #### Vorbereitung: Referenzdokumente lesen
 **WICHTIG**: Vor der Erstellung des BPMN-Modells MUESSEN die folgenden Referenzdokumente gelesen werden:
-1. `BPMN_ADONIS_Template.xml` - ADONIS-kompatibles Template als Strukturreferenz (3-Pool-Vorlage, adaptieren auf 2 Pools)
+1. `templates/BPMN_ADONIS_Template.xml` - ADONIS-kompatibles Template als Strukturreferenz (3-Pool-Vorlage, adaptieren auf 2 Pools)
 2. `ADONIS_BPMN_Guidelines.md` - ADONIS-spezifische Modellierungs-, Layout- und BPMN-DI-Regeln
 3. `.github/instructions/BPMN_Documentation.instructions.md` - Verbindliche Regel fuer Taskinformationen in Documentation - Element documentation
 
 ### 1. ADONIS XML-Template (PRIMAERE VORLAGE)
-- **Pfad**: `BPMN_ADONIS_Template.xml`
+- **Pfad**: `templates/BPMN_ADONIS_Template.xml`
 - Enthaelt im Kommentarkopf die Grundregeln fuer Namespaces, ID-Format und BPMN-DI-Praefixe
 - Vollstaendige Struktur fuer Collaboration, Prozesse, Lanes und BPMN-DI
 
@@ -96,7 +96,7 @@ Vor Abschluss pruefen (Details siehe `ADONIS_BPMN_Guidelines.md`):
 - Taskdokumentation gemaess `.github/instructions/BPMN_Documentation.instructions.md` geprueft; unbestaetigte ADONIS-UI-Zuordnung ausgewiesen
 - ✅ **e2e-Rahmen definiert**: Kundenbeduernis, Startereignis (vom Kunden abgeleitet), Endereignis (vom Kunden abgeleitet)
 - ✅ **Alle Prozessbeteiligten dargestellt**: Aktivitaeten aus Kunde-, Organisation lueckenlos abgebildet
-- ✅ Template `BPMN_ADONIS_Template.xml` als Basis verwendet und Kommentarkopf gelesen
+- ✅ Template `templates/BPMN_ADONIS_Template.xml` als Basis verwendet und Kommentarkopf gelesen
 - ✅ 2-Pool-Struktur implementiert
 - ✅ Organisation-Pool mit vollstaendigem Prozess
 - Kunden-Pool mit vollstaendigem Prozess

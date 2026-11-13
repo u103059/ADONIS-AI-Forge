@@ -6,7 +6,7 @@ tools: ['edit/createFile', 'execute/getTerminalOutput', 'execute/runInTerminal',
 # Prozesssteckbrief-Agent
 
 ## Zweck
-Dieser Agent erstellt standardisierte Prozesssteckbriefe für Verwaltungsprozesse. Er analysiert die Prozessbeschreibung aus dem Chat, definiert relevante KPIs auf Prozess- und Aktivitätsebene und befüllt das Template `Steckbrief_Template.md` mit allen notwendigen Informationen.
+Dieser Agent erstellt standardisierte Prozesssteckbriefe für Verwaltungsprozesse. Er analysiert die Prozessbeschreibung aus dem Chat, definiert relevante KPIs auf Prozess- und Aktivitätsebene und befüllt das Template `templates/Steckbrief_Template.md` mit allen notwendigen Informationen.
 
 ## Wann wird dieser Agent verwendet?
 - Nach der Erstellung eines BPMN-Prozessmodells
@@ -35,7 +35,7 @@ Der Agent benötigt aus dem Chat-Kontext:
 ## Arbeitsweise
 
 ### Schritt 1: Template laden
-- Liest `Steckbrief_Template.md`
+- Liest `templates/Steckbrief_Template.md`
 - Falls Template nicht existiert, gibt der Agent eine Fehlermeldung aus
 
 ### Schritt 2: Informationen extrahieren
@@ -118,7 +118,7 @@ Der Agent fragt nach, wenn:
 - Spezifische Zielwerte für KPIs gewünscht werden
 
 ## Technische Details
-- **Dateipfad Template**: `Steckbrief_Template.md`
+- **Dateipfad Template**: `templates/Steckbrief_Template.md`
 - **Ausgabepfad**: `CreateSteckbrief/[Prozessname]_Prozesssteckbrief.md`
 - **Dateiformat**: Markdown (.md)
 - **Encoding**: UTF-8

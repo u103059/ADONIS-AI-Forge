@@ -110,13 +110,13 @@ Im Perfekt oder als abgeschlossenen Zustand formulieren:
 
 #### Vorbereitung: Referenzdokumente lesen
 **WICHTIG**: Vor der Erstellung des BPMN-Modells MUESSEN die folgenden Referenzdokumente gelesen werden:
-1. `BPMN_ADONIS_Template.xml` - ADONIS-kompatibles Template (Namespaces, Collaboration, Pools, Message Flows, BPMN-DI)
+1. `templates/BPMN_ADONIS_Template.xml` - ADONIS-kompatibles Template (Namespaces, Collaboration, Pools, Message Flows, BPMN-DI)
 2. `ADONIS_BPMN_Guidelines.md` - ADONIS-spezifische Modellierungs-, Layout- und BPMN-DI-Regeln
 3. `.github/instructions/BPMN_Documentation.instructions.md` - Verbindliche Regel fuer Taskinformationen in Documentation - Element documentation
 4. `BPMN_ADONIS/ADONIS KOI Prozessmodell (3 Pools mit Lane).bpmn` - ADONIS-Beispiel mit mehreren Pools und Message Flows
 
 #### BPMN-Modell-Struktur (ADONIS-kompatibel):
-- **Basis**: Verwende die Struktur aus `BPMN_ADONIS_Template.xml`, Pools jedoch je IT-System statt Kunde/IT/Organisation
+- **Basis**: Verwende die Struktur aus `templates/BPMN_ADONIS_Template.xml`, Pools jedoch je IT-System statt Kunde/IT/Organisation
 - **XML-Deklaration**: `<?xml version="1.0" encoding="utf-8"?>`
 - **Namespace-Deklarationen** (KRITISCH fuer ADONIS-Import):
   ```xml

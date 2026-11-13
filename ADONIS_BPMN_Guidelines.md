@@ -5,7 +5,7 @@
 Diese Guidelines definieren die Modellierungsregeln für BPMN 2.0 Prozessmodelle, die in der Prozessmanagement-Software **ADONIS** (BOC Group) erstellt und importiert werden. Die Modelle folgen dem **KOI-Prinzip** (Kunde – Organisation – IT) und werden als Ende-zu-Ende-Prozesse (e2e) abgebildet.
 
 ### Referenzdokumente
-- ADONIS BPMN Template: `BPMN_ADONIS_Template.xml`
+- ADONIS BPMN Template: `templates/BPMN_ADONIS_Template.xml`
 - ADONIS Beispielmodelle: `BPMN_ADONIS/`
 - GPM-Handbuch der LHS Stuttgart: `BPMN_ADONIS/GPM-Handbuch.md`
 

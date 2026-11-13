@@ -25,7 +25,7 @@ Die öffentliche Verwaltung steht vor der Herausforderung, komplexe und heteroge
 * **ADONIS** als Zielsystem für Import und Review der Prozessmodelle
 * **Camunda Modeler (Miragon)** zur Darstellung und Bearbeitung der BPMN-Prozessmodelle in VS Code
 
-Details zu Voraussetzungen, Agenten und Abläufen: [TECHNISCHE_DOKUMENTATION.md](TECHNISCHE_DOKUMENTATION.md)
+Details zu Voraussetzungen, Agenten und Abläufen: [TECHNISCHE_DOKUMENTATION.md](docs/TECHNISCHE_DOKUMENTATION.md)
 
 ## Warum das wichtig ist
 

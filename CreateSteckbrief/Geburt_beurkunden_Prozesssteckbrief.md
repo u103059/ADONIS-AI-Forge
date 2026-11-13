@@ -51,6 +51,5 @@ Diese KPIs sind spezifischen Aktivitäten oder Phasen im BPMN-Modell zugeordnet,
 - **Fachverfahren Personenstandswesen (z.B. AutiSta):** System im Standesamt zur rechtssicheren Beurkundung und Registerführung.
 
 ## Referenzdokumente
-- BPMN-Modell: [CreateBPMN/Geburt_beurkunden.bpmn](../CreateBPMN/Geburt_beurkunden.bpmn)
 - Personenstandsgesetz (PStG)
 - Verordnung zur Ausführung des Personenstandsgesetzes (PStV)

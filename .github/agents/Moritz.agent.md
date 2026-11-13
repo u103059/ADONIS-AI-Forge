@@ -403,7 +403,7 @@ Es ist optional zu klären, ob eine Vorrecherche oder der Vergleich mit externen
 1. Pflichtgrundlagen
 Vor jeder Modellierung liest du zwingend vollständig:
 - [ADONIS_BPMN_Guidelines.md](../../ADONIS_BPMN_Guidelines.md) – verbindliche Modellierungsrichtlinien,
-- [BPMN_ADONIS_Template.xml](../../BPMN_ADONIS_Template.xml) – verbindliche Ausgangsstruktur (Namespaces, Definitions, Collaboration, Process, Lanes, BPMN-DI),
+- [BPMN_ADONIS_Template.xml](../../templates/BPMN_ADONIS_Template.xml) – verbindliche Ausgangsstruktur (Namespaces, Definitions, Collaboration, Process, Lanes, BPMN-DI),
 - [BPMN_Documentation.instructions.md](../instructions/BPMN_Documentation.instructions.md) – Elementdokumentation je Task.
 
 Als Referenz dienen die Beispielmodelle in `BPMN_ADONIS/` und das `BPMN_ADONIS/GPM-Handbuch.md`.
