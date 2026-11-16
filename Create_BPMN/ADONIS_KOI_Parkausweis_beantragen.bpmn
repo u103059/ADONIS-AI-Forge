@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:adonis="http://www.boc-group.com"
+             xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             id="definition__6d7d6ff8-2d85-4f8a-8ef0-86a6bb8f6ef2"
+             typeLanguage="http://www.w3.org/2001/XMLSchema"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd"
+             targetNamespace="http://www.boc-group.com">
+
+  <collaboration id="Collaboration_6d7d6ff8-2d85-4f8a-8ef0-86a6bb8f6ef2"
+                 name="Parkausweis beantragen"
+                 isClosed="false">
+    <participant processRef="process_50d2bff8-a7a3-4da0-b747-2de6f7cc4f95" name="Kunde" id="_3c8a4f99-7bf5-4d9f-a0d5-f7829242ccbb"/>
+    <participant processRef="process_6af72e36-a420-4300-b90b-a0fa6d0d96e5" name="IT" id="_92842bf4-2e9a-4c49-985e-0df6812f46f5"/>
+    <participant processRef="process_53e08c83-4e9b-42a8-b538-9c78875f9f81" name="Organisation" id="_bb708d2d-13d1-4215-a6d5-84e4ef98b1bd"/>
+
+    <messageFlow id="_42d86b0d-8719-4ef6-a51d-4df13f5915ef" name="Antrag" sourceRef="_kunde_task_submit" targetRef="_org_start"/>
+    <messageFlow id="_d89e7d00-4bf0-4d97-a4b5-15cb9a2fe12d" name="Datenanfrage" sourceRef="_org_task_request" targetRef="_it_start"/>
+    <messageFlow id="_6167d693-f0ef-41a8-bf3d-c9768d32e79d" name="Datenvalidierung" sourceRef="_it_task_validate" targetRef="_org_task_issue"/>
+    <messageFlow id="_25fd7408-a7a5-4e6d-9d35-5e36dbaa2a0d" name="Bescheid" sourceRef="_org_task_issue" targetRef="_kunde_task_receive"/>
+  </collaboration>
+
+  <process name="Kunde" id="process_50d2bff8-a7a3-4da0-b747-2de6f7cc4f95" isExecutable="false" isClosed="false" processType="None">
+    <laneSet id="laneSet_50d2bff8-a7a3-4da0-b747-2de6f7cc4f95">
+      <lane name="Kunde" id="_da3bd1a3-dccd-4a9f-bd9a-7835f1cdb4d9">
+        <flowNodeRef>_kunde_start</flowNodeRef>
+        <flowNodeRef>_kunde_task_prepare</flowNodeRef>
+        <flowNodeRef>_kunde_task_submit</flowNodeRef>
+        <flowNodeRef>_kunde_task_receive</flowNodeRef>
+        <flowNodeRef>_kunde_end</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <startEvent name="Antrag gestartet" id="_kunde_start">
+      <outgoing>_kunde_flow_1</outgoing>
+    </startEvent>
+
+    <task name="Antrag vorbereiten" id="_kunde_task_prepare" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Kunde sammelt die notwendigen Angaben zum Parkausweis, prüft die benötigten Nachweise und bereitet die digitale Einreichung vor.</documentation>
+      <incoming>_kunde_flow_1</incoming>
+      <outgoing>_kunde_flow_2</outgoing>
+    </task>
+
+    <task name="Antrag einreichen" id="_kunde_task_submit" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Kunde übermittelt den vollständig ausgefüllten Antrag und die erforderlichen Angaben an die Organisation über das digitale Antragsportal.</documentation>
+      <incoming>_kunde_flow_2</incoming>
+      <outgoing>_kunde_flow_3</outgoing>
+    </task>
+
+    <task name="Bescheid entgegennehmen" id="_kunde_task_receive" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Kunde erhält die Nachricht zur Entscheidung der Organisation und nimmt den Bescheid für den Parkausweis entgegen.</documentation>
+      <incoming>_kunde_flow_3</incoming>
+      <outgoing>_kunde_flow_4</outgoing>
+    </task>
+
+    <endEvent name="Antrag abgeschlossen" id="_kunde_end">
+      <incoming>_kunde_flow_4</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_kunde_start" targetRef="_kunde_task_prepare" id="_kunde_flow_1"/>
+    <sequenceFlow sourceRef="_kunde_task_prepare" targetRef="_kunde_task_submit" id="_kunde_flow_2"/>
+    <sequenceFlow sourceRef="_kunde_task_submit" targetRef="_kunde_task_receive" id="_kunde_flow_3"/>
+    <sequenceFlow sourceRef="_kunde_task_receive" targetRef="_kunde_end" id="_kunde_flow_4"/>
+  </process>
+
+  <process name="IT" id="process_6af72e36-a420-4300-b90b-a0fa6d0d96e5" isExecutable="false" isClosed="false" processType="None">
+    <laneSet id="laneSet_6af72e36-a420-4300-b90b-a0fa6d0d96e5">
+      <lane name="IT" id="_2ede5bb0-56ec-4479-b266-2d5325574cd9">
+        <flowNodeRef>_it_start</flowNodeRef>
+        <flowNodeRef>_it_task_validate</flowNodeRef>
+        <flowNodeRef>_it_end</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <startEvent name="Datenanfrage eingegangen" id="_it_start">
+      <outgoing>_it_flow_1</outgoing>
+      <messageEventDefinition id="msgEvtDef_it_start"/>
+    </startEvent>
+
+    <task name="Daten validieren" id="_it_task_validate" isForCompensation="false">
+      <documentation textFormat="text/plain">Die IT prüft die übermittelten Antragsdaten, kontrolliert die Vollständigkeit und bereitet die fachliche Weiterverarbeitung für die Organisation vor.</documentation>
+      <incoming>_it_flow_1</incoming>
+      <outgoing>_it_flow_2</outgoing>
+    </task>
+
+    <endEvent name="Daten freigegeben" id="_it_end">
+      <incoming>_it_flow_2</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_it_start" targetRef="_it_task_validate" id="_it_flow_1"/>
+    <sequenceFlow sourceRef="_it_task_validate" targetRef="_it_end" id="_it_flow_2"/>
+  </process>
+
+  <process name="Organisation" id="process_53e08c83-4e9b-42a8-b538-9c78875f9f81" isExecutable="false" isClosed="false" processType="None">
+    <laneSet id="laneSet_53e08c83-4e9b-42a8-b538-9c78875f9f81">
+      <lane name="Organisation" id="_8c1802a8-3e1c-4094-b0d6-14e325f63850">
+        <flowNodeRef>_org_start</flowNodeRef>
+        <flowNodeRef>_org_task_check</flowNodeRef>
+        <flowNodeRef>_org_task_request</flowNodeRef>
+        <flowNodeRef>_org_task_issue</flowNodeRef>
+        <flowNodeRef>_org_end</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <startEvent name="Antrag eingegangen" id="_org_start">
+      <outgoing>_org_flow_1</outgoing>
+      <messageEventDefinition id="msgEvtDef_org_start"/>
+    </startEvent>
+
+    <task name="Antrag prüfen" id="_org_task_check" isForCompensation="false">
+      <documentation textFormat="text/plain">Die Organisation prüft den eingegangenen Antrag und verifiziert die vom Kunden angegebenen Voraussetzungen und Nachweise für den Parkausweis.</documentation>
+      <incoming>_org_flow_1</incoming>
+      <outgoing>_org_flow_2</outgoing>
+    </task>
+
+    <task name="Datenanfrage senden" id="_org_task_request" isForCompensation="false">
+      <documentation textFormat="text/plain">Die Organisation fordert bei der IT die zusätzlichen Prüf- und Validierungsdaten an, damit die fachliche Entscheidung auf vollständigen Informationen basiert.</documentation>
+      <incoming>_org_flow_2</incoming>
+      <outgoing>_org_flow_3</outgoing>
+    </task>
+
+    <task name="Parkausweis ausstellen" id="_org_task_issue" isForCompensation="false">
+      <documentation textFormat="text/plain">Nach erfolgreicher Prüfung und Rückmeldung der IT stellt die Organisation den Parkausweis aus und dokumentiert die Entscheidung für den Kunden.</documentation>
+      <incoming>_org_flow_3</incoming>
+      <outgoing>_org_flow_5</outgoing>
+    </task>
+
+    <endEvent name="Bescheid erteilt" id="_org_end">
+      <incoming>_org_flow_5</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_org_start" targetRef="_org_task_check" id="_org_flow_1"/>
+    <sequenceFlow sourceRef="_org_task_check" targetRef="_org_task_request" id="_org_flow_2"/>
+    <sequenceFlow sourceRef="_org_task_request" targetRef="_org_task_issue" id="_org_flow_3"/>
+    <sequenceFlow sourceRef="_org_task_issue" targetRef="_org_end" id="_org_flow_5"/>
+  </process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Parkausweis_beantragen">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_6d7d6ff8-2d85-4f8a-8ef0-86a6bb8f6ef2">
+
+      <bpmndi:BPMNShape id="shape_kunde_pool" bpmnElement="_3c8a4f99-7bf5-4d9f-a0d5-f7829242ccbb" isHorizontal="true">
+        <omgdc:Bounds x="10" y="0" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_kunde_lane" bpmnElement="_da3bd1a3-dccd-4a9f-bd9a-7835f1cdb4d9" isHorizontal="true">
+        <omgdc:Bounds x="40" y="0" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="shape_kunde_start" bpmnElement="_kunde_start">
+        <omgdc:Bounds x="120" y="172" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_kunde_task_prepare" bpmnElement="_kunde_task_prepare">
+        <omgdc:Bounds x="220" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_kunde_task_submit" bpmnElement="_kunde_task_submit">
+        <omgdc:Bounds x="440" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_kunde_task_receive" bpmnElement="_kunde_task_receive">
+        <omgdc:Bounds x="660" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_kunde_end" bpmnElement="_kunde_end">
+        <omgdc:Bounds x="920" y="172" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="edge_kunde_1" bpmnElement="_kunde_flow_1">
+        <omgdi:waypoint x="156" y="190"/>
+        <omgdi:waypoint x="220" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_kunde_2" bpmnElement="_kunde_flow_2">
+        <omgdi:waypoint x="371" y="190"/>
+        <omgdi:waypoint x="440" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_kunde_3" bpmnElement="_kunde_flow_3">
+        <omgdi:waypoint x="591" y="190"/>
+        <omgdi:waypoint x="660" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_kunde_4" bpmnElement="_kunde_flow_4">
+        <omgdi:waypoint x="811" y="190"/>
+        <omgdi:waypoint x="920" y="190"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNShape id="shape_it_pool" bpmnElement="_92842bf4-2e9a-4c49-985e-0df6812f46f5" isHorizontal="true">
+        <omgdc:Bounds x="10" y="390" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_it_lane" bpmnElement="_2ede5bb0-56ec-4479-b266-2d5325574cd9" isHorizontal="true">
+        <omgdc:Bounds x="40" y="390" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="shape_it_start" bpmnElement="_it_start">
+        <omgdc:Bounds x="120" y="562" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_it_task_validate" bpmnElement="_it_task_validate">
+        <omgdc:Bounds x="220" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_it_end" bpmnElement="_it_end">
+        <omgdc:Bounds x="440" y="562" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="edge_it_1" bpmnElement="_it_flow_1">
+        <omgdi:waypoint x="156" y="580"/>
+        <omgdi:waypoint x="220" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_it_2" bpmnElement="_it_flow_2">
+        <omgdi:waypoint x="371" y="580"/>
+        <omgdi:waypoint x="440" y="580"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNShape id="shape_org_pool" bpmnElement="_bb708d2d-13d1-4215-a6d5-84e4ef98b1bd" isHorizontal="true">
+        <omgdc:Bounds x="10" y="780" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_org_lane" bpmnElement="_8c1802a8-3e1c-4094-b0d6-14e325f63850" isHorizontal="true">
+        <omgdc:Bounds x="40" y="780" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="shape_org_start" bpmnElement="_org_start">
+        <omgdc:Bounds x="120" y="952" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_org_task_check" bpmnElement="_org_task_check">
+        <omgdc:Bounds x="220" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_org_task_request" bpmnElement="_org_task_request">
+        <omgdc:Bounds x="440" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_org_task_issue" bpmnElement="_org_task_issue">
+        <omgdc:Bounds x="660" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_org_end" bpmnElement="_org_end">
+        <omgdc:Bounds x="920" y="952" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="edge_org_1" bpmnElement="_org_flow_1">
+        <omgdi:waypoint x="156" y="970"/>
+        <omgdi:waypoint x="220" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_org_2" bpmnElement="_org_flow_2">
+        <omgdi:waypoint x="371" y="970"/>
+        <omgdi:waypoint x="440" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_org_3" bpmnElement="_org_flow_3">
+        <omgdi:waypoint x="591" y="970"/>
+        <omgdi:waypoint x="660" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_org_5" bpmnElement="_org_flow_5">
+        <omgdi:waypoint x="811" y="970"/>
+        <omgdi:waypoint x="920" y="970"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="message_kunde_org" bpmnElement="_42d86b0d-8719-4ef6-a51d-4df13f5915ef">
+        <omgdi:waypoint x="591" y="190"/>
+        <omgdi:waypoint x="591" y="780"/>
+        <omgdi:waypoint x="156" y="780"/>
+        <omgdi:waypoint x="156" y="952"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="message_org_it" bpmnElement="_d89e7d00-4bf0-4d97-a4b5-15cb9a2fe12d">
+        <omgdi:waypoint x="591" y="970"/>
+        <omgdi:waypoint x="591" y="390"/>
+        <omgdi:waypoint x="156" y="390"/>
+        <omgdi:waypoint x="156" y="562"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="message_it_org" bpmnElement="_6167d693-f0ef-41a8-bf3d-c9768d32e79d">
+        <omgdi:waypoint x="371" y="580"/>
+        <omgdi:waypoint x="371" y="780"/>
+        <omgdi:waypoint x="660" y="780"/>
+        <omgdi:waypoint x="660" y="932"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="message_org_kunde" bpmnElement="_25fd7408-a7a5-4e6d-9d35-5e36dbaa2a0d">
+        <omgdi:waypoint x="811" y="970"/>
+        <omgdi:waypoint x="811" y="390"/>
+        <omgdi:waypoint x="660" y="390"/>
+        <omgdi:waypoint x="660" y="190"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

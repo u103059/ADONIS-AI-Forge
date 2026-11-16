@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:adonis="http://www.boc-group.com"
+             xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             id="definition__f7d83c9a-2d51-4b57-9ae4-7f9a9ec2c0a2"
+             typeLanguage="http://www.w3.org/2001/XMLSchema"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd"
+             targetNamespace="http://www.boc-group.com">
+
+  <collaboration id="Collaboration_f7d83c9a-2d51-4b57-9ae4-7f9a9ec2c0a2"
+                 name="Grundsicherung beantragen"
+                 isClosed="false">
+    <participant processRef="process_8fb2bb43-fd50-4c8e-8384-863cb3ee10cb" name="Kunde" id="_d437f201-9f0d-4c54-a139-01d2d7bf7b36"/>
+    <participant processRef="process_0f479eb4-2cba-4f6a-b0e5-b7c5718a4961" name="IT" id="_b6f86d3e-1be2-4a65-9f1d-6c426f0d96cc"/>
+    <participant processRef="process_9b2be7a8-92d7-4f4b-9b35-8ab7b3d3580d" name="Organisation" id="_6d23d52d-0f0d-4bbc-93ae-650505640b78"/>
+
+    <messageFlow id="_8254c66a-7303-4eb6-aef4-ed3a663fd9b7" name="Antrag" sourceRef="_kunde_task_submit" targetRef="_org_start"/>
+    <messageFlow id="_795e7605-6d42-4aa1-9c2d-cfde6a5d4e39" name="Datenanfrage" sourceRef="_org_task_request" targetRef="_it_start"/>
+    <messageFlow id="_4d3d67d5-4b36-4207-8955-7dd5062fdd60" name="Datenantwort" sourceRef="_it_task_provide" targetRef="_org_task_assess"/>
+    <messageFlow id="_7ca5d17f-1786-42be-b3bb-75d0d8c804a8" name="Bescheid" sourceRef="_org_task_issue" targetRef="_kunde_task_receive"/>
+  </collaboration>
+
+  <process name="Kunde" id="process_8fb2bb43-fd50-4c8e-8384-863cb3ee10cb" isExecutable="false" isClosed="false" processType="None">
+    <laneSet id="laneSet_8fb2bb43-fd50-4c8e-8384-863cb3ee10cb">
+      <lane name="Kunde" id="_1a8f807d-2fc6-4bd9-99fa-6d2991cb3c48">
+        <flowNodeRef>_kunde_start</flowNodeRef>
+        <flowNodeRef>_kunde_task_prepare</flowNodeRef>
+        <flowNodeRef>_kunde_task_submit</flowNodeRef>
+        <flowNodeRef>_kunde_task_reply</flowNodeRef>
+        <flowNodeRef>_kunde_task_receive</flowNodeRef>
+        <flowNodeRef>_kunde_end</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <startEvent name="Antrag gestartet" id="_kunde_start">
+      <outgoing>_kunde_flow_1</outgoing>
+    </startEvent>
+
+    <task name="Antrag vorbereiten" id="_kunde_task_prepare" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Kunde sammelt die für die Grundsicherung relevanten Angaben, prüft die benötigten Nachweise und bereitet die digitale Antragstellung vor.</documentation>
+      <incoming>_kunde_flow_1</incoming>
+      <outgoing>_kunde_flow_2</outgoing>
+    </task>
+
+    <task name="Antrag einreichen" id="_kunde_task_submit" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Kunde reicht den vollständig ausgefüllten Antrag auf Grundsicherung bei der zuständigen Organisation ein und übermittelt die erforderlichen Angaben.</documentation>
+      <incoming>_kunde_flow_2</incoming>
+      <outgoing>_kunde_flow_3</outgoing>
+    </task>
+
+    <task name="Rückfrage beantworten" id="_kunde_task_reply" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Kunde beantwortet nach Bedarf Rückfragen der Organisation und ergänzt fehlende oder unklare Informationen für die Prüfung des Leistungsanspruchs.</documentation>
+      <incoming>_kunde_flow_3</incoming>
+      <outgoing>_kunde_flow_4</outgoing>
+    </task>
+
+    <task name="Bescheid entgegennehmen" id="_kunde_task_receive" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Kunde erhält den Bescheid zur Entscheidung über die Grundsicherung und nimmt die Mitteilung der Organisation entgegen.</documentation>
+      <incoming>_kunde_flow_4</incoming>
+      <outgoing>_kunde_flow_5</outgoing>
+    </task>
+
+    <endEvent name="Antrag bearbeitet" id="_kunde_end">
+      <incoming>_kunde_flow_5</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_kunde_start" targetRef="_kunde_task_prepare" id="_kunde_flow_1"/>
+    <sequenceFlow sourceRef="_kunde_task_prepare" targetRef="_kunde_task_submit" id="_kunde_flow_2"/>
+    <sequenceFlow sourceRef="_kunde_task_submit" targetRef="_kunde_task_reply" id="_kunde_flow_3"/>
+    <sequenceFlow sourceRef="_kunde_task_reply" targetRef="_kunde_task_receive" id="_kunde_flow_4"/>
+    <sequenceFlow sourceRef="_kunde_task_receive" targetRef="_kunde_end" id="_kunde_flow_5"/>
+  </process>
+
+  <process name="IT" id="process_0f479eb4-2cba-4f6a-b0e5-b7c5718a4961" isExecutable="false" isClosed="false" processType="None">
+    <laneSet id="laneSet_0f479eb4-2cba-4f6a-b0e5-b7c5718a4961">
+      <lane name="IT" id="_8e1dc6b5-b803-4ecf-9fe0-f8d43d1c2174">
+        <flowNodeRef>_it_start</flowNodeRef>
+        <flowNodeRef>_it_task_process</flowNodeRef>
+        <flowNodeRef>_it_task_validate</flowNodeRef>
+        <flowNodeRef>_it_task_provide</flowNodeRef>
+        <flowNodeRef>_it_end</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <startEvent name="Datenanfrage eingegangen" id="_it_start">
+      <outgoing>_it_flow_1</outgoing>
+      <messageEventDefinition id="msgEvtDef_it_start"/>
+    </startEvent>
+
+    <task name="Datenabfrage verarbeiten" id="_it_task_process" isForCompensation="false">
+      <documentation textFormat="text/plain">Die IT verarbeitet die von der Organisation angeforderten Daten, öffnet die relevanten Informationssysteme und bereitet die Prüfung für die Grundsicherung vor.</documentation>
+      <incoming>_it_flow_1</incoming>
+      <outgoing>_it_flow_2</outgoing>
+    </task>
+
+    <task name="Daten validieren" id="_it_task_validate" isForCompensation="false">
+      <documentation textFormat="text/plain">Die IT prüft die Vollständigkeit, Konsistenz und fachliche Plausibilität der übermittelten Daten für die Bewertung des Leistungsanspruchs.</documentation>
+      <incoming>_it_flow_2</incoming>
+      <outgoing>_it_flow_3</outgoing>
+    </task>
+
+    <task name="Ergebnis bereitstellen" id="_it_task_provide" isForCompensation="false">
+      <documentation textFormat="text/plain">Die IT liefert der Organisation die validierten Daten und das Prüfergebnis, damit die fachliche Entscheidung über die Grundsicherung getroffen werden kann.</documentation>
+      <incoming>_it_flow_3</incoming>
+      <outgoing>_it_flow_4</outgoing>
+    </task>
+
+    <endEvent name="Daten bearbeitet" id="_it_end">
+      <incoming>_it_flow_4</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_it_start" targetRef="_it_task_process" id="_it_flow_1"/>
+    <sequenceFlow sourceRef="_it_task_process" targetRef="_it_task_validate" id="_it_flow_2"/>
+    <sequenceFlow sourceRef="_it_task_validate" targetRef="_it_task_provide" id="_it_flow_3"/>
+    <sequenceFlow sourceRef="_it_task_provide" targetRef="_it_end" id="_it_flow_4"/>
+  </process>
+
+  <process name="Organisation" id="process_9b2be7a8-92d7-4f4b-9b35-8ab7b3d3580d" isExecutable="false" isClosed="false" processType="None">
+    <laneSet id="laneSet_9b2be7a8-92d7-4f4b-9b35-8ab7b3d3580d">
+      <lane name="Organisation" id="_7d6f8f3a-bca4-4e75-94b7-0f79a7fe9eb7">
+        <flowNodeRef>_org_start</flowNodeRef>
+        <flowNodeRef>_org_task_check</flowNodeRef>
+        <flowNodeRef>_org_task_request</flowNodeRef>
+        <flowNodeRef>_org_task_assess</flowNodeRef>
+        <flowNodeRef>_org_task_issue</flowNodeRef>
+        <flowNodeRef>_org_end</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <startEvent name="Antrag eingegangen" id="_org_start">
+      <outgoing>_org_flow_1</outgoing>
+      <messageEventDefinition id="msgEvtDef_org_start"/>
+    </startEvent>
+
+    <task name="Antrag prüfen" id="_org_task_check" isForCompensation="false">
+      <documentation textFormat="text/plain">Die Organisation prüft den eingegangenen Antrag auf Vollständigkeit, Identität und grundlegende Voraussetzungen für die Gewährung von Grundsicherung.</documentation>
+      <incoming>_org_flow_1</incoming>
+      <outgoing>_org_flow_2</outgoing>
+    </task>
+
+    <task name="Datenanfrage senden" id="_org_task_request" isForCompensation="false">
+      <documentation textFormat="text/plain">Die Organisation fordert die für die Leistungsprüfung erforderlichen Daten und Nachweise bei der IT an, damit die sachliche Bewertung verlässlicher erfolgen kann.</documentation>
+      <incoming>_org_flow_2</incoming>
+      <outgoing>_org_flow_3</outgoing>
+    </task>
+
+    <task name="Bedarf bewerten" id="_org_task_assess" isForCompensation="false">
+      <documentation textFormat="text/plain">Nach Eingang der validierten Daten bewertet die Organisation den individuellen Bedarf und prüft, ob die Voraussetzungen für die Gewährung der Grundsicherung erfüllt sind.</documentation>
+      <incoming>_org_flow_3</incoming>
+      <outgoing>_org_flow_4</outgoing>
+    </task>
+
+    <task name="Bescheid erstellen" id="_org_task_issue" isForCompensation="false">
+      <documentation textFormat="text/plain">Die Organisation erstellt den Bescheid zur Gewährung oder Ablehnung der Grundsicherung und dokumentiert die einschlägigen Entscheidungskriterien.</documentation>
+      <incoming>_org_flow_4</incoming>
+      <outgoing>_org_flow_5</outgoing>
+    </task>
+
+    <endEvent name="Bescheid erteilt" id="_org_end">
+      <incoming>_org_flow_5</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_org_start" targetRef="_org_task_check" id="_org_flow_1"/>
+    <sequenceFlow sourceRef="_org_task_check" targetRef="_org_task_request" id="_org_flow_2"/>
+    <sequenceFlow sourceRef="_org_task_request" targetRef="_org_task_assess" id="_org_flow_3"/>
+    <sequenceFlow sourceRef="_org_task_assess" targetRef="_org_task_issue" id="_org_flow_4"/>
+    <sequenceFlow sourceRef="_org_task_issue" targetRef="_org_end" id="_org_flow_5"/>
+  </process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Grundsicherung_beantragen">
+    <bpmndi:BPMNPlane id="BPMNPlane_Grundsicherung_beantragen" bpmnElement="Collaboration_f7d83c9a-2d51-4b57-9ae4-7f9a9ec2c0a2">
+
+      <bpmndi:BPMNShape id="shape_kunde_pool" bpmnElement="_d437f201-9f0d-4c54-a139-01d2d7bf7b36" isHorizontal="true">
+        <omgdc:Bounds x="10" y="0" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_kunde_lane" bpmnElement="_1a8f807d-2fc6-4bd9-99fa-6d2991cb3c48" isHorizontal="true">
+        <omgdc:Bounds x="40" y="0" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="shape_kunde_start" bpmnElement="_kunde_start">
+        <omgdc:Bounds x="120" y="172" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_kunde_task_prepare" bpmnElement="_kunde_task_prepare">
+        <omgdc:Bounds x="220" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_kunde_task_submit" bpmnElement="_kunde_task_submit">
+        <omgdc:Bounds x="440" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_kunde_task_reply" bpmnElement="_kunde_task_reply">
+        <omgdc:Bounds x="660" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_kunde_task_receive" bpmnElement="_kunde_task_receive">
+        <omgdc:Bounds x="880" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_kunde_end" bpmnElement="_kunde_end">
+        <omgdc:Bounds x="1120" y="172" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="edge_kunde_1" bpmnElement="_kunde_flow_1">
+        <omgdi:waypoint x="156" y="190"/>
+        <omgdi:waypoint x="220" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_kunde_2" bpmnElement="_kunde_flow_2">
+        <omgdi:waypoint x="371" y="190"/>
+        <omgdi:waypoint x="440" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_kunde_3" bpmnElement="_kunde_flow_3">
+        <omgdi:waypoint x="591" y="190"/>
+        <omgdi:waypoint x="660" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_kunde_4" bpmnElement="_kunde_flow_4">
+        <omgdi:waypoint x="811" y="190"/>
+        <omgdi:waypoint x="880" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_kunde_5" bpmnElement="_kunde_flow_5">
+        <omgdi:waypoint x="1031" y="190"/>
+        <omgdi:waypoint x="1120" y="190"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNShape id="shape_it_pool" bpmnElement="_b6f86d3e-1be2-4a65-9f1d-6c426f0d96cc" isHorizontal="true">
+        <omgdc:Bounds x="10" y="390" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_it_lane" bpmnElement="_8e1dc6b5-b803-4ecf-9fe0-f8d43d1c2174" isHorizontal="true">
+        <omgdc:Bounds x="40" y="390" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="shape_it_start" bpmnElement="_it_start">
+        <omgdc:Bounds x="120" y="562" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_it_task_process" bpmnElement="_it_task_process">
+        <omgdc:Bounds x="220" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_it_task_validate" bpmnElement="_it_task_validate">
+        <omgdc:Bounds x="440" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_it_task_provide" bpmnElement="_it_task_provide">
+        <omgdc:Bounds x="660" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_it_end" bpmnElement="_it_end">
+        <omgdc:Bounds x="920" y="562" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="edge_it_1" bpmnElement="_it_flow_1">
+        <omgdi:waypoint x="156" y="580"/>
+        <omgdi:waypoint x="220" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_it_2" bpmnElement="_it_flow_2">
+        <omgdi:waypoint x="371" y="580"/>
+        <omgdi:waypoint x="440" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_it_3" bpmnElement="_it_flow_3">
+        <omgdi:waypoint x="591" y="580"/>
+        <omgdi:waypoint x="660" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_it_4" bpmnElement="_it_flow_4">
+        <omgdi:waypoint x="811" y="580"/>
+        <omgdi:waypoint x="920" y="580"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNShape id="shape_org_pool" bpmnElement="_6d23d52d-0f0d-4bbc-93ae-650505640b78" isHorizontal="true">
+        <omgdc:Bounds x="10" y="780" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_org_lane" bpmnElement="_7d6f8f3a-bca4-4e75-94b7-0f79a7fe9eb7" isHorizontal="true">
+        <omgdc:Bounds x="40" y="780" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="shape_org_start" bpmnElement="_org_start">
+        <omgdc:Bounds x="120" y="952" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_org_task_check" bpmnElement="_org_task_check">
+        <omgdc:Bounds x="220" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_org_task_request" bpmnElement="_org_task_request">
+        <omgdc:Bounds x="440" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_org_task_assess" bpmnElement="_org_task_assess">
+        <omgdc:Bounds x="660" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_org_task_issue" bpmnElement="_org_task_issue">
+        <omgdc:Bounds x="880" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_org_end" bpmnElement="_org_end">
+        <omgdc:Bounds x="1120" y="952" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="edge_org_1" bpmnElement="_org_flow_1">
+        <omgdi:waypoint x="156" y="970"/>
+        <omgdi:waypoint x="220" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_org_2" bpmnElement="_org_flow_2">
+        <omgdi:waypoint x="371" y="970"/>
+        <omgdi:waypoint x="440" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_org_3" bpmnElement="_org_flow_3">
+        <omgdi:waypoint x="591" y="970"/>
+        <omgdi:waypoint x="660" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_org_4" bpmnElement="_org_flow_4">
+        <omgdi:waypoint x="811" y="970"/>
+        <omgdi:waypoint x="880" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_org_5" bpmnElement="_org_flow_5">
+        <omgdi:waypoint x="1031" y="970"/>
+        <omgdi:waypoint x="1120" y="970"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="message_kunde_org" bpmnElement="_8254c66a-7303-4eb6-aef4-ed3a663fd9b7">
+        <omgdi:waypoint x="515" y="228"/>
+        <omgdi:waypoint x="515" y="780"/>
+        <omgdi:waypoint x="138" y="780"/>
+        <omgdi:waypoint x="138" y="952"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="message_org_it" bpmnElement="_795e7605-6d42-4aa1-9c2d-cfde6a5d4e39">
+        <omgdi:waypoint x="515" y="1008"/>
+        <omgdi:waypoint x="515" y="780"/>
+        <omgdi:waypoint x="138" y="780"/>
+        <omgdi:waypoint x="138" y="580"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="message_it_org" bpmnElement="_4d3d67d5-4b36-4207-8955-7dd5062fdd60">
+        <omgdi:waypoint x="735" y="618"/>
+        <omgdi:waypoint x="735" y="780"/>
+        <omgdi:waypoint x="735" y="780"/>
+        <omgdi:waypoint x="735" y="932"/>
+      </bpmndi:BPMNEdge>
+
+      <bpmndi:BPMNEdge id="message_org_kunde" bpmnElement="_7ca5d17f-1786-42be-b3bb-75d0d8c804a8">
+        <omgdi:waypoint x="955" y="932"/>
+        <omgdi:waypoint x="955" y="390"/>
+        <omgdi:waypoint x="955" y="390"/>
+        <omgdi:waypoint x="955" y="228"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>
