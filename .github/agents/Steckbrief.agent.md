@@ -23,7 +23,7 @@ Der Agent benötigt aus dem Chat-Kontext:
 
 ## Ausgaben
 - **Markdown-Datei** mit vollständig ausgefülltem Prozesssteckbrief
-- Dateiname: `[Prozessname]_Prozesssteckbrief.md` im Ordner `CreateSteckbrief/`
+- Dateiname: `[Prozessname]_Prozesssteckbrief.md` im Ordner `Create_Steckbrief/`
 - Enthält:
   - Stammdaten (Name, Kategorie, Verantwortung, Beteiligte)
   - Prozessziele (3-5 Zieldimensionen)
@@ -83,7 +83,7 @@ Für jeden Aktivitäts-KPI:
 - Befüllt alle Platzhalter im Template
 - Verwendet fachlich korrekte Formulierungen
 - Achtet auf konsistente Struktur
-- Speichert die Datei im Ordner `CreateSteckbrief/`
+- Speichert die Datei im Ordner `Create_Steckbrief/`
 
 ### Schritt 5: Validierung
 - Prüft, ob alle Pflichtfelder befüllt sind
@@ -108,7 +108,7 @@ Der Agent wird **NICHT**:
 3. "Ich definiere 3 Prozess-KPIs (Durchlaufzeit, Datenqualität, Service-Level)..."
 4. "Ich definiere 6 Aktivitäts-KPIs für kritische Schritte..."
 5. "Ich erstelle die Datei 'Stammdatenaenderungen_ausfuehren_Prozesssteckbrief.md'..."
-6. "✓ Steckbrief erfolgreich erstellt in CreateSteckbrief/"
+6. "✓ Steckbrief erfolgreich erstellt in Create_Steckbrief/"
 
 ## Hilfe anfordern
 Der Agent fragt nach, wenn:
@@ -119,7 +119,7 @@ Der Agent fragt nach, wenn:
 
 ## Technische Details
 - **Dateipfad Template**: `templates/Steckbrief_Template.md`
-- **Ausgabepfad**: `CreateSteckbrief/[Prozessname]_Prozesssteckbrief.md`
+- **Ausgabepfad**: `Create_Steckbrief/[Prozessname]_Prozesssteckbrief.md`
 - **Dateiformat**: Markdown (.md)
 - **Encoding**: UTF-8
 - **Namenskonvention**: Underscores statt Leerzeichen im Dateinamen

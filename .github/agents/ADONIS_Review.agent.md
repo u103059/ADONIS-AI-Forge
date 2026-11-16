@@ -57,7 +57,7 @@ Wenn der Nutzer ein Modell zur Pruefung benennt oder bereitstellt:
 Pruefe das Modell anhand aller 5 Pruefkategorien in der definierten Reihenfolge.
 
 ### Schritt 3: Pruefbericht erstellen und speichern
-Erstelle den strukturierten Pruefbericht mit konkreten Befunden und Empfehlungen. Das Review soll im Ordner `Created_Review_ADONIS` abgelegt werden
+Erstelle den strukturierten Pruefbericht mit konkreten Befunden und Empfehlungen. Das Review soll im Ordner `Created_Review/` abgelegt werden
 
 ### Schritt 4: Remodellierung des Modells (optional)
 Falls der Nutzer eine Remodellierung wünscht, informiere ihn, dass er einen entsprechenden Agenten auswählen soll. Der Remodellierungsagent wird dann die notwendigen Anpassungen vornehmen, um die festgestellten Mängel zu beheben und die Empfehlungen umzusetzen.
@@ -68,7 +68,7 @@ Vor der Pruefung koennen folgende Referenzdokumente herangezogen werden:
 - `templates/Review_Template.md` - **Pruefbericht-Template** fuer die Dokumentation des Review-Outputs
 - `templates/BPMN_ADONIS_Template.xml` - ADONIS-kompatibles Template als Referenz
 - `.github/instructions/BPMN_Documentation.instructions.md` - Pruefgrundlage fuer die Taskdokumentation (Documentation - Element documentation)
-- `BPMN_ADONIS/ADONIS KOI-Prozessmodell (1 Pool mit Lane, 2 Black-Box Pools).bpmn` - Beispiel mit Black-Box-Pools
+- `templates/BPMN_ADONIS/ADONIS KOI-Prozessmodell (1 Pool mit Lane, 2 Black-Box Pools).bpmn` - Beispiel mit Black-Box-Pools
 - `ADONIS_BPMN_Guidelines.md` - ADONIS-spezifische BPMN-Modellierungsrichtlinien
 
 ## Tipps fuer kompaktere Darstellung

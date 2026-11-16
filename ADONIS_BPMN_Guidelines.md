@@ -6,8 +6,8 @@ Diese Guidelines definieren die Modellierungsregeln für BPMN 2.0 Prozessmodelle
 
 ### Referenzdokumente
 - ADONIS BPMN Template: `templates/BPMN_ADONIS_Template.xml`
-- ADONIS Beispielmodelle: `BPMN_ADONIS/`
-- GPM-Handbuch der LHS Stuttgart: `BPMN_ADONIS/GPM-Handbuch.md`
+- ADONIS Beispielmodelle: `templates/BPMN_ADONIS/`
+- GPM-Handbuch der LHS Stuttgart: `templates/BPMN_ADONIS/GPM-Handbuch.md`
 
 ---
 

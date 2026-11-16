@@ -102,7 +102,7 @@ Im Perfekt oder als abgeschlossenen Zustand formulieren:
 - **Fehlertoleranz**: Bei kritischen Validierungen erwaehnen, dass nur valide Daten weitergeleitet werden (Happy Path)
 
 **Nach der Prozessbeschreibung:**
-**Erstelle IMMER automatisch ein BPMN-XML-Modell im Ordner `CreateBPMN/`.**
+**Erstelle IMMER automatisch ein BPMN-XML-Modell im Ordner `Create_BPMN/`.**
 **Oeffne das erstellte BPMN-Modell IMMER automatisch in VS Code (Extension "Camunda Modeler by miragon").**
 **Den Nutzer informieren, dass der Prozess als ADONIS-kompatibles IT-Datenverarbeitungsmodell mit je einem Pool pro IT-System und Nachrichtenfluessen dargestellt wird.**
 
@@ -113,7 +113,7 @@ Im Perfekt oder als abgeschlossenen Zustand formulieren:
 1. `templates/BPMN_ADONIS_Template.xml` - ADONIS-kompatibles Template (Namespaces, Collaboration, Pools, Message Flows, BPMN-DI)
 2. `ADONIS_BPMN_Guidelines.md` - ADONIS-spezifische Modellierungs-, Layout- und BPMN-DI-Regeln
 3. `.github/instructions/BPMN_Documentation.instructions.md` - Verbindliche Regel fuer Taskinformationen in Documentation - Element documentation
-4. `BPMN_ADONIS/ADONIS KOI Prozessmodell (3 Pools mit Lane).bpmn` - ADONIS-Beispiel mit mehreren Pools und Message Flows
+4. `templates/BPMN_ADONIS/ADONIS KOI Prozessmodell (3 Pools mit Lane).bpmn` - ADONIS-Beispiel mit mehreren Pools und Message Flows
 
 #### BPMN-Modell-Struktur (ADONIS-kompatibel):
 - **Basis**: Verwende die Struktur aus `templates/BPMN_ADONIS_Template.xml`, Pools jedoch je IT-System statt Kunde/IT/Organisation
@@ -189,7 +189,7 @@ Jeder Task erhaelt gemaess `.github/instructions/BPMN_Documentation.instructions
 - Schnittstelle / Protokoll (bei Datenaustausch)
 
 #### Dateiname und Speicherort:
-- **Ordner**: `CreateBPMN/`
+- **Ordner**: `Create_BPMN/`
 - **Dateiname**: `ADONIS_I_[Prozessname].bpmn` z.B.:
   - `ADONIS_I_Wohngeld_beantragen.bpmn`
   - `ADONIS_I_Antragsdaten_validieren.bpmn`
@@ -197,7 +197,7 @@ Jeder Task erhaelt gemaess `.github/instructions/BPMN_Documentation.instructions
 
 #### Nach Modell-Erstellung:
 **WICHTIG**: Nach erfolgreicher Erstellung MUSS das Modell automatisch geoeffnet werden:
-- Im Terminal `code "CreateBPMN/ADONIS_I_[Prozessname].bpmn"` ausfuehren
+- Im Terminal `code "Create_BPMN/ADONIS_I_[Prozessname].bpmn"` ausfuehren
 - Die Extension "Camunda Modeler by miragon" visualisiert das BPMN-Modell
 - Den Nutzer informieren, dass das Modell in der Camunda Modeler Extension geoeffnet wurde
 
@@ -273,7 +273,7 @@ Diese Dokumente MUESSEN vor der BPMN-Modell-Erstellung gelesen werden:
 ### 3. .github/instructions/BPMN_Documentation.instructions.md
 - Verbindliche Regel fuer Taskinformationen in Documentation - Element documentation
 
-### 4. BPMN_ADONIS/ADONIS KOI Prozessmodell (3 Pools mit Lane).bpmn
+### 4. templates/BPMN_ADONIS/ADONIS KOI Prozessmodell (3 Pools mit Lane).bpmn
 - ADONIS-Beispiel fuer mehrere Pools mit Lanes und Message Flows
 
 ## Qualitaetssicherung
@@ -292,5 +292,5 @@ Vor Abschluss pruefen:
 - ✅ Jeder technische Schritt hat einen eigenen Task (keine Zusammenfassung)
 - ✅ Jeder Task hat ein `<documentation>`-Element
 - ✅ ADONIS-Namespaces korrekt, alle IDs im Format `_[UUID]`, Umlaute in IDs ersetzt
-- ✅ Datei im Ordner `CreateBPMN/` als `ADONIS_I_[Prozessname].bpmn` gespeichert
+- ✅ Datei im Ordner `Create_BPMN/` als `ADONIS_I_[Prozessname].bpmn` gespeichert
 - ✅ BPMN-Modell automatisch in Camunda Modeler geoeffnet

@@ -59,7 +59,7 @@ Wenn der Nutzer die Erstellung eines BPMN-Modells bestaetigt:
 1. `templates/BPMN_ADONIS_Template.xml` - ADONIS-kompatibles KOI-Template mit 3-Pool-Struktur
 2. `ADONIS_BPMN_Guidelines.md` - ADONIS-spezifische Modellierungs-, Layout- und BPMN-DI-Regeln
 3. `.github/instructions/BPMN_Documentation.instructions.md` - Verbindliche Regel fuer Taskinformationen in Documentation - Element documentation
-4. `BPMN_ADONIS/ADONIS KOI Prozessmodell (3 Pools mit Lane).bpmn` - ADONIS-Beispiel mit 3 Pools
+4. `templates/BPMN_ADONIS/ADONIS KOI Prozessmodell (3 Pools mit Lane).bpmn` - ADONIS-Beispiel mit 3 Pools
 
 #### BPMN-Modell-Struktur (ADONIS-kompatibel):
 - **Basis**: Verwende die Struktur aus `templates/BPMN_ADONIS_Template.xml`
@@ -106,7 +106,7 @@ Wenn der Nutzer die Erstellung eines BPMN-Modells bestaetigt:
   - sourceRef und targetRef referenzieren Element-IDs
 
 #### Dateiname und Speicherort:
-- **Ordner**: `CreateBPMN/`
+- **Ordner**: `Create_BPMN/`
 - **Dateiname**: `ADONIS_KOI_[Prozessname].bpmn` z.B.:
   - `ADONIS_KOI_Personalausweis_beantragen.bpmn`
   - `ADONIS_KOI_Elterngeld_beantragen.bpmn`

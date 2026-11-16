@@ -87,7 +87,7 @@ Wenn der Nutzer die Erstellung eines BPMN-Modells bestaetigt:
 - Best Practices und Checkliste (Kap. 16-17)
 
 #### Dateiname und Speicherort:
-- **Ordner**: `CreateBPMN/`
+- **Ordner**: `Create_BPMN/`
 - **Dateiname**: `ADONIS_KO_[Prozessname].bpmn` z.B. `ADONIS_KO_Wohngeld_beantragen.bpmn`
 
 ## Qualitaetssicherung

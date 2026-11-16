@@ -39,6 +39,8 @@ Diese Dokumentation beschreibt die technischen Grundlagen und Voraussetzungen zu
 
 **Zweck:** Remote-GitHub-Repositories direkt in VS Code durchsuchen, bearbeiten und committen, ohne lokalen Clone
 
+> **Achtung:** Für die Nutzung der Agenten wird ein **lokaler Clone** benötigt. Der Copilot-Harness läuft im Agent Host neben dem lokalen Workspace und findet die Agenten unter `.github/agents` in einem über „GitHub Repositories“ geöffneten (virtuellen) Workspace nicht – sie erscheinen dann nicht in der Agent-Auswahl.
+
 ### 5. VS Code Speech (optional)
 **Extension ID:** `ms-vscode.vscode-speech`
 

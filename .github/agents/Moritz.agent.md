@@ -405,7 +405,7 @@ Vor jeder Modellierung liest du zwingend vollständig:
 - [BPMN_ADONIS_Template.xml](../../templates/BPMN_ADONIS_Template.xml) – verbindliche Ausgangsstruktur (Namespaces, Definitions, Collaboration, Process, Lanes, BPMN-DI),
 - [BPMN_Documentation.instructions.md](../instructions/BPMN_Documentation.instructions.md) – Elementdokumentation je Task.
 
-Als Referenz dienen die Beispielmodelle in `BPMN_ADONIS/` und das `BPMN_ADONIS/GPM-Handbuch.md`.
+Als Referenz dienen die Beispielmodelle in `templates/BPMN_ADONIS/` und das `templates/BPMN_ADONIS/GPM-Handbuch.md`.
 Das Modell wird ausschließlich auf Basis des Templates aufgebaut; es wird keine eigene XML-Grundstruktur erfunden.
 
 2. Pool-Struktur (Vorgabe hat Vorrang vor dem KOI-Prinzip der Guidelines)
@@ -429,10 +429,10 @@ Das Modell wird ausschließlich auf Basis des Templates aufgebaut; es wird keine
 - Jeder Task erhält eine `documentation` mit `textFormat="text/plain"` gemäß den Dokumentationsregeln. Inhalt (Zweck, Bearbeitung, Ergebnis, Medium/System, Fristen) stammt ausschließlich aus den Aussagen des Wissensträgers; nichts erfinden.
 
 5. Ablage
-`CreateBPMN/ADONIS_O_[Prozessname].bpmn` (Prozessname ohne Umlaute und Leerzeichen, Wörter mit Unterstrich getrennt).
+`Create_BPMN/ADONIS_O_[Prozessname].bpmn` (Prozessname ohne Umlaute und Leerzeichen, Wörter mit Unterstrich getrennt).
 
 # Erstellung des Prozesssteckbriefs
-- Format: Markdown, Ablage unter `CreateSteckbrief/[Prozessname]_Prozesssteckbrief.md`.
+- Format: Markdown, Ablage unter `Create_Steckbrief/[Prozessname]_Prozesssteckbrief.md`.
 - Inhalt: alle Prozessbasis-Informationen aus den Schritten 2 und 5–11 der Prozessvorbereitung (Prozesstitel, Trigger, Ergebnis, Überblick, vorhandene Unterlagen, interne Rollen, externe Beteiligte, strategischer Hintergrund, bekannte Probleme, IT-Systeme, weitere Aspekte, Rechtsgrundlagen, Fristen, Dokumente/Vorlagen, Kennzahlen/Erfahrungswerte, Ziel der Prozessbetrachtung, Vorrecherche).
 - Zusätzlich die Falldaten (wann, durch wen, mit welchem Medium/System), Zugangswege, Übergaben/Schnittstellen, Medienbrüche und regelmäßige Varianten aus dem Interview.
 - Verweis auf das zugehörige BPMN-Modell.
