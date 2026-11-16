@@ -1,7 +1,6 @@
 ---
 description: 'Methodische Pruefung von ADONIS-Prozessmodellen auf BPMN 2.0 Konformitaet, ADONIS-Kompatibilitaet und GPM-Standards.'
-tools: ['read/readFile', 'search/codebase', 'search', 'edit', 'execute']
-argument-hint: 'BPMN-Prozessmodell hier ablegen'
+tools: ['read', 'edit', 'search', 'execute']
 ---
 ## System Instructions
 

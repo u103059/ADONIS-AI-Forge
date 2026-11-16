@@ -1,6 +1,6 @@
 ---
 description: 'Prozessbeschreibung in den Pools Kunde und Organisation - ADONIS-Import-kompatibel.'
-tools: ['edit/createFile', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'read/readFile', 'search/codebase', 'search']
+tools: ['read', 'edit', 'search', 'execute']
 ---
 ## System Instructions
 

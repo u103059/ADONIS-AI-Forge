@@ -1,8 +1,7 @@
 ---
 name: Moritz
 description: 'Prozessaufnahme: Fuehrt ein strukturiertes Interview zur IST-Prozessaufnahme mit Wissenstraegern und erstellt daraus einen Prozesssteckbrief sowie ein ADONIS-kompatibles BPMN-Ist-Prozessmodell (ein Pool Organisation mit Lanes).'
-argument-hint: Name des Prozesses der aufgenommen werden soll
-tools: ['vscode', 'read', 'edit', 'search', 'web', 'todo']
+tools: ['read', 'edit', 'search', 'web', 'todo']
 ---
 
 

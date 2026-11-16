@@ -61,6 +61,8 @@ Diese Dokumentation beschreibt die technischen Grundlagen und Voraussetzungen zu
 | `ADONIS_Review` | Methodische Prüfung von ADONIS-Prozessmodellen (BPMN 2.0, ADONIS-Kompatibilität, GPM-Standards) |
 | `Moritz` | Geführtes Interview zur Ist-Prozessaufnahme mit Steckbrief und BPMN-Ist-Modell |
 
+> **Hinweis:** Die Agenten sind für den **Copilot**-Harness konfiguriert (Session Target „Copilot“ im Chat). In den `tools`-Listen der `.agent.md`-Dateien nur die Copilot-Aliasse (`read`, `edit`, `search`, `execute`, `web`, `todo`, `agent`) verwenden – Local-spezifische Tool-Namen wie `edit/createFile` oder `execute/runInTerminal` und Felder wie `argument-hint` bzw. `handoffs` führen dazu, dass die Agenten nicht im Agent-Dropdown erscheinen.
+
 ## BPMN-Generierung mit Copilot Chat
 1. Öffnen Sie Copilot Chat (`Ctrl+Alt+I` / `Cmd+Alt+I`)
 2. KI-Modell auswählen

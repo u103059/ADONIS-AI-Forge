@@ -1,6 +1,6 @@
 ---
 description: 'Erstellt strukturierte Prozesssteckbriefe mit Prozess- und Aktivitäts-KPIs auf Basis des Templates.'
-tools: ['edit/createFile', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'read/readFile', 'search/codebase', 'search']
+tools: ['read', 'edit', 'search', 'execute']
 ---
 
 # Prozesssteckbrief-Agent
