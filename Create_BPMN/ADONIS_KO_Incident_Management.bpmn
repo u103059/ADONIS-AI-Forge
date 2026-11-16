@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:adonis="http://www.boc-group.com"
+             xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             id="definition__8c1d2e30-4a5b-4c6d-8e7f-9a0b1c2d0000"
+             typeLanguage="http://www.w3.org/2001/XMLSchema"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd"
+             targetNamespace="http://www.boc-group.com">
+
+  <!-- Pools: Kunde (oben), Organisation (unten, 2 Lanes: Service Desk, Fachteam) -->
+  <collaboration id="Collaboration_8c1d2e30-4a5b-4c6d-8e7f-9a0b1c2d0001"
+                 name="Incident Management"
+                 isClosed="false">
+    <participant processRef="process_b0000002-4a5b-4c6d-8e7f-9a0b1c2d0001"
+                 name="Kunde"
+                 id="_a0000002-4a5b-4c6d-8e7f-9a0b1c2d0001"/>
+    <participant processRef="process_b0000002-4a5b-4c6d-8e7f-9a0b1c2d0002"
+                 name="Organisation"
+                 id="_a0000002-4a5b-4c6d-8e7f-9a0b1c2d0002"/>
+
+    <!-- Kunde → Organisation: Störungsmeldung -->
+    <messageFlow id="_f3000002-4a5b-4c6d-8e7f-9a0b1c2d0001"
+                 name="Störungsmeldung"
+                 sourceRef="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0002"
+                 targetRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0001">
+      <extensionElements>
+        <adonis:connector>
+          <adonis:attribute name="DISPLAY_DENOMNIATION" type="BOOL" notebook="1" sourcelang="" novalue="0">
+            <adonis:value>true</adonis:value>
+            <adonis:metavalue/>
+          </adonis:attribute>
+          <adonis:attribute name="REPRESENTATION_HAS_PROCESS" type="ENUM" notebook="1" sourcelang="" novalue="0" lang-independent="v0">
+            <adonis:value>automatisch</adonis:value>
+            <adonis:metavalue/>
+          </adonis:attribute>
+        </adonis:connector>
+      </extensionElements>
+    </messageFlow>
+
+    <!-- Organisation → Kunde: Eingangsbestätigung -->
+    <messageFlow id="_f3000002-4a5b-4c6d-8e7f-9a0b1c2d0002"
+                 name="Eingangsbestätigung mit Ticketnummer"
+                 sourceRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0003"
+                 targetRef="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0003">
+      <extensionElements>
+        <adonis:connector>
+          <adonis:attribute name="DISPLAY_DENOMNIATION" type="BOOL" notebook="1" sourcelang="" novalue="0">
+            <adonis:value>true</adonis:value>
+            <adonis:metavalue/>
+          </adonis:attribute>
+          <adonis:attribute name="REPRESENTATION_HAS_PROCESS" type="ENUM" notebook="1" sourcelang="" novalue="0" lang-independent="v0">
+            <adonis:value>automatisch</adonis:value>
+            <adonis:metavalue/>
+          </adonis:attribute>
+        </adonis:connector>
+      </extensionElements>
+    </messageFlow>
+
+    <!-- Organisation → Kunde: Lösungsmitteilung -->
+    <messageFlow id="_f3000002-4a5b-4c6d-8e7f-9a0b1c2d0003"
+                 name="Lösungsmitteilung"
+                 sourceRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0012"
+                 targetRef="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0004">
+      <extensionElements>
+        <adonis:connector>
+          <adonis:attribute name="DISPLAY_DENOMNIATION" type="BOOL" notebook="1" sourcelang="" novalue="0">
+            <adonis:value>true</adonis:value>
+            <adonis:metavalue/>
+          </adonis:attribute>
+          <adonis:attribute name="REPRESENTATION_HAS_PROCESS" type="ENUM" notebook="1" sourcelang="" novalue="0" lang-independent="v0">
+            <adonis:value>automatisch</adonis:value>
+            <adonis:metavalue/>
+          </adonis:attribute>
+        </adonis:connector>
+      </extensionElements>
+    </messageFlow>
+
+    <!-- Kunde → Organisation: Bestätigung -->
+    <messageFlow id="_f3000002-4a5b-4c6d-8e7f-9a0b1c2d0004"
+                 name="Bestätigung der Wiederherstellung"
+                 sourceRef="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0005"
+                 targetRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0013">
+      <extensionElements>
+        <adonis:connector>
+          <adonis:attribute name="DISPLAY_DENOMNIATION" type="BOOL" notebook="1" sourcelang="" novalue="0">
+            <adonis:value>true</adonis:value>
+            <adonis:metavalue/>
+          </adonis:attribute>
+          <adonis:attribute name="REPRESENTATION_HAS_PROCESS" type="ENUM" notebook="1" sourcelang="" novalue="0" lang-independent="v0">
+            <adonis:value>automatisch</adonis:value>
+            <adonis:metavalue/>
+          </adonis:attribute>
+        </adonis:connector>
+      </extensionElements>
+    </messageFlow>
+  </collaboration>
+
+  <!-- ===== PROZESS: Kunde ===== -->
+  <process name="Kunde" id="process_b0000002-4a5b-4c6d-8e7f-9a0b1c2d0001" isExecutable="false" isClosed="false" processType="None">
+    <laneSet id="laneSet_c0000002-4a5b-4c6d-8e7f-9a0b1c2d0001">
+      <lane name="Anwender" id="_d0000002-4a5b-4c6d-8e7f-9a0b1c2d0001">
+        <flowNodeRef>_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0001</flowNodeRef>
+        <flowNodeRef>_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0002</flowNodeRef>
+        <flowNodeRef>_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0003</flowNodeRef>
+        <flowNodeRef>_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0004</flowNodeRef>
+        <flowNodeRef>_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0005</flowNodeRef>
+        <flowNodeRef>_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0006</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <startEvent name="Störung festgestellt" id="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0001">
+      <outgoing>_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0001</outgoing>
+    </startEvent>
+
+    <task name="Störung melden" id="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0002" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Anwender meldet die festgestellte Störung des IT-Services beim Service Desk und beschreibt Symptome und Auswirkung. Ergebnis ist die Übermittlung der Störungsmeldung an die Organisation (Nachricht: Störungsmeldung).</documentation>
+      <incoming>_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0001</incoming>
+      <outgoing>_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0002</outgoing>
+    </task>
+
+    <intermediateCatchEvent name="Eingangsbestätigung erhalten" id="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0003">
+      <incoming>_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0002</incoming>
+      <outgoing>_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0003</outgoing>
+      <messageEventDefinition id="messageEventDefinition_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0003"/>
+    </intermediateCatchEvent>
+
+    <intermediateCatchEvent name="Lösungsmitteilung erhalten" id="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0004">
+      <incoming>_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0003</incoming>
+      <outgoing>_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0004</outgoing>
+      <messageEventDefinition id="messageEventDefinition_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0004"/>
+    </intermediateCatchEvent>
+
+    <task name="Lösung bestätigen" id="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0005" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Anwender prüft anhand der Lösungsmitteilung, ob der gestörte IT-Service wieder wie gewohnt nutzbar ist, und bestätigt dies gegenüber dem Service Desk. Ergebnis ist die Bestätigung der Wiederherstellung (Nachricht: Bestätigung der Wiederherstellung).</documentation>
+      <incoming>_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0004</incoming>
+      <outgoing>_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0005</outgoing>
+    </task>
+
+    <endEvent name="Service wiederhergestellt" id="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0006">
+      <incoming>_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0005</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0001" targetRef="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0002" id="_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0001"/>
+    <sequenceFlow sourceRef="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0002" targetRef="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0003" id="_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0002"/>
+    <sequenceFlow sourceRef="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0003" targetRef="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0004" id="_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0003"/>
+    <sequenceFlow sourceRef="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0004" targetRef="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0005" id="_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0004"/>
+    <sequenceFlow sourceRef="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0005" targetRef="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0006" id="_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0005"/>
+  </process>
+
+  <!-- ===== PROZESS: Organisation ===== -->
+  <process name="Organisation" id="process_b0000002-4a5b-4c6d-8e7f-9a0b1c2d0002" isExecutable="false" isClosed="false" processType="None">
+    <laneSet id="laneSet_c0000002-4a5b-4c6d-8e7f-9a0b1c2d0002">
+      <lane name="Service Desk" id="_d0000002-4a5b-4c6d-8e7f-9a0b1c2d0002">
+        <flowNodeRef>_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0001</flowNodeRef>
+        <flowNodeRef>_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0002</flowNodeRef>
+        <flowNodeRef>_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0003</flowNodeRef>
+        <flowNodeRef>_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0004</flowNodeRef>
+        <flowNodeRef>_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0005</flowNodeRef>
+        <flowNodeRef>_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0006</flowNodeRef>
+        <flowNodeRef>_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0011</flowNodeRef>
+        <flowNodeRef>_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0012</flowNodeRef>
+        <flowNodeRef>_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0013</flowNodeRef>
+        <flowNodeRef>_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0014</flowNodeRef>
+        <flowNodeRef>_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0015</flowNodeRef>
+      </lane>
+      <lane name="Fachteam" id="_d0000002-4a5b-4c6d-8e7f-9a0b1c2d0003">
+        <flowNodeRef>_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0007</flowNodeRef>
+        <flowNodeRef>_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0008</flowNodeRef>
+        <flowNodeRef>_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0009</flowNodeRef>
+        <flowNodeRef>_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0010</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <startEvent name="Störungsmeldung eingegangen" id="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0001">
+      <outgoing>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0001</outgoing>
+      <messageEventDefinition id="messageEventDefinition_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0001"/>
+    </startEvent>
+
+    <task name="Incident erfassen" id="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0002" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Service Desk legt zur eingegangenen Störungsmeldung ein Incident-Ticket an und erfasst Beschreibung, betroffenen Anwender und betroffenen Service. Ergebnis ist ein angelegtes Ticket mit Ticketnummer.</documentation>
+      <incoming>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0001</incoming>
+      <outgoing>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0002</outgoing>
+    </task>
+
+    <task name="Eingangsbestätigung versenden" id="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0003" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Service Desk bestätigt dem Anwender den Eingang der Störungsmeldung und teilt die Ticketnummer mit. Ergebnis ist die Information des Anwenders über den Bearbeitungsstart (Nachricht: Eingangsbestätigung mit Ticketnummer).</documentation>
+      <incoming>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0002</incoming>
+      <outgoing>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0003</outgoing>
+    </task>
+
+    <task name="Incident kategorisieren und priorisieren" id="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0004" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Service Desk ordnet das Incident-Ticket einer Kategorie zu und bestimmt anhand von Auswirkung und Dringlichkeit die Priorität. Ergebnis ist ein kategorisiertes und priorisiertes Ticket.</documentation>
+      <incoming>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0003</incoming>
+      <outgoing>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0004</outgoing>
+    </task>
+
+    <task name="Erstanalyse durchführen" id="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0005" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Service Desk gleicht die Störung mit bekannten Fehlern und der Lösungsdatenbank ab und prüft, ob eine Lösung im Rahmen der Ersten Ebene möglich ist. Ergebnis ist die Feststellung, dass das Fachteam hinzugezogen werden muss.</documentation>
+      <incoming>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0004</incoming>
+      <outgoing>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0005</outgoing>
+    </task>
+
+    <task name="Incident an Fachteam übergeben" id="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0006" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Service Desk weist das Incident-Ticket mit den Ergebnissen der Erstanalyse dem zuständigen Fachteam zu. Ergebnis ist ein dem Fachteam zugewiesenes Ticket.</documentation>
+      <incoming>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0005</incoming>
+      <outgoing>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0006</outgoing>
+    </task>
+
+    <intermediateThrowEvent name="Incident übernommen" id="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0007">
+      <incoming>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0006</incoming>
+      <outgoing>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0007</outgoing>
+    </intermediateThrowEvent>
+
+    <task name="Ursache diagnostizieren" id="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0008" isForCompensation="false">
+      <documentation textFormat="text/plain">Das Fachteam analysiert die Störung technisch und ermittelt die Ursache anhand der Ticketangaben. Ergebnis ist die festgestellte Störungsursache.</documentation>
+      <incoming>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0007</incoming>
+      <outgoing>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0008</outgoing>
+    </task>
+
+    <task name="Störung beheben" id="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0009" isForCompensation="false">
+      <documentation textFormat="text/plain">Das Fachteam setzt die Lösung oder einen Workaround um und stellt den gestörten IT-Service wieder her. Ergebnis ist ein wieder funktionsfähiger Service.</documentation>
+      <incoming>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0008</incoming>
+      <outgoing>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0009</outgoing>
+    </task>
+
+    <task name="Lösung dokumentieren" id="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0010" isForCompensation="false">
+      <documentation textFormat="text/plain">Das Fachteam hält Ursache und durchgeführte Maßnahmen im Incident-Ticket fest. Ergebnis ist ein vollständig dokumentiertes Ticket.</documentation>
+      <incoming>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0009</incoming>
+      <outgoing>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0010</outgoing>
+    </task>
+
+    <intermediateThrowEvent name="Lösung bereitgestellt" id="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0011">
+      <incoming>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0010</incoming>
+      <outgoing>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0011</outgoing>
+    </intermediateThrowEvent>
+
+    <task name="Lösung mitteilen" id="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0012" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Service Desk informiert den Anwender über die Behebung der Störung und bittet um Bestätigung der Wiederherstellung. Ergebnis ist die Information des Anwenders (Nachricht: Lösungsmitteilung).</documentation>
+      <incoming>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0011</incoming>
+      <outgoing>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0012</outgoing>
+    </task>
+
+    <intermediateCatchEvent name="Bestätigung erhalten" id="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0013">
+      <incoming>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0012</incoming>
+      <outgoing>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0013</outgoing>
+      <messageEventDefinition id="messageEventDefinition_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0013"/>
+    </intermediateCatchEvent>
+
+    <task name="Incident schließen" id="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0014" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Service Desk schließt das Incident-Ticket nach der Bestätigung des Anwenders ab. Ergebnis ist ein geschlossenes Ticket.</documentation>
+      <incoming>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0013</incoming>
+      <outgoing>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0014</outgoing>
+    </task>
+
+    <endEvent name="Incident abgeschlossen" id="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0015">
+      <incoming>_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0014</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0001" targetRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0002" id="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0001"/>
+    <sequenceFlow sourceRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0002" targetRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0003" id="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0002"/>
+    <sequenceFlow sourceRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0003" targetRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0004" id="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0003"/>
+    <sequenceFlow sourceRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0004" targetRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0005" id="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0004"/>
+    <sequenceFlow sourceRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0005" targetRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0006" id="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0005"/>
+    <sequenceFlow sourceRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0006" targetRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0007" id="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0006"/>
+    <sequenceFlow sourceRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0007" targetRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0008" id="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0007"/>
+    <sequenceFlow sourceRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0008" targetRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0009" id="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0008"/>
+    <sequenceFlow sourceRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0009" targetRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0010" id="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0009"/>
+    <sequenceFlow sourceRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0010" targetRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0011" id="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0010"/>
+    <sequenceFlow sourceRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0011" targetRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0012" id="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0011"/>
+    <sequenceFlow sourceRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0012" targetRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0013" id="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0012"/>
+    <sequenceFlow sourceRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0013" targetRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0014" id="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0013"/>
+    <sequenceFlow sourceRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0014" targetRef="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0015" id="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0014"/>
+  </process>
+
+  <!-- Pool-Breite 2500 statt 1830, da der Organisationsprozess mehr Schritte enthaelt -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_8c1d2e30-4a5b-4c6d-8e7f-9a0b1c2d0002">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration_8c1d2e30-4a5b-4c6d-8e7f-9a0b1c2d0001">
+
+      <!-- ===== POOL: Kunde (y=0) ===== -->
+      <bpmndi:BPMNShape bpmnElement="_a0000002-4a5b-4c6d-8e7f-9a0b1c2d0001" isHorizontal="true">
+        <omgdc:Bounds x="10" y="0" width="2500" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_d0000002-4a5b-4c6d-8e7f-9a0b1c2d0001" isHorizontal="true">
+        <omgdc:Bounds x="40" y="0" width="2470" height="380"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape bpmnElement="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0001">
+        <omgdc:Bounds x="120" y="172" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="88" y="213" width="100" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0002">
+        <omgdc:Bounds x="220" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0003">
+        <omgdc:Bounds x="498" y="172" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="466" y="127" width="100" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0004">
+        <omgdc:Bounds x="1898" y="172" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1866" y="127" width="100" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0005">
+        <omgdc:Bounds x="2000" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e1000002-4a5b-4c6d-8e7f-9a0b1c2d0006">
+        <omgdc:Bounds x="2220" y="172" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="2188" y="213" width="100" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge bpmnElement="_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0001">
+        <omgdi:waypoint x="156" y="190"/>
+        <omgdi:waypoint x="220" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0002">
+        <omgdi:waypoint x="371" y="190"/>
+        <omgdi:waypoint x="498" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0003">
+        <omgdi:waypoint x="534" y="190"/>
+        <omgdi:waypoint x="1898" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0004">
+        <omgdi:waypoint x="1934" y="190"/>
+        <omgdi:waypoint x="2000" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f1000002-4a5b-4c6d-8e7f-9a0b1c2d0005">
+        <omgdi:waypoint x="2151" y="190"/>
+        <omgdi:waypoint x="2220" y="190"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- ===== POOL: Organisation (y=390, 2 Lanes a 190) ===== -->
+      <bpmndi:BPMNShape bpmnElement="_a0000002-4a5b-4c6d-8e7f-9a0b1c2d0002" isHorizontal="true">
+        <omgdc:Bounds x="10" y="390" width="2500" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_d0000002-4a5b-4c6d-8e7f-9a0b1c2d0002" isHorizontal="true">
+        <omgdc:Bounds x="40" y="390" width="2470" height="190"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_d0000002-4a5b-4c6d-8e7f-9a0b1c2d0003" isHorizontal="true">
+        <omgdc:Bounds x="40" y="580" width="2470" height="190"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Lane Service Desk (Mitte y=485) -->
+      <bpmndi:BPMNShape bpmnElement="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0001">
+        <omgdc:Bounds x="120" y="467" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="88" y="508" width="100" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0002">
+        <omgdc:Bounds x="220" y="447" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0003">
+        <omgdc:Bounds x="440" y="447" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0004">
+        <omgdc:Bounds x="660" y="447" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0005">
+        <omgdc:Bounds x="880" y="447" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0006">
+        <omgdc:Bounds x="1100" y="447" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0011">
+        <omgdc:Bounds x="1748" y="467" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1716" y="422" width="100" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0012">
+        <omgdc:Bounds x="1840" y="447" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0013">
+        <omgdc:Bounds x="2058" y="467" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="2026" y="508" width="100" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0014">
+        <omgdc:Bounds x="2156" y="447" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0015">
+        <omgdc:Bounds x="2380" y="467" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="2348" y="508" width="100" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- Lane Fachteam (Mitte y=675) -->
+      <bpmndi:BPMNShape bpmnElement="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0007">
+        <omgdc:Bounds x="1158" y="657" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1126" y="698" width="100" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0008">
+        <omgdc:Bounds x="1250" y="637" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0009">
+        <omgdc:Bounds x="1470" y="637" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e2000002-4a5b-4c6d-8e7f-9a0b1c2d0010">
+        <omgdc:Bounds x="1690" y="637" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge bpmnElement="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0001">
+        <omgdi:waypoint x="156" y="485"/>
+        <omgdi:waypoint x="220" y="485"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0002">
+        <omgdi:waypoint x="371" y="485"/>
+        <omgdi:waypoint x="440" y="485"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0003">
+        <omgdi:waypoint x="591" y="485"/>
+        <omgdi:waypoint x="660" y="485"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0004">
+        <omgdi:waypoint x="811" y="485"/>
+        <omgdi:waypoint x="880" y="485"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0005">
+        <omgdi:waypoint x="1031" y="485"/>
+        <omgdi:waypoint x="1100" y="485"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0006">
+        <omgdi:waypoint x="1176" y="523"/>
+        <omgdi:waypoint x="1176" y="657"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0007">
+        <omgdi:waypoint x="1194" y="675"/>
+        <omgdi:waypoint x="1250" y="675"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0008">
+        <omgdi:waypoint x="1401" y="675"/>
+        <omgdi:waypoint x="1470" y="675"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0009">
+        <omgdi:waypoint x="1621" y="675"/>
+        <omgdi:waypoint x="1690" y="675"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0010">
+        <omgdi:waypoint x="1766" y="637"/>
+        <omgdi:waypoint x="1766" y="503"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0011">
+        <omgdi:waypoint x="1784" y="485"/>
+        <omgdi:waypoint x="1840" y="485"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0012">
+        <omgdi:waypoint x="1991" y="485"/>
+        <omgdi:waypoint x="2058" y="485"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0013">
+        <omgdi:waypoint x="2094" y="485"/>
+        <omgdi:waypoint x="2156" y="485"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f2000002-4a5b-4c6d-8e7f-9a0b1c2d0014">
+        <omgdi:waypoint x="2307" y="485"/>
+        <omgdi:waypoint x="2380" y="485"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- ===== MESSAGE FLOWS (Routing im Pool-Zwischenraum bei y=385) ===== -->
+      <bpmndi:BPMNEdge bpmnElement="_f3000002-4a5b-4c6d-8e7f-9a0b1c2d0001">
+        <omgdi:waypoint x="296" y="228"/>
+        <omgdi:waypoint x="296" y="385"/>
+        <omgdi:waypoint x="138" y="385"/>
+        <omgdi:waypoint x="138" y="467"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f3000002-4a5b-4c6d-8e7f-9a0b1c2d0002">
+        <omgdi:waypoint x="516" y="447"/>
+        <omgdi:waypoint x="516" y="208"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f3000002-4a5b-4c6d-8e7f-9a0b1c2d0003">
+        <omgdi:waypoint x="1916" y="447"/>
+        <omgdi:waypoint x="1916" y="208"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_f3000002-4a5b-4c6d-8e7f-9a0b1c2d0004">
+        <omgdi:waypoint x="2076" y="228"/>
+        <omgdi:waypoint x="2076" y="467"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>
