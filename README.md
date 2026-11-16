@@ -16,7 +16,7 @@ Die öffentliche Verwaltung steht vor der Herausforderung, komplexe und heteroge
 * :eyeglasses: **Erstellung von e2e-Prozessmodellen** durch Einbeziehung der Perspektiven **Kunde, Organisation und IT (KOI)**
 * :microphone: **Geführte Prozessaufnahme** per Interview (Agent `Moritz`) mit Steckbrief und Ist-Prozessmodell
 * :mag: **Erstellung von standardisierten Prozesssteckbriefen** mit KPIs für Gesamtprozess und Aktivitäten im BPMN-Modell
-* :white_check_mark: **Methodische Prüfung** von ADONIS-Prozessmodellen, inkl. Abruf über die ADONIS-REST-API
+* :white_check_mark: **Methodische Prüfung** von ADONIS-Prozessmodellen
 
 ## Technologische Basis
 

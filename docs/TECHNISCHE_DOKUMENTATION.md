@@ -81,22 +81,6 @@ Diese Dokumentation beschreibt die technischen Grundlagen und Voraussetzungen zu
 3. Die Interviewfragen beantworten (optional per Spracheingabe)
 4. Ergebnis: Prozesssteckbrief und ADONIS-kompatibles BPMN-Ist-Prozessmodell (ein Pool Organisation mit Lanes)
 
-## ADONIS-Modelle per API abrufen und prüfen
-Voraussetzungen: Python 3.10+, lokaler Clone im Stadtnetz, REST-API und Basic Auth für den API-Nutzer in ADONIS aktiviert.
-
-1. `cd tools/adonis_fetch` und `pip install --proxy http://webgateway.lhs.stuttgart.de:9090 -r requirements.txt`
-2. `.env.example` nach `.env` kopieren und `ADONIS_BASE_URL` sowie ggf. `ADONIS_USER` eintragen. `ADONIS_PASSWORD` leer lassen: Das Skript fragt das Passwort per Dialog ab und speichert es im Windows-Schlüsselbund.
-3. `python fetch_models.py --discover` - Repository-ID und Attributname des Freigabe-Workflow-Status ermitteln, ggf. in `.env` anpassen
-4. `python fetch_models.py --dry-run` - Trefferliste prüfen
-5. `python fetch_models.py` - Modelle nach `Import_ADONIS/` exportieren
-6. Agent "ADONIS_Review" auswählen und z. B. "Prüfe alle Modelle in Import_ADONIS" eingeben
-
-Hinweise:
-- `python fetch_models.py --logout` löscht die gespeicherten Zugangsdaten.
-- Das Zertifikat der internen LHS-CA wird automatisch aus dem Windows-Zertifikatsspeicher verwendet.
-- Ausgabe je Modell als `.bpmn`; bietet ADONIS keinen BPMN-Export per REST an, wird stattdessen eine `.json`-Datei mit Objektdetails und Imagemap abgelegt. Zusätzlich entsteht `Import_ADONIS/manifest.json`.
-- `Import_ADONIS/` und `.env` sind per `.gitignore` von der Versionierung ausgeschlossen.
-
 ## Troubleshooting
 
 ### Problem: Copilot bricht ab und generiert kein BPMN (Timeout)
