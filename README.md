@@ -27,6 +27,22 @@ Die öffentliche Verwaltung steht vor der Herausforderung, komplexe und heteroge
 
 Details zu Voraussetzungen, Agenten und Abläufen: [TECHNISCHE_DOKUMENTATION.md](docs/TECHNISCHE_DOKUMENTATION.md)
 
+## Beispiel: Prozessmodell „Geschäftsprozess auditieren"
+
+Das Beispiel zeigt denselben, mit ADONIS AI Forge erzeugten Prozess in zwei Darstellungen: zunächst als generiertes BPMN-Modell in VS Code, anschließend nach dem Import in ADONIS. Das Modell bildet die Perspektiven **Kunde** (Prozessverantwortlicher) und **Organisation** (Auditkoordination, Auditor) ab und verbindet sie über Nachrichtenflüsse (Auditauftrag, Auftragsbestätigung, Prozessunterlagen, Prüfplan, Terminbestätigung, Auditbericht).
+
+### 1. Generiertes BPMN-Modell (ADONIS AI Forge)
+
+BPMN-2.0-Modell, wie es der Agent erzeugt und in VS Code mit der Erweiterung Camunda Modeler (Miragon) dargestellt wird:
+
+![Prozessmodell „Geschäftsprozess auditieren" – generiert mit ADONIS AI Forge](<docs/Geschaeftsprozess auditieren (2026-11-18_09-45-23) ADONIS AI Forge.png>)
+
+### 2. Import in ADONIS
+
+Dasselbe Modell nach dem Import in ADONIS. Die Aktivitäten sind mit Zusatzinformationen aus dem Prozesssteckbrief hinterlegt (Info-Symbol an den Aktivitäten):
+
+![Prozessmodell „Geschäftsprozess auditieren" – importiert in ADONIS](<docs/Geschaeftsprozess auditieren (2026-11-18_09-45-23) Import ADONIS.png>)
+
 ## Warum das wichtig ist
 
 * ⏱️ **Ressourcenschonung**: Reduktion von Aufwand und Kosten in der Prozessaufnahme
