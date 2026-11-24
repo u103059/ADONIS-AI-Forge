@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:adonis="http://www.boc-group.com"
+             xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+             xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+             xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             id="definition__7e3b1c20-4d5a-4f8e-9a61-2b0c8d17e401"
+             typeLanguage="http://www.w3.org/2001/XMLSchema"
+             xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd"
+             targetNamespace="http://www.boc-group.com">
+
+  <collaboration id="Collaboration_9f1d2a34-6b7c-4e85-a3d2-5c10e8b94f02"
+                 name="Incident Management"
+                 isClosed="false">
+    <participant processRef="process_e7f5b943-4d6c-4a0b-9bc8-3c9d5a0f6e06" name="Kunde" id="_b4c2e610-1a3f-4d78-8e95-0f6a2d7c3b03"/>
+    <participant processRef="process_f8a6ca54-5e7d-4b1c-8cd9-4dae6b1a7f07" name="IT" id="_c5d3f721-2b4a-4e89-9fa6-1a7b3e8d4c04"/>
+    <participant processRef="process_09b7db65-6f8e-4c2d-9de0-5ebf7c2b8a08" name="Organisation" id="_d6e4a832-3c5b-4f9a-8ab7-2b8c4f9e5d05"/>
+
+    <messageFlow id="_f80ac055-b89d-4516-a6f5-4da0e154da2d" name="Störungsmeldung" sourceRef="_5e0c20ba-1ef3-4b72-8c35-a304c17a0d13" targetRef="_4d5f15aa-0de2-4a6b-bb4a-92f536a9fc22"/>
+    <messageFlow id="_091bd166-c9ae-4627-b706-5eb1f265eb2e" name="Geprüfte Meldung" sourceRef="_5e6026bb-1ef3-4b7c-8c5b-a30647bad023" targetRef="_b4c68611-7459-41d8-a2b1-096ac7d06319"/>
+    <messageFlow id="_1a2ce277-dabf-4738-8817-6fc20376fc2f" name="Zugewiesener Incident" sourceRef="_d6e8a833-967b-43fa-84d3-2b8ce9f2851b" targetRef="_6f7137cc-2f04-4c8d-9d6c-b41758cbe124"/>
+    <messageFlow id="_2b3df388-ebc0-4849-9928-70d314870d30" name="Dokumentierte Lösung" sourceRef="_708248dd-3015-4d9e-ae7d-c52869dcf225" targetRef="_e7f9b944-a78c-440b-95e4-3c9df0a3961c"/>
+    <messageFlow id="_3c4e0499-fcd1-495a-aa39-81e425981e31" name="Abschlussmeldung" sourceRef="_e7f9b944-a78c-440b-95e4-3c9df0a3961c" targetRef="_819359ee-4126-4eaf-bf8e-d6397aedc326"/>
+    <messageFlow id="_4d5f15aa-0de2-4a6b-bb4a-92f536a92f32" name="Lösungsmitteilung" sourceRef="_819359ee-4126-4eaf-bf8e-d6397aedc326" targetRef="_6f1d31cb-2f04-4c83-9d46-b415d28b1e14"/>
+  </collaboration>
+
+  <!-- Pool: Kunde -->
+  <process name="Kunde"
+           id="process_e7f5b943-4d6c-4a0b-9bc8-3c9d5a0f6e06"
+           isExecutable="false"
+           isClosed="false"
+           processType="None">
+    <laneSet id="laneSet_e7f5b943-4d6c-4a0b-9bc8-3c9d5a0f6e06">
+      <lane name="Kunde" id="_1ac8ec76-7a9f-4d3e-8ef1-6fc08d3c9b09">
+        <flowNodeRef>_4dfb1fa9-0de2-4a61-9b24-92f3b06fce12</flowNodeRef>
+        <flowNodeRef>_5e0c20ba-1ef3-4b72-8c35-a304c17a0d13</flowNodeRef>
+        <flowNodeRef>_6f1d31cb-2f04-4c83-9d46-b415d28b1e14</flowNodeRef>
+        <flowNodeRef>_70e242dc-3015-4d94-ae57-c526e39c2f15</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <startEvent name="Störung festgestellt" id="_4dfb1fa9-0de2-4a61-9b24-92f3b06fce12">
+      <outgoing>_81f353ed-4126-4ea5-bf68-d637f4ad3016</outgoing>
+    </startEvent>
+
+    <task name="Störung melden" id="_5e0c20ba-1ef3-4b72-8c35-a304c17a0d13" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Kunde beschreibt die festgestellte Störung mit Symptom, Zeitpunkt und betroffenem Service und übermittelt seine Kontaktdaten über das Online-Formular. Ergebnis ist eine vollständige Störungsmeldung, die an die Organisation gesendet wird.</documentation>
+      <incoming>_81f353ed-4126-4ea5-bf68-d637f4ad3016</incoming>
+      <outgoing>_92a464fe-5237-4fb6-80f9-e748a5be4117</outgoing>
+    </task>
+
+    <task name="Lösung bestätigen" id="_6f1d31cb-2f04-4c83-9d46-b415d28b1e14" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Kunde prüft anhand der Lösungsmitteilung, ob der Service wieder wie erwartet funktioniert, und bestätigt die Wiederherstellung. Ergebnis ist die bestätigte Lösung.</documentation>
+      <incoming>_92a464fe-5237-4fb6-80f9-e748a5be4117</incoming>
+      <outgoing>_a3b57500-6348-40c7-91a0-f859b6cf5218</outgoing>
+    </task>
+
+    <endEvent name="Störung behoben" id="_70e242dc-3015-4d94-ae57-c526e39c2f15">
+      <incoming>_a3b57500-6348-40c7-91a0-f859b6cf5218</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_4dfb1fa9-0de2-4a61-9b24-92f3b06fce12" targetRef="_5e0c20ba-1ef3-4b72-8c35-a304c17a0d13" id="_81f353ed-4126-4ea5-bf68-d637f4ad3016"/>
+    <sequenceFlow sourceRef="_5e0c20ba-1ef3-4b72-8c35-a304c17a0d13" targetRef="_6f1d31cb-2f04-4c83-9d46-b415d28b1e14" id="_92a464fe-5237-4fb6-80f9-e748a5be4117"/>
+    <sequenceFlow sourceRef="_6f1d31cb-2f04-4c83-9d46-b415d28b1e14" targetRef="_70e242dc-3015-4d94-ae57-c526e39c2f15" id="_a3b57500-6348-40c7-91a0-f859b6cf5218"/>
+  </process>
+
+  <!-- Pool: IT -->
+  <process name="IT"
+           id="process_f8a6ca54-5e7d-4b1c-8cd9-4dae6b1a7f07"
+           isExecutable="false"
+           isClosed="false"
+           processType="None">
+    <laneSet id="laneSet_f8a6ca54-5e7d-4b1c-8cd9-4dae6b1a7f07">
+      <lane name="IT-Betrieb" id="_2bd9fd87-8bb0-4e4f-9f02-70d19e4dac10">
+        <flowNodeRef>_b4c68611-7459-41d8-a2b1-096ac7d06319</flowNodeRef>
+        <flowNodeRef>_c5d79722-856a-42e9-b3c2-1a7bd8e1741a</flowNodeRef>
+        <flowNodeRef>_d6e8a833-967b-43fa-84d3-2b8ce9f2851b</flowNodeRef>
+        <flowNodeRef>_e7f9b944-a78c-440b-95e4-3c9df0a3961c</flowNodeRef>
+        <flowNodeRef>_f80ac055-b89d-451c-a6f5-4da0e1b4a71d</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <startEvent name="Geprüfte Meldung eingegangen" id="_b4c68611-7459-41d8-a2b1-096ac7d06319">
+      <outgoing>_091bd166-c9ae-462d-b706-5eb1f2c5b81e</outgoing>
+      <messageEventDefinition id="msgEvtDef_b4c68611-7459-41d8-a2b1-096ac7d06319"/>
+    </startEvent>
+
+    <task name="Incident erfassen und kategorisieren" id="_c5d79722-856a-42e9-b3c2-1a7bd8e1741a" isForCompensation="false">
+      <documentation textFormat="text/plain">Das Ticketsystem legt automatisiert einen Incident mit eindeutiger Ticketnummer an, ordnet ihn anhand von Schlagworten und betroffenem Service einer Kategorie zu und verknüpft ihn gegebenenfalls mit bekannten Fehlern. Ergebnis ist ein erfasster und kategorisierter Incident.</documentation>
+      <incoming>_091bd166-c9ae-462d-b706-5eb1f2c5b81e</incoming>
+      <outgoing>_1a2ce277-dabf-473e-8817-6fc203d6c91f</outgoing>
+    </task>
+
+    <task name="Incident priorisieren und zuweisen" id="_d6e8a833-967b-43fa-84d3-2b8ce9f2851b" isForCompensation="false">
+      <documentation textFormat="text/plain">Das System ermittelt automatisiert die Priorität anhand von Auswirkung und Dringlichkeit (Prioritätsmatrix), weist den Incident der zuständigen Bearbeitergruppe zu und setzt die Reaktions- und Lösungsfristen (SLA). Ergebnis ist ein priorisierter, zugewiesener Incident, der an die Organisation übermittelt wird.</documentation>
+      <incoming>_1a2ce277-dabf-473e-8817-6fc203d6c91f</incoming>
+      <outgoing>_2b3df388-ebc0-484f-9928-70d314e7da20</outgoing>
+    </task>
+
+    <task name="Incident abschließen" id="_e7f9b944-a78c-440b-95e4-3c9df0a3961c" isForCompensation="false">
+      <documentation textFormat="text/plain">Das System setzt den Incident auf den Status gelöst, protokolliert Bearbeitungszeiten und SLA-Einhaltung und archiviert den Incident samt Lösungsdokumentation. Ergebnis ist ein abgeschlossener Incident mit Protokoll, der der Organisation gemeldet wird.</documentation>
+      <incoming>_2b3df388-ebc0-484f-9928-70d314e7da20</incoming>
+      <outgoing>_3c4e0499-fcd1-495a-aa39-81e425f8eb21</outgoing>
+    </task>
+
+    <endEvent name="Incident abgeschlossen" id="_f80ac055-b89d-451c-a6f5-4da0e1b4a71d">
+      <incoming>_3c4e0499-fcd1-495a-aa39-81e425f8eb21</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_b4c68611-7459-41d8-a2b1-096ac7d06319" targetRef="_c5d79722-856a-42e9-b3c2-1a7bd8e1741a" id="_091bd166-c9ae-462d-b706-5eb1f2c5b81e"/>
+    <sequenceFlow sourceRef="_c5d79722-856a-42e9-b3c2-1a7bd8e1741a" targetRef="_d6e8a833-967b-43fa-84d3-2b8ce9f2851b" id="_1a2ce277-dabf-473e-8817-6fc203d6c91f"/>
+    <sequenceFlow sourceRef="_d6e8a833-967b-43fa-84d3-2b8ce9f2851b" targetRef="_e7f9b944-a78c-440b-95e4-3c9df0a3961c" id="_2b3df388-ebc0-484f-9928-70d314e7da20"/>
+    <sequenceFlow sourceRef="_e7f9b944-a78c-440b-95e4-3c9df0a3961c" targetRef="_f80ac055-b89d-451c-a6f5-4da0e1b4a71d" id="_3c4e0499-fcd1-495a-aa39-81e425f8eb21"/>
+  </process>
+
+  <!-- Pool: Organisation -->
+  <process name="Organisation"
+           id="process_09b7db65-6f8e-4c2d-9de0-5ebf7c2b8a08"
+           isExecutable="false"
+           isClosed="false"
+           processType="None">
+    <laneSet id="laneSet_09b7db65-6f8e-4c2d-9de0-5ebf7c2b8a08">
+      <lane name="Service Desk" id="_3cea0e98-9cc1-4f50-8a13-81e2af5ebd11">
+        <flowNodeRef>_4d5f15aa-0de2-4a6b-bb4a-92f536a9fc22</flowNodeRef>
+        <flowNodeRef>_5e6026bb-1ef3-4b7c-8c5b-a30647bad023</flowNodeRef>
+        <flowNodeRef>_6f7137cc-2f04-4c8d-9d6c-b41758cbe124</flowNodeRef>
+        <flowNodeRef>_708248dd-3015-4d9e-ae7d-c52869dcf225</flowNodeRef>
+        <flowNodeRef>_819359ee-4126-4eaf-bf8e-d6397aedc326</flowNodeRef>
+        <flowNodeRef>_92a46aff-5237-4fb0-809f-e74a8bfed427</flowNodeRef>
+      </lane>
+    </laneSet>
+
+    <startEvent name="Störungsmeldung eingegangen" id="_4d5f15aa-0de2-4a6b-bb4a-92f536a9fc22">
+      <outgoing>_a3b57b00-6348-40c1-91a0-f85b9c0fe528</outgoing>
+      <messageEventDefinition id="msgEvtDef_4d5f15aa-0de2-4a6b-bb4a-92f536a9fc22"/>
+    </startEvent>
+
+    <task name="Meldung prüfen" id="_5e6026bb-1ef3-4b7c-8c5b-a30647bad023" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Service Desk prüft die Störungsmeldung auf Vollständigkeit, Plausibilität und Zuständigkeit und stellt sicher, dass es sich um einen Incident und nicht um eine Serviceanfrage handelt. Ergebnis ist die geprüfte und freigegebene Meldung, die an die IT übermittelt wird.</documentation>
+      <incoming>_a3b57b00-6348-40c1-91a0-f85b9c0fe528</incoming>
+      <outgoing>_b4c68c11-7459-41d2-a2b1-096cad10f629</outgoing>
+    </task>
+
+    <task name="Störung analysieren und beheben" id="_6f7137cc-2f04-4c8d-9d6c-b41758cbe124" isForCompensation="false">
+      <documentation textFormat="text/plain">Die zugewiesene Fachkraft analysiert die Ursache der Störung anhand von Diagnose und Wissensdatenbank, setzt die Lösung oder eine Umgehungslösung um und testet die Wiederherstellung des Services. Ergebnis ist der wiederhergestellte Service.</documentation>
+      <incoming>_b4c68c11-7459-41d2-a2b1-096cad10f629</incoming>
+      <outgoing>_c5d79d22-856a-42e3-b3c2-1a7dbe21a72a</outgoing>
+    </task>
+
+    <task name="Lösung dokumentieren" id="_708248dd-3015-4d9e-ae7d-c52869dcf225" isForCompensation="false">
+      <documentation textFormat="text/plain">Die Fachkraft hält Ursache, durchgeführte Maßnahmen und Lösung im Incident fest und ergänzt bei Bedarf die Wissensdatenbank. Ergebnis ist die dokumentierte Lösung, die an die IT übermittelt wird.</documentation>
+      <incoming>_c5d79d22-856a-42e3-b3c2-1a7dbe21a72a</incoming>
+      <outgoing>_d6e8ae33-967b-43f4-84d3-2b8ecf32b82b</outgoing>
+    </task>
+
+    <task name="Lösung mitteilen" id="_819359ee-4126-4eaf-bf8e-d6397aedc326" isForCompensation="false">
+      <documentation textFormat="text/plain">Der Service Desk informiert den Kunden nach der Abschlussmeldung der IT über die Behebung der Störung und die durchgeführten Maßnahmen. Ergebnis ist die Lösungsmitteilung an den Kunden.</documentation>
+      <incoming>_d6e8ae33-967b-43f4-84d3-2b8ecf32b82b</incoming>
+      <outgoing>_e7f9bf44-a78c-4405-95e4-3c9fd043c92c</outgoing>
+    </task>
+
+    <endEvent name="Lösung mitgeteilt" id="_92a46aff-5237-4fb0-809f-e74a8bfed427">
+      <incoming>_e7f9bf44-a78c-4405-95e4-3c9fd043c92c</incoming>
+    </endEvent>
+
+    <sequenceFlow sourceRef="_4d5f15aa-0de2-4a6b-bb4a-92f536a9fc22" targetRef="_5e6026bb-1ef3-4b7c-8c5b-a30647bad023" id="_a3b57b00-6348-40c1-91a0-f85b9c0fe528"/>
+    <sequenceFlow sourceRef="_5e6026bb-1ef3-4b7c-8c5b-a30647bad023" targetRef="_6f7137cc-2f04-4c8d-9d6c-b41758cbe124" id="_b4c68c11-7459-41d2-a2b1-096cad10f629"/>
+    <sequenceFlow sourceRef="_6f7137cc-2f04-4c8d-9d6c-b41758cbe124" targetRef="_708248dd-3015-4d9e-ae7d-c52869dcf225" id="_c5d79d22-856a-42e3-b3c2-1a7dbe21a72a"/>
+    <sequenceFlow sourceRef="_708248dd-3015-4d9e-ae7d-c52869dcf225" targetRef="_819359ee-4126-4eaf-bf8e-d6397aedc326" id="_d6e8ae33-967b-43f4-84d3-2b8ecf32b82b"/>
+    <sequenceFlow sourceRef="_819359ee-4126-4eaf-bf8e-d6397aedc326" targetRef="_92a46aff-5237-4fb0-809f-e74a8bfed427" id="_e7f9bf44-a78c-4405-95e4-3c9fd043c92c"/>
+  </process>
+
+  <!-- BPMN-DI -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane bpmnElement="Collaboration_9f1d2a34-6b7c-4e85-a3d2-5c10e8b94f02">
+
+      <!-- Pool Kunde -->
+      <bpmndi:BPMNShape bpmnElement="_b4c2e610-1a3f-4d78-8e95-0f6a2d7c3b03" isHorizontal="true">
+        <omgdc:Bounds x="10" y="0" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_1ac8ec76-7a9f-4d3e-8ef1-6fc08d3c9b09" isHorizontal="true">
+        <omgdc:Bounds x="40" y="0" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_4dfb1fa9-0de2-4a61-9b24-92f3b06fce12">
+        <omgdc:Bounds x="90" y="172" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="78" y="212" width="60" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_5e0c20ba-1ef3-4b72-8c35-a304c17a0d13">
+        <omgdc:Bounds x="190" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_6f1d31cb-2f04-4c83-9d46-b415d28b1e14">
+        <omgdc:Bounds x="1510" y="152" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_70e242dc-3015-4d94-ae57-c526e39c2f15">
+        <omgdc:Bounds x="1725" y="172" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1713" y="212" width="60" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="_81f353ed-4126-4ea5-bf68-d637f4ad3016">
+        <omgdi:waypoint x="126" y="190"/>
+        <omgdi:waypoint x="190" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_92a464fe-5237-4fb6-80f9-e748a5be4117">
+        <omgdi:waypoint x="341" y="190"/>
+        <omgdi:waypoint x="1510" y="190"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_a3b57500-6348-40c7-91a0-f859b6cf5218">
+        <omgdi:waypoint x="1661" y="190"/>
+        <omgdi:waypoint x="1725" y="190"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- Pool IT -->
+      <bpmndi:BPMNShape bpmnElement="_c5d3f721-2b4a-4e89-9fa6-1a7b3e8d4c04" isHorizontal="true">
+        <omgdc:Bounds x="10" y="390" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_2bd9fd87-8bb0-4e4f-9f02-70d19e4dac10" isHorizontal="true">
+        <omgdc:Bounds x="40" y="390" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_b4c68611-7459-41d8-a2b1-096ac7d06319">
+        <omgdc:Bounds x="467" y="562" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="455" y="517" width="60" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_c5d79722-856a-42e9-b3c2-1a7bd8e1741a">
+        <omgdc:Bounds x="630" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_d6e8a833-967b-43fa-84d3-2b8ce9f2851b">
+        <omgdc:Bounds x="850" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_e7f9b944-a78c-440b-95e4-3c9df0a3961c">
+        <omgdc:Bounds x="1070" y="542" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_f80ac055-b89d-451c-a6f5-4da0e1b4a71d">
+        <omgdc:Bounds x="1285" y="562" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1273" y="602" width="60" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="_091bd166-c9ae-462d-b706-5eb1f2c5b81e">
+        <omgdi:waypoint x="503" y="580"/>
+        <omgdi:waypoint x="630" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_1a2ce277-dabf-473e-8817-6fc203d6c91f">
+        <omgdi:waypoint x="781" y="580"/>
+        <omgdi:waypoint x="850" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_2b3df388-ebc0-484f-9928-70d314e7da20">
+        <omgdi:waypoint x="1001" y="580"/>
+        <omgdi:waypoint x="1070" y="580"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_3c4e0499-fcd1-495a-aa39-81e425f8eb21">
+        <omgdi:waypoint x="1221" y="580"/>
+        <omgdi:waypoint x="1285" y="580"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- Pool Organisation -->
+      <bpmndi:BPMNShape bpmnElement="_d6e4a832-3c5b-4f9a-8ab7-2b8c4f9e5d05" isHorizontal="true">
+        <omgdc:Bounds x="10" y="780" width="1830" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_3cea0e98-9cc1-4f50-8a13-81e2af5ebd11" isHorizontal="true">
+        <omgdc:Bounds x="40" y="780" width="1800" height="380"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_4d5f15aa-0de2-4a6b-bb4a-92f536a9fc22">
+        <omgdc:Bounds x="247" y="952" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="235" y="992" width="60" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_5e6026bb-1ef3-4b7c-8c5b-a30647bad023">
+        <omgdc:Bounds x="410" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_6f7137cc-2f04-4c8d-9d6c-b41758cbe124">
+        <omgdc:Bounds x="850" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_708248dd-3015-4d9e-ae7d-c52869dcf225">
+        <omgdc:Bounds x="1070" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_819359ee-4126-4eaf-bf8e-d6397aedc326">
+        <omgdc:Bounds x="1290" y="932" width="151" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="_92a46aff-5237-4fb0-809f-e74a8bfed427">
+        <omgdc:Bounds x="1505" y="952" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds x="1493" y="992" width="60" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="_a3b57b00-6348-40c1-91a0-f85b9c0fe528">
+        <omgdi:waypoint x="283" y="970"/>
+        <omgdi:waypoint x="410" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_b4c68c11-7459-41d2-a2b1-096cad10f629">
+        <omgdi:waypoint x="561" y="970"/>
+        <omgdi:waypoint x="850" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_c5d79d22-856a-42e3-b3c2-1a7dbe21a72a">
+        <omgdi:waypoint x="1001" y="970"/>
+        <omgdi:waypoint x="1070" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_d6e8ae33-967b-43f4-84d3-2b8ecf32b82b">
+        <omgdi:waypoint x="1221" y="970"/>
+        <omgdi:waypoint x="1290" y="970"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="_e7f9bf44-a78c-4405-95e4-3c9fd043c92c">
+        <omgdi:waypoint x="1441" y="970"/>
+        <omgdi:waypoint x="1505" y="970"/>
+      </bpmndi:BPMNEdge>
+
+      <!-- Message Flows -->
+      <!-- Kunde: Störung melden -> Organisation: Störungsmeldung eingegangen -->
+      <bpmndi:BPMNEdge bpmnElement="_f80ac055-b89d-4516-a6f5-4da0e154da2d">
+        <omgdi:waypoint x="265" y="228"/>
+        <omgdi:waypoint x="265" y="952"/>
+      </bpmndi:BPMNEdge>
+      <!-- Organisation: Meldung prüfen -> IT: Geprüfte Meldung eingegangen -->
+      <bpmndi:BPMNEdge bpmnElement="_091bd166-c9ae-4627-b706-5eb1f265eb2e">
+        <omgdi:waypoint x="485" y="932"/>
+        <omgdi:waypoint x="485" y="598"/>
+      </bpmndi:BPMNEdge>
+      <!-- IT: Incident priorisieren und zuweisen -> Organisation: Störung analysieren und beheben -->
+      <bpmndi:BPMNEdge bpmnElement="_1a2ce277-dabf-4738-8817-6fc20376fc2f">
+        <omgdi:waypoint x="925" y="618"/>
+        <omgdi:waypoint x="925" y="932"/>
+      </bpmndi:BPMNEdge>
+      <!-- Organisation: Lösung dokumentieren -> IT: Incident abschließen -->
+      <bpmndi:BPMNEdge bpmnElement="_2b3df388-ebc0-4849-9928-70d314870d30">
+        <omgdi:waypoint x="1115" y="932"/>
+        <omgdi:waypoint x="1115" y="618"/>
+      </bpmndi:BPMNEdge>
+      <!-- IT: Incident abschließen -> Organisation: Lösung mitteilen -->
+      <bpmndi:BPMNEdge bpmnElement="_3c4e0499-fcd1-495a-aa39-81e425981e31">
+        <omgdi:waypoint x="1175" y="618"/>
+        <omgdi:waypoint x="1175" y="775"/>
+        <omgdi:waypoint x="1340" y="775"/>
+        <omgdi:waypoint x="1340" y="932"/>
+      </bpmndi:BPMNEdge>
+      <!-- Organisation: Lösung mitteilen -> Kunde: Lösung bestätigen -->
+      <bpmndi:BPMNEdge bpmnElement="_4d5f15aa-0de2-4a6b-bb4a-92f536a92f32">
+        <omgdi:waypoint x="1400" y="932"/>
+        <omgdi:waypoint x="1400" y="775"/>
+        <omgdi:waypoint x="1585" y="775"/>
+        <omgdi:waypoint x="1585" y="228"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+
+</definitions>
